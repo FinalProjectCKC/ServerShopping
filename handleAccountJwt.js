@@ -8,7 +8,7 @@ exports.getAccountId = (req, res) => {
         if (err) {
             console.log(err)
             res.json({
-                resultCode: -1,
+                status: -1,
                 message: 'Không tìm thấy người dùng này',
                 data: null,
             })

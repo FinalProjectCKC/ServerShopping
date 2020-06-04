@@ -1,11 +1,13 @@
 const express = require('express')
 const app = express()
+const port = 3000
+
+
+app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`))
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 let server = require('http').createServer(app)
 let api = require('./config')
-
-const port = process.argv.slice(2)[0] || 5001
 
 const cors = require('cors')
 app.use(cors())
@@ -21,11 +23,11 @@ let routes = require('./routes')
 // routes(app)
 app.use('/api', routes)
 
-app.use('/image', express.static(__dirname + '/uploads'))
-app.use('/pdfFile', express.static(__dirname + '/pdfFile'))
-app.use('/excelFile', express.static(__dirname + '/excelFile'))
+// app.use('/image', express.static(__dirname + '/uploads'))
+// app.use('/pdfFile', express.static(__dirname + '/pdfFile'))
+// app.use('/excelFile', express.static(__dirname + '/excelFile'))
 // connect database
-mongoose.connect('mongodb://localhost:2x7017/attendence-tracking',
+mongoose.connect('mongodb://localhost:2x7017/ShoppingDB',
     {
         useNewUrlParser: true,
         useUnifiedTopology: true,
@@ -38,7 +40,3 @@ mongoose.connect('mongodb://localhost:2x7017/attendence-tracking',
             console.log('Connect database successfully!')
         }
     })
-
-server.listen(port)
-
-console.log(`server started on: ${port}`)

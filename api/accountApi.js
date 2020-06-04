@@ -8,39 +8,31 @@ let handleAccountJwt = require('../handleAccountJwt')
 let fs = require('fs')
 const path = require('path')
 let api = require('../config')
-API_FIS = api.API_FIS
-API_RMIS = api.API_RMIS
-API_ETMS = api.API_ETMS
+API_URL = api.API_URL
 
 exports.login = async (req, res) => {
     let username = req.body.username
     let password = req.body.password
-
     if (username === null || username === undefined || password === null || password === undefined) {
         return res.json({
-            resultCode: -1,
+            status: -1,
             message: 'Vui lòng nhập đầy đủ tài khoản và mật khẩu',
             data: null
         })
     }
 
     username = username.toLowerCase()
-
-    let check = await Account.findOne({
-        username: username,
-        password: password
-    })
-
+    const check = await Account.findOne(
+        { username: username }
+    )
     if (check !== null) {
         const token1 = jwt.sign({ id: check.id }, 'jwt-secret')
         return res.json({
-            resultCode: 1,
+            status: 1,
             message: 'Thành công',
             data: {
                 token: token1,
                 userId: check.userId,
-                etmsId: check.etmsId,
-                employeeId: check.employeeId,
                 username: check.username,
                 fullName: check.fullName,
                 email: check.email,
@@ -48,6 +40,39 @@ exports.login = async (req, res) => {
                 address: check.address,
                 accRole: check.accRole
             }
+        })
+    } else {
+        return res.json({
+            status: -1,
+            message: 'Tên đăng nhập hoặc mật khẩu không chính xác',
+            data: null
+        })
+    }
+}
+
+exports.logout = async (req, res) => {
+    let accountId = handleAccountJwt.getAccountId(req)
+    try {
+        await Account.findOneAndUpdate(
+            { _id: accountId },
+            {
+                notificationToken: {
+                    token: null,
+                    platform: null
+                }
+            }
+        )
+        res.json({
+            status: 1,
+            message: 'Đăng xuất thành công',
+            data: null
+        })
+    } catch (error) {
+        res.json({
+            status: -1,
+            message: 'Thất bại',
+            data: null,
+            error: error
         })
     }
 }
@@ -76,7 +101,7 @@ exports.pushNotificationToken = async (req, res) => {
 
         if (checkAccount.notificationToken.token === notificationToken) {
             res.json({
-                resultCode: 1,
+                status: 1,
                 message: 'Thành công',
                 data: {
                     notificationToken: checkAccount.notificationToken
@@ -85,14 +110,14 @@ exports.pushNotificationToken = async (req, res) => {
         }
         else {
             res.json({
-                resultCode: -1,
+                status: -1,
                 message: 'Thất bại',
                 data: null,
             })
         }
     } catch (error) {
         res.json({
-            resultCode: -1,
+            status: -1,
             message: 'Thất bại',
             data: null,
             error: error
@@ -117,7 +142,7 @@ exports.getNumOfNotification = async (req, res) => {
             }
 
             res.json({
-                resultCode: 1,
+                status: 1,
                 message: 'Thành công',
                 data: {
                     numOfNotification: length
@@ -125,14 +150,14 @@ exports.getNumOfNotification = async (req, res) => {
             })
         } else {
             res.json({
-                resultCode: -1,
+                status: -1,
                 message: 'Thất bại',
                 data: null,
             })
         }
     } catch (error) {
         res.json({
-            resultCode: -1,
+            status: -1,
             message: 'Thất bại',
             data: null,
             error: error
@@ -151,40 +176,13 @@ exports.clearNotification = async (req, res) => {
         )
 
         res.json({
-            resultCode: 1,
+            status: 1,
             message: 'Thành công',
             data: null
         })
     } catch (error) {
         res.json({
-            resultCode: -1,
-            message: 'Thất bại',
-            data: null,
-            error: error
-        })
-    }
-}
-
-exports.logout = async (req, res) => {
-    let accountId = handleAccountJwt.getAccountId(req)
-    try {
-        await Account.findOneAndUpdate(
-            { _id: accountId },
-            {
-                notificationToken: {
-                    token: null,
-                    platform: null
-                }
-            }
-        )
-        res.json({
-            resultCode: 1,
-            message: 'Đăng xuất thành công',
-            data: null
-        })
-    } catch (error) {
-        res.json({
-            resultCode: -1,
+            status: -1,
             message: 'Thất bại',
             data: null,
             error: error
@@ -214,19 +212,137 @@ exports.getListNotification = async (req, res) => {
         }
 
         return res.json({
-            resultCode: 1,
+            status: 1,
             message: 'Lấy danh sách thông báo thành công !',
             data: result
         })
 
     } catch (error) {
         res.json({
-            resultCode: -1,
+            status: -1,
             message: 'Có sự cố xảy ra. Không thể lấy danh sách thông báo !',
             data: null,
             error: error
         })
     }
+}
+
+exports.register = async (req, res) => {
+    try {
+        let email = req.body.email
+        let username = req.body.username.toLowerCase()
+        let password = req.body.password
+        let retypePassword = req.body.retypePassword
+        //email = email.toLowerCase()
+        if (email === undefined || email === null) {
+            return res.json({
+                status: -1,
+                message: ' Email không được bỏ trống!',
+                data: null
+            })
+        }
+
+        if (password === undefined || password === null || password !== retypePassword) {
+            return res.json({
+                status: -1,
+                message: 'Password is incorrect !',
+                data: null
+            })
+        }
+        const checkAccount = await Account.findOne(
+            { email: email }
+        )
+        const checkUsername = await Account.findOne(
+            { username: username }
+        )
+        if (checkAccount !== null) {
+            return res.json({
+                status: -1,
+                message: 'Email đã được đăng ký!',
+                data: null
+            })
+        } else if (checkUsername !== null) {
+            return res.json({
+                status: -1,
+                message: 'Tên tài khoản đã tồn tại!',
+                data: null
+            })
+        } else {
+            const newAccount = new Account({
+                _id: new mongoose.Types.ObjectId(),
+                email: email,
+                username: username,
+                password: password,
+                status: 1,
+                created_at: new Date()
+            })
+
+            await newAccount.save()
+
+            return res.json({
+                status: 1,
+                message: 'Đăng ký thành công!',
+                data: null
+            })
+        }
+    } catch (error) {
+        console.log(error)
+        return res.json({
+            status: -1,
+            message: 'Failed !',
+            data: null
+        })
+    }
+}
+
+exports.getUserData = async (user) => {
+    try {
+        //let username = user
+        let fullName = ''
+        let email = ''
+        let phone = ''
+        const account = await Account.findOne({
+            username: user
+        })
+
+        if (account.username !== null && account.username !== undefined) {
+            username = account.username
+        }
+
+        if (account.fullName !== null && account.fullName !== undefined) {
+            fullName = account.fullName
+        }
+        if (account.email !== null && account.email !== undefined) {
+            email = account.email
+        }
+
+        if (account.phone !== null && account.phone !== undefined) {
+            phone = account.phone
+        }
+
+        return {
+            username: username,
+            fullName: fullName,
+            email: email,
+            phone: phone
+        }
+    } catch (error) {
+        return ''
+    }
+}
+
+exports.updateUserData = async (req, res) => {
+    // const newAccount = new Account({
+    //   _id: new mongoose.Types.ObjectId(),
+    //   userId: id,
+    //   username: username,
+    //   fullName: (userData1.data === undefined || userData1.data === null) ? null : userData1.data.fullName,
+    //   email: (userData1.data === undefined || userData1.data === null) ? null : userData1.data.email,
+    //   phone: (userData1.data === undefined || userData1.data === null) ? null : userData1.data.phone,
+    //   status: 1,
+    //   created_at: new Date()
+    // })
+    // result = await newAccount.save()
 }
 
 exports.changeAvatar = async (req, res) => {
@@ -247,7 +363,7 @@ exports.changeAvatar = async (req, res) => {
                 _id: accountId
             })
             if (account.avatarUrl !== null || account.avatarUrl === undefined) {
-                let currentAvatar = account.avatarUrl.replace(`${API_FIS}/image/`, '')
+                let currentAvatar = account.avatarUrl.replace(`${API_URL}/image/`, '')
                 try {
                     fs.unlink(__dirname.replace('/api', '') + `/uploads/${currentAvatar}`, err => {
                         console.log(err)
@@ -262,22 +378,22 @@ exports.changeAvatar = async (req, res) => {
                     _id: accountId
                 },
                 {
-                    avatarUrl: `${API_FIS}/image/${imageName}`
+                    avatarUrl: `${API_URL}/image/${imageName}`
                 }
             )
 
             res.json({
-                resultCode: 1,
+                status: 1,
                 message: 'Thay đổi ảnh đại diện thành công',
                 data: {
-                    imageUrl: `${API_FIS}/image/${imageName}`
+                    imageUrl: `${API_URL}/image/${imageName}`
                 }
             })
 
 
         } catch (error) {
             return res.json({
-                resultCode: -1,
+                status: -1,
                 message: 'Có sự cố xảy ra. Không thể thay đổi ảnh đại diện !',
                 data: null,
                 error: error
@@ -287,82 +403,10 @@ exports.changeAvatar = async (req, res) => {
     src.on('error', (err) => {
         fs.unlink(tmp_path, (err) => { console.log(err) })
         return res.json({
-            resultCode: -1,
+            status: -1,
             message: 'Thất bại',
             data: null,
             error: error
         })
     })
-}
-
-exports.updateUserData = async (req, res) => {
-    // const newAccount = new Account({
-    //   _id: new mongoose.Types.ObjectId(),
-    //   userId: id,
-    //   username: username,
-    //   fullName: (userData1.data === undefined || userData1.data === null) ? null : userData1.data.fullName,
-    //   email: (userData1.data === undefined || userData1.data === null) ? null : userData1.data.email,
-    //   phone: (userData1.data === undefined || userData1.data === null) ? null : userData1.data.phone,
-    //   status: 1,
-    //   created_at: new Date()
-    // })
-    // result = await newAccount.save()
-}
-
-exports.register = async (req, res) => {
-    try {
-        let email = req.body.email
-        let password = req.body.password
-        let retypePassword = req.body.retypePassword
-        email = email.toLowerCase()
-        if (email === undefined || email === null) {
-            return res.json({
-                resultCode: -1,
-                message: 'Email can not null !',
-                data: null
-            })
-        }
-
-        if (password === undefined || password === null || password !== retypePassword) {
-            return res.json({
-                resultCode: -1,
-                message: 'Password is incorrect !',
-                data: null
-            })
-        }
-
-        const checkAccount = await Account.findOne(
-            { email: email }
-        )
-        if (checkAccount !== null) {
-            return res.json({
-                resultCode: -1,
-                message: 'Email already exists !',
-                data: null
-            })
-        } else {
-            const newAccount = new Account({
-                _id: new mongoose.Types.ObjectId(),
-                email: email,
-                password: password,
-                status: 1,
-                created_at: new Date()
-            })
-
-            await newAccount.save()
-
-            return res.json({
-                resultCode: 1,
-                message: 'Register successfully !',
-                data: null
-            })
-        }
-    } catch (error) {
-        console.log(error)
-        return res.json({
-            resultCode: -1,
-            message: 'Failed !',
-            data: null
-        })
-    }
 }

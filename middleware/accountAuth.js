@@ -18,7 +18,7 @@ const checkJwt = async (req, res, next) => {
         )
         if (account === null || account === undefined) {
           return res.json({
-            resultCode: -1,
+            status: -1,
             message: 'Không tìm thấy người dùng này !',
             data: null,
           })
@@ -28,7 +28,7 @@ const checkJwt = async (req, res, next) => {
       }
     } else {
       return res.json({
-        resultCode: -1,
+        status: -1,
         message: 'Không tìm thấy người dùng này !',
         data: null,
       })
