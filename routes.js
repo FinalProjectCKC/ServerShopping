@@ -9,15 +9,6 @@ const accountAuth = require('./middleware/accountAuth')
 let multer = require('multer')
 let upload = multer({ dest: 'uploads' })
 
-// check api 
-// router.get('/', (req, res) => {
-//   res.json({
-//     status: 1,
-//     message: 'Have a nice day',
-//     data: null
-//   })
-// })
-
 //Account route
 router.route('/register')
   .post(accountApi.register)

@@ -11,6 +11,10 @@ const Schema = mongoose.Schema
       type: String,
       require: true
     },
+    typeProduct: {
+      type: String,
+      require: true
+    },
     unit: {
       type: String,
       require: true
@@ -24,6 +28,9 @@ const Schema = mongoose.Schema
     created_at: {
       type: Date,
       timezone: "Asia/Ho_Chi_Minh"
+    },
+    delete_at: {
+      type: Date
     },
     last_modified: {
       type: Date,

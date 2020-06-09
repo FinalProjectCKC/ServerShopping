@@ -1,5 +1,6 @@
 var passport = require('passport')
 var Account = require('../models/account')
+var Product = require('../models/product')
 var jwt = require('jsonwebtoken')
 let request = require('request-promise')
 let base64 = require('base-64')
