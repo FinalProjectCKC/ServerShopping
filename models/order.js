@@ -37,7 +37,7 @@ const orderDetail = new Schema({
   },
   delete_at: {
     type: Date,
-    require: false
+    timezone: "Asia/Ho_Chi_Minh",
   },
   last_modified: {
     type: Date,
@@ -64,7 +64,8 @@ const orderSchema = new Schema({
     timezone: "Asia/Ho_Chi_Minh"
   },
   delete_at: {
-    type: Date
+    type: Date,
+    timezone: "Asia/Ho_Chi_Minh"
   },
   last_modified: {
     type: Date,
@@ -73,6 +74,6 @@ const orderSchema = new Schema({
   }
 })
 
-const Product = mongoose.model('Order', orderSchema, 'Order')
+const Order = mongoose.model('Order', orderSchema, 'Order')
 
-module.exports = Product
+module.exports = Order

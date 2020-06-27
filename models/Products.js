@@ -30,7 +30,8 @@ const Schema = mongoose.Schema
       timezone: "Asia/Ho_Chi_Minh"
     },
     delete_at: {
-      type: Date
+      type: Date,
+      timezone: "Asia/Ho_Chi_Minh"
     },
     last_modified: {
       type: Date,
