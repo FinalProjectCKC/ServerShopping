@@ -45,7 +45,8 @@ const productTypesSchema = new Schema({
     auto: true
   },
   typeName: {
-    type: String
+    type: String,
+    required: true,
   },
   product: [productSchema],
   created_at: {
@@ -60,6 +61,6 @@ const productTypesSchema = new Schema({
     default: Date.now
   },
 })
-const ProductType = mongoose.model('ProductType', productTypesSchema)
+const ProductType = mongoose.model('ProductType', productTypesSchema, 'ProductType')
 
 module.exports = ProductType

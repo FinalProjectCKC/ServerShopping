@@ -14,27 +14,17 @@ API_URL = api.API_URL
 exports.addProductType = async (req, res) => {
   //let accountId = handleAccountJwt.getAccountId(req)
   //Type infor
-  let typeName = req.body.typeName
-  let date = new Date()
-  let today = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
-   
   try {
-    if(!handleAccountJwt.adminRole){
-      return res.json({
-        status: -1,
-        message: 'Bạn không có quyền sử dụng tính năng này !',
-        data: {}
-      })
-    } else {
+    let typeName = req.body.typeName
+    let date = new Date()
+    let today = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
       const newProductType = new ProductType({
         _id: new mongoose.Types.ObjectId(),
         typeName: typeName,
         created_at: today,
         last_modified: today
       })
-  
       await newProductType.save()
-  
       return res.json({
         status: 1,
         message: 'Tạo loại sản phẩm mới thành công !',
@@ -42,7 +32,6 @@ exports.addProductType = async (req, res) => {
           typeName: newProductType.typeName,
         }
       })
-    }
   } catch (error) {
     return res.json({
       status: -1,
