@@ -1,10 +1,9 @@
 const router = require('express').Router()
-const verifyToken = require('./middleware/accountAuth')
+const accAuth = require('./middleware/accountAuth')
 const accountApi = require('./api/accountApi')
-const dashboardApi = require('./api/dashboardApi')
-const productApi = require('./api/productApi')
+const productTypeApi = require('./api/productTypeApi')
+//const productApi = require('./api/productApi')
 const accountAuth = require('./middleware/accountAuth')
-
 
 let multer = require('multer')
 let upload = multer({ dest: 'uploads' })
@@ -33,4 +32,9 @@ router.route('/getNumOfNotification')
 router.route('/clearNotification')
   .post(accountApi.clearNotification)
 
-  module.exports = router;
+//Product Type
+
+router.route('/addProductType')
+  .post(accAuth, productTypeApi.addProductType)
+
+module.exports = router;

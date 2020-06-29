@@ -16,7 +16,6 @@ app.use(cors())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json({ strict: false }))
 
-
 //route
 let routes = require('./routes')
 
