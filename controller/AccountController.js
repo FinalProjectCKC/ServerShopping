@@ -11,8 +11,10 @@ let api = require('../config')
 API_URL = api.API_URL
 
 exports.login= async (req, res) => {
-  let username = req.params.username
-  let password = req.params.password
+  // let username = 'req.params.username'
+  // let password = 'req.params.password'
+  let username = 'tunsgtx5'
+  let password = 'Tung!@#'
   if (username === null || username === undefined || password === null || password === undefined) {
       res.send('Tài khoản mật khẩu không được để trống');
   }
@@ -22,9 +24,9 @@ exports.login= async (req, res) => {
         password: password}
   )
   if (check !== null) {
-        req.session.isLogin = true;
-        req.session.user = username;
-        res.redirect('page/index')
+        // req.session.isLogin = true;
+        // req.session.user = username;
+        res.redirect('home')
   } else {
     res.send('Tên đăng nhập hoặc mật khẩu không đúng');
   }

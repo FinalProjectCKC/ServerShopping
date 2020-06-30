@@ -18,7 +18,7 @@ server.use('/', routes)
 server.use(expressSession({
 	isLogin: false,
 	resave: false,
-  saveUninitialized: true,
+    saveUninitialized: true,
 	secret: 'keyboard cat', }))
 
 server.use(bodyParser.urlencoded({extended: true}));
