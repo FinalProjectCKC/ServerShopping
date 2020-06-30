@@ -12,7 +12,12 @@ let upload = multer({ dest: 'uploads' })
 router.get('', function (req, res) {
   res.render('login/login');
 });
-router.get('home', function (req, res) {
+// router.post('/login', AccountController.login(req, res));
+
+router.route('/login')
+.post(AccountController.login)
+
+router.get('/home', function (req, res) {
   res.render('pages/index');
 });
 router.get('/productType', function (req, res) {

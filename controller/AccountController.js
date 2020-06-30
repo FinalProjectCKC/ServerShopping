@@ -10,7 +10,7 @@ const path = require('path')
 let api = require('../config')
 API_URL = api.API_URL
 
-exports.loginAction= async (req, res) => {
+exports.login= async (req, res) => {
   let username = req.params.username
   let password = req.params.password
   if (username === null || username === undefined || password === null || password === undefined) {

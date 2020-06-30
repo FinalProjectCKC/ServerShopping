@@ -4,34 +4,33 @@
 	<div class="wrapper">
 		<div class="main">
 			<main class="content">
-				<!--Form Account-->
-				<div class="col-md-12">
-					<div class="card">
-						<div class="card-header">
-							<h2 class="card-title">Thêm loại sản phẩm</h2>
-							<!-- <h6 class="card-subtitle text-muted">Thêm tài khoản</h6> -->
-						</div>
-						<div class="card-body">
-							<form>
-								<div class="form-group">
-									<label class="form-label">Tên loại</label>
-									<input type="text" class="form-control" placeholder="Tên loại sản phẩm">
+				<div class="container-fluid p-0">
+					<div class="row">
+						<!--Form Account-->
+						<div class="col-md-4">
+							<div class="card">
+								<div class="card-header">
+									<h2 class="card-title">Đăng nhập</h2>
+									<!-- <h6 class="card-subtitle text-muted">Thêm tài khoản</h6> -->
 								</div>
-								<div class="form-group">
-									<label class="form-label">Mô tả</label>
-									<textarea class="form-control" placeholder="Mô tả loại sản phẩm" rows="1"></textarea>
+								<div class="card-body">
+									<form action="login" method="POST">
+										<div class="form-group">
+											<label class="form-label">Tài khoản</label>
+											<input type="text" name="username"required class="form-control" placeholder="Tài khoản">
+										</div>
+										<div class="form-group">
+											<label class="form-label">Mật khẩu</label>
+											<input name="username"required type="text" class="form-control" placeholder="Mật khẩu">
+										</div>
+										<div class="form-group">
+											<label class="custom-control custom-checkbox">
+											</label>
+										</div>
+										<button type="submit" class="btn btn-primary">Đăng nhập</button>
+									</form>
 								</div>
-								<div class="form-group">
-									<label class="form-label w-100">Ảnh loại</label>
-									<input type="file">
-									<small class="form-text text-muted">=))</small>
-								</div>
-								<div class="form-group">
-									<label class="custom-control custom-checkbox">
-									</label>
-								</div>
-								<button type="submit" class="btn btn-primary">Thêm loại sản phẩm</button>
-							</form>
+							</div>
 						</div>
 					</div>
 				</div>
