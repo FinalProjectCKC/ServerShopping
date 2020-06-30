@@ -1,0 +1,118 @@
+<% include ../partials/Header %>
+
+<body>
+	<div class="wrapper">
+		<% include ../partials/RightBar %>
+
+		<div class="main">
+			<% include ../partials/SearchBar %>
+
+			<main class="content">
+				<!--Form Account-->
+				<div class="col-md-12">
+					<div class="card">
+						<div class="card-header">
+							<h2 class="card-title">Thêm loại sản phẩm</h2>
+							<!-- <h6 class="card-subtitle text-muted">Thêm tài khoản</h6> -->
+						</div>
+						<div class="card-body">
+							<form>
+								<div class="form-group">
+									<label class="form-label">Tên loại</label>
+									<input type="text" class="form-control" placeholder="Tên loại sản phẩm">
+								</div>
+								<div class="form-group">
+									<label class="form-label">Mô tả</label>
+									<textarea class="form-control" placeholder="Mô tả loại sản phẩm" rows="1"></textarea>
+								</div>
+								<div class="form-group">
+									<label class="form-label w-100">Ảnh loại</label>
+									<input type="file">
+									<small class="form-text text-muted">=))</small>
+								</div>
+								<div class="form-group">
+									<label class="custom-control custom-checkbox">
+									</label>
+								</div>
+								<button type="submit" class="btn btn-primary">Thêm loại sản phẩm</button>
+							</form>
+						</div>
+					</div>
+				</div>
+				<!--ListAccount-->
+				<div class="col-12 col-xl-12">
+					<div class="card">
+						<div class="card-header">
+							<h5 class="card-title">Danh sách loại sản phẩm</h5>
+							<h6 class="card-subtitle text-muted">Loại sản phẩm</h6>
+						</div>
+						<table class="table">
+							<thead>
+								<tr>
+									<th style="width:20%;">Tên loại sản phẩm</th>
+									<th style="width:20%">Mô tả</th>
+									<th style="width:20%">Hình ảnh</th>
+									<th>Tuỳ chỉnh</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>Vanessa Tucker</td>
+									<td>Vanessa Tucker</td>
+									<td>864-348-0485</td>
+									<td class="table-action">
+										<a href="#"><i class="align-middle" data-feather="edit-2"></i></a>
+										<a href="#"><i class="align-middle" data-feather="trash"></i></a>
+									</td>
+								</tr>
+								<tr class="table-primary">
+									<td>William Harris</td>
+									<td>William Harris</td>
+									<td>914-939-2458</td>
+									<td class="table-action">
+										<a href="#"><i class="align-middle" data-feather="edit-2"></i></a>
+										<a href="#"><i class="align-middle" data-feather="trash"></i></a>
+									</td>
+								</tr>
+								<tr>
+									<td>Sharon Lessman</td>
+									<td>Sharon Lessman</td>
+									<td>704-993-5435</td>
+									<td class="table-action">
+										<a href="#"><i class="align-middle" data-feather="edit-2"></i></a>
+										<a href="#"><i class="align-middle" data-feather="trash"></i></a>
+									</td>
+								</tr>
+								<tr class="table-success">
+									<td>Christina Mason</td>
+									<td>Christina Mason</td>
+									<td>765-382-8195</td>
+									<td class="table-action">
+										<a href="#"><i class="align-middle" data-feather="edit-2"></i></a>
+										<a href="#"><i class="align-middle" data-feather="trash"></i></a>
+									</td>
+								</tr>
+								<tr>
+									<td>Robin Schneiders</td>
+									<td>Robin Schneiders</td>
+									<td>202-672-1407</td>
+									<td class="table-action">
+										<a href="#"><i class="align-middle" data-feather="edit-2"></i></a>
+										<a href="#"><i class="align-middle" data-feather="trash"></i></a>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</main>
+			<% include ../partials/Footer %>
+		</div>
+	</div>
+
+	<script src="js/vendor.js"></script>
+	<script src="js/app.js"></script>
+
+</body>
+
+</html>

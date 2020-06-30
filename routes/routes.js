@@ -1,9 +1,9 @@
 const router = require('express').Router()
-const accAuth = require('./middleware/accountAuth')
-const accountApi = require('./api/accountApi')
-const productTypeApi = require('./api/productTypeApi')
+const accAuth = require('../middleware/accountAuth')
+const accountApi = require('../api/accountApi')
+const productTypeApi = require('../api/productTypeApi')
 //const productApi = require('./api/productApi')
-const accountAuth = require('./middleware/accountAuth')
+const accountAuth = require('../middleware/accountAuth')
 
 let multer = require('multer')
 let upload = multer({ dest: 'uploads' })

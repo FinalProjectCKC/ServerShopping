@@ -17,7 +17,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json({ strict: false }))
 
 //route
-let routes = require('./routes')
+let routes = require('./routes/routes')
 
 // routes(app)
 app.use('/api', routes)
