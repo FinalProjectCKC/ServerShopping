@@ -10,28 +10,37 @@ const path = require('path')
 let api = require('../config')
 API_URL = api.API_URL
 
-exports.login= async (req, res) => {
-  // let username = 'req.params.username'
-  // let password = 'req.params.password'
-  let username = 'tunsgtx5'
-  let password = 'Tung!@#'
+exports.login = async (req, res) => {
+  let username = req.body.username
+  let password = req.body.password
+  // console.log("=))", req.body)
+  // let username = 'tungtx5'
+  // let password = 'Tung!@#'
   if (username === null || username === undefined || password === null || password === undefined) {
-      res.send('Tài khoản mật khẩu không được để trống');
+    res.send('Tài khoản mật khẩu không được để trống');
   }
-  username = username.toLowerCase()
-  const check = await Account.findOne(
-      { username: username,
-        password: password}
-  )
-  if (check !== null) {
-        // req.session.isLogin = true;
-        // req.session.user = username;
-        res.redirect('home')
-  } else {
-    res.send('Tên đăng nhập hoặc mật khẩu không đúng');
+  try {
+    username = username.toLowerCase()
+    const check = await Account.findOne(
+      {
+        username: username,
+        password: password
+      }
+    )
+    if (check !== null) {
+      req.session.isLogin = true;
+      req.session.user = username;
+      res.redirect('home')
+    } else {
+      res.send('Tên đăng nhập hoặc mật khẩu không đúng');
+    }
   }
+  catch{
+    res.send('Có sự cố xảy ra, vui lòng thử lại sau');
+  }
+
 }
 
 // exports.logout = async (req, res) => {
-  
+
 // }

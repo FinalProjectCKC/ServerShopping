@@ -48,6 +48,10 @@ const productTypesSchema = new Schema({
     type: String,
     required: true,
   },
+  description: {
+    type: String,
+    default: 'Sản phẩm này chưa có mô tả',
+  },
   product: [productSchema],
   created_at: {
     type: Date

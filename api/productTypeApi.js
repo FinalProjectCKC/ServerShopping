@@ -16,11 +16,13 @@ exports.addProductType = async (req, res) => {
   //Type infor
   try {
     let typeName = req.body.typeName
+    let description = req.body.description
     let date = new Date()
     let today = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
       const newProductType = new ProductType({
         _id: new mongoose.Types.ObjectId(),
         typeName: typeName,
+        description: description,
         created_at: today,
         last_modified: today
       })

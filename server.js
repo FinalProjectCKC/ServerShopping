@@ -6,24 +6,29 @@ var bodyParser = require('body-parser');
 var passport = require('passport');
 var routes = require('./routes/routeServer')
 const mongoose = require('mongoose')
-server.use('/css',express.static('public/css'));
-server.use('/js',express.static('public/js'));
+server.use('/css', express.static('public/css'));
+server.use('/js', express.static('public/js'));
 // set the view engine to ejs
 server.set('view engine', 'ejs');
 
-// routes(server)
-server.use('/', routes)
+
 
 //Passport
 server.use(expressSession({
-	isLogin: false,
-	resave: false,
+    isLogin: false,
+    resave: false,
     saveUninitialized: true,
-	secret: 'keyboard cat', }))
+    secret: 'keyboard cat',
+}))
+server.use(express.json()) // for parsing application/json
+// server.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
+server.use(bodyParser.urlencoded({ extended: true }));
 
-server.use(bodyParser.urlencoded({extended: true}));
 server.use(passport.initialize());
 server.use(passport.session());
+
+// routes(server)
+server.use('/', routes)
 
 server.listen(8080);
 console.log('server run in port 8080');
