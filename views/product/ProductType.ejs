@@ -57,51 +57,31 @@
 								</tr>
 							</thead>
 							<tbody>
+								<% for (var i = 0; i < listProductType.length; i++) { %>
+								<% if ( i%2 == 0 ) {%>
 								<tr>
+									<td><%= listProductType[i].typeName %></td>
+									<td><%= listProductType[i].description %></td>
 									<td>Vanessa Tucker</td>
-									<td>Vanessa Tucker</td>
-									<td>864-348-0485</td>
 									<td class="table-action">
 										<a href="#"><i class="align-middle" data-feather="edit-2"></i></a>
 										<a href="#"><i class="align-middle" data-feather="trash"></i></a>
 									</td>
 								</tr>
+								<% } else {%>
 								<tr class="table-primary">
-									<td>William Harris</td>
-									<td>William Harris</td>
-									<td>914-939-2458</td>
+									<td><%= listProductType[i].typeName %></td>
+									<td><%= listProductType[i].description %></td>
+									<td>Vanessa Tucker</td>
 									<td class="table-action">
 										<a href="#"><i class="align-middle" data-feather="edit-2"></i></a>
 										<a href="#"><i class="align-middle" data-feather="trash"></i></a>
 									</td>
 								</tr>
-								<tr>
-									<td>Sharon Lessman</td>
-									<td>Sharon Lessman</td>
-									<td>704-993-5435</td>
-									<td class="table-action">
-										<a href="#"><i class="align-middle" data-feather="edit-2"></i></a>
-										<a href="#"><i class="align-middle" data-feather="trash"></i></a>
-									</td>
-								</tr>
-								<tr class="table-success">
-									<td>Christina Mason</td>
-									<td>Christina Mason</td>
-									<td>765-382-8195</td>
-									<td class="table-action">
-										<a href="#"><i class="align-middle" data-feather="edit-2"></i></a>
-										<a href="#"><i class="align-middle" data-feather="trash"></i></a>
-									</td>
-								</tr>
-								<tr>
-									<td>Robin Schneiders</td>
-									<td>Robin Schneiders</td>
-									<td>202-672-1407</td>
-									<td class="table-action">
-										<a href="#"><i class="align-middle" data-feather="edit-2"></i></a>
-										<a href="#"><i class="align-middle" data-feather="trash"></i></a>
-									</td>
-								</tr>
+								<% } %>
+								<% } %>
+
+
 							</tbody>
 						</table>
 					</div>
@@ -110,7 +90,6 @@
 			<% include ../partials/Footer %>
 		</div>
 	</div>
-
 	<script src="js/vendor.js"></script>
 	<script src="js/app.js"></script>
 

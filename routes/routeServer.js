@@ -17,11 +17,6 @@ router.get('', function (req, res) {
 router.get('/home', function (req, res) {
   res.render('pages/index');
 });
-// router.get('/productType', ProductController.getListProductType)
-router.get('/productType', function (req, res) {
-  const listType = ProductController.getListProductType
-  res.render('product/ProductType',{listType})
-});
 
 //Action
 //Account
@@ -29,6 +24,9 @@ router.route('/login')
   .post(AccountController.login)
 
 //Product
+router.get('/productType', ProductController.getListProductType);
+// router.route('/productType')
+//   .post(ProductController.getListProductType)
 router.route('/productType/add')
   .post(ProductController.addProductType)
 router.route('/productType/edit')
