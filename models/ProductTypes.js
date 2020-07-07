@@ -52,6 +52,9 @@ const productTypesSchema = new Schema({
     type: String,
     default: 'Sản phẩm này chưa có mô tả',
   },
+  typeImg: {
+    type: String,
+  },
   product: [productSchema],
   created_at: {
     type: Date
