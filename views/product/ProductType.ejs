@@ -16,7 +16,7 @@
 							<!-- <h6 class="card-subtitle text-muted">Thêm tài khoản</h6> -->
 						</div>
 						<div class="card-body">
-							<form id="proTypeForm" action="/productType/add"  enctype="multipart/form-data" method="POST">
+							<form id="proTypeForm" action="/productType/addType"  method="POST" enctype="multipart/form-data">
 								<div class="form-group">
 									<label class="form-label">Tên loại</label>
 									<input type="text" name="typeName" class="form-control" placeholder="Tên loại sản phẩm">
@@ -65,7 +65,7 @@
 									<td><%= listProductType[i].typeName %></td>
 									<td><%= listProductType[i].description %></td>
 									<td>
-										<img src="img/avatars/avatar-5.jpg" class="avatar img-fluid" alt="No IMG">
+										<img src="<%= listProductType[i].typeImg %>" class="avatar img-fluid" alt="No IMG">
 									</td>
 									<td class="table-action">
 										<button type="button" name="btn_edit"><i class="align-middle" data-feather="edit-2"></i></button>

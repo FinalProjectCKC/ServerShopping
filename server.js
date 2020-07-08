@@ -7,12 +7,13 @@ var passport = require('passport');
 var routes = require('./routes/routeServer')
 const mongoose = require('mongoose')
 const formData = require('form-data');
+let multer = require('multer')
+let upload = multer({ dest: 'public/img' })
 
 server.use('/css', express.static('public/css'));
 server.use('/js', express.static('public/js'));
 server.use('/img', express.static('public/img'));
 server.use('/fonts', express.static('public/fonts'));
-server.use('/img', express.static('public/img'));
 // set the view engine to ejs
 server.set('view engine', 'ejs');
 

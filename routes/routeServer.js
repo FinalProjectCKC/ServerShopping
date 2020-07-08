@@ -2,14 +2,11 @@ const router = require('express').Router()
 const accAuth = require('../middleware/accountAuth')
 var bodyParser = require('body-parser');
 var AccountController = require('../controller/AccountController');
-var ProductController = require('../controller/ProductController');
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 var passport = require('passport');
 var localStrategy = require('passport-local').Strategy;
-
-let multer = require('multer');
-const { query } = require('express');
-let upload = multer({ dest: 'uploads' })
+let multer = require('multer')
+var proType = require('./routeProductType');
 
 //Navigation
 router.get('', function (req, res) {
@@ -21,14 +18,6 @@ router.get('/home', function (req, res) {
 router.route('/login')
   .post(AccountController.login)
 //Product
-router.get('/productType', ProductController.getListProductType);
-// router.route('/productType')
-//   .post(ProductController.getListProductType)
-router.route('/productType/add')
-  .post(ProductController.addProductType)
-router.route('/productType/edit')
-  .post(ProductController.editProductType)
-router.route('/productType/delete')
-  .post(ProductController.deleteProductType)
+router.use('/productType', proType );
 
 module.exports = router;
