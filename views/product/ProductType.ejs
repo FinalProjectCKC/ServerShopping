@@ -94,8 +94,10 @@
 			$('[name=description]').val(des);
 			$('[name=typeImgForm]').attr('src', img);
 			$('[name=btnCreate]').html('Cập nhật');
-			$('#proTypeForm').attr('action', '/productType/edit');
-			$('[name=btnCreate]').attr('name', 'btnUpdate');
+			
+			$('#proTypeForm').attr('action', '/productType/editType');
+			$('#proTypeForm').attr('enctype', '');
+			// $('[name=btnCreate]').attr('name', 'btnUpdate');
 		});
 	</script>
 	<script src="js/vendor.js"></script>

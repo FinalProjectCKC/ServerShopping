@@ -7,6 +7,7 @@ var passport = require('passport');
 var localStrategy = require('passport-local').Strategy;
 let multer = require('multer')
 var proType = require('./routeProductType');
+var routeProduct = require('./routeProduct');
 
 //Navigation
 router.get('', function (req, res) {
@@ -19,5 +20,6 @@ router.route('/login')
   .post(AccountController.login)
 //Product
 router.use('/productType', proType );
+router.use('/product', routeProduct );
 
 module.exports = router;

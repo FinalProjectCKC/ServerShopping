@@ -1,4 +1,4 @@
-const proType = require('express').Router()
+const routeProduct = require('express').Router()
 const accAuth = require('../middleware/accountAuth')
 var bodyParser = require('body-parser');
 var path = require('path');
@@ -10,23 +10,23 @@ var localStrategy = require('passport-local').Strategy;
 let multer = require('multer')
 // Set The Storage Engine
 const storage = multer.diskStorage({
-  destination: './public/img/proType',
-  filename: function(req, file, cb){
-    cb(null,file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+  destination: './public/img/product',
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
   }
 });
 
 // Init Upload
 const upload = multer({
   storage: storage,
-  limits:{fileSize: 1000000},
-  fileFilter: function(req, file, cb){
+  limits: { fileSize: 1000000 },
+  fileFilter: function (req, file, cb) {
     checkFileType(file, cb);
   }
 });
 
 // Check File Type
-function checkFileType(file, cb){
+function checkFileType(file, cb) {
   // Allowed ext
   const filetypes = /jpeg|jpg|png|gif/;
   // Check ext
@@ -34,28 +34,27 @@ function checkFileType(file, cb){
   // Check mime
   const mimetype = filetypes.test(file.mimetype);
 
-  if(mimetype && extname){
-    return cb(null,true);
+  if (mimetype && extname) {
+    return cb(null, true);
   } else {
     cb('Error: Images Only!');
   }
 }
 
 //Navigation
-proType.get('/',ProductController.getListProductType)
+// routeProduct.get('/', function (req, res) {
+//   res.render('login/login');
+// });
+routeProduct.get('/', ProductController.getListProduct)
 
-proType.route('/addType' )
+routeProduct.route('/addProduct')
   .post(upload.single('typeImg'))
-  .post(ProductController.addProductType)
+  .post(ProductController.addProduct)
 
-  proType.route('/editType')
-  .post(ProductController.editProductType)
+routeProduct.route('/editType')
+  .post(ProductController.editProduct)
 
-// proType.route('/editType')
-//   .post(upload.single('typeImg'))
-//   .post(ProductController.editProductType)
+routeProduct.route('/deleteType')
+  .post(ProductController.deleteProduct)
 
-proType.route('/deleteType')
-  .post(ProductController.deleteProductType)
-
-module.exports = proType;
+module.exports = routeProduct;

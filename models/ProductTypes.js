@@ -12,6 +12,12 @@ const productSchema = new Schema({
     type: String,
     require: true
   },
+  description: {
+    type: String,
+  },
+  productImg: {
+    type: String,
+  },
   unit: {
     type: String,
     require: true
