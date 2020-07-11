@@ -8,6 +8,11 @@
 			<% include ../partials/SearchBar %>
 
 			<main class="content">
+				<% if(locals.message){ %>
+				<div class="alert alert-success" role="alert">
+					<strong>Well done!</strong> <%=message.success%>
+				</div>
+				<% } %>
 				<!--Form Account-->
 				<div class="col-md-12">
 					<div class="card">
@@ -16,7 +21,7 @@
 							<!-- <h6 class="card-subtitle text-muted">Thêm tài khoản</h6> -->
 						</div>
 						<div class="card-body">
-							<form id="proTypeForm" action="/productType/addType"  method="POST" enctype="multipart/form-data">
+							<form id="proTypeForm" action="/productType/addType" method="POST" enctype="multipart/form-data">
 								<div class="form-group">
 									<label class="form-label">Tên loại</label>
 									<input type="text" name="typeName" class="form-control" placeholder="Tên loại sản phẩm">
@@ -38,7 +43,7 @@
 									<label class="custom-control custom-checkbox">
 									</label>
 								</div>
-								<button type="submit" name="btnCreate" class="btn btn-primary">Thêm loại sản phẩm</button>
+								<button name="btnCreate" class="btn btn-primary">Thêm loại sản phẩm</button>
 							</form>
 						</div>
 					</div>
@@ -94,10 +99,20 @@
 			$('[name=description]').val(des);
 			$('[name=typeImgForm]').attr('src', img);
 			$('[name=btnCreate]').html('Cập nhật');
-			
+			$('[name=btnCreate]').attr('name', 'btnUpdate');
 			$('#proTypeForm').attr('action', '/productType/editType');
-			$('#proTypeForm').attr('enctype', '');
-			// $('[name=btnCreate]').attr('name', 'btnUpdate');
+		});
+		$('[name=btnUpdate]').click(function () {
+			console.log("=))")
+			var img = $("#typeImg").val();
+			console.log("=>>", img)
+			if (img == null) {
+				$('#proTypeForm').attr('action', '/productType/editType1');
+				$('#proTypeForm').attr('enctype', '');
+				$('#proTypeForm').submit();
+			} else {
+				$('#proTypeForm').submit();
+			}
 		});
 	</script>
 	<script src="js/vendor.js"></script>

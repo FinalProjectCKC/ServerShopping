@@ -11,22 +11,22 @@ let multer = require('multer')
 // Set The Storage Engine
 const storage = multer.diskStorage({
   destination: './public/img/proType',
-  filename: function(req, file, cb){
-    cb(null,file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
   }
 });
 
 // Init Upload
 const upload = multer({
   storage: storage,
-  limits:{fileSize: 1000000},
-  fileFilter: function(req, file, cb){
+  limits: { fileSize: 1000000 },
+  fileFilter: function (req, file, cb) {
     checkFileType(file, cb);
+    return cb(null, false);
   }
 });
-
 // Check File Type
-function checkFileType(file, cb){
+function checkFileType(file, cb) {
   // Allowed ext
   const filetypes = /jpeg|jpg|png|gif/;
   // Check ext
@@ -34,26 +34,25 @@ function checkFileType(file, cb){
   // Check mime
   const mimetype = filetypes.test(file.mimetype);
 
-  if(mimetype && extname){
-    return cb(null,true);
+  if (mimetype && extname) {
+    return cb(null, true);
   } else {
     cb('Error: Images Only!');
   }
 }
-
 //Navigation
-proType.get('/',ProductController.getListProductType)
+proType.get('/', ProductController.getListProductType)
 
-proType.route('/addType' )
+proType.route('/addType')
   .post(upload.single('typeImg'))
   .post(ProductController.addProductType)
 
-  proType.route('/editType')
+proType.route('/editType1')
   .post(ProductController.editProductType)
 
-// proType.route('/editType')
-//   .post(upload.single('typeImg'))
-//   .post(ProductController.editProductType)
+proType.route('/editType')
+  .post(upload.single('typeImg'))
+  .post(ProductController.editProductType)
 
 proType.route('/deleteType')
   .post(ProductController.deleteProductType)

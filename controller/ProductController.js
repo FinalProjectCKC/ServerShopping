@@ -43,8 +43,10 @@ exports.addProductType = async (req, res) => {
       created_at: today,
       last_modified: today
     })
-    await newProductType.save().then(() => {
-      return res.send('Thêm loại sản phẩm thành công');
+    await newProductType.save().then(async () => {
+      const listProductType = await ProductType.find()
+      return res.redirect(req.get('referer'));
+      return res.render('product/ProductType', { listProductType });
     })
   } catch (error) {
     console.log(error)
@@ -56,16 +58,36 @@ exports.editProductType = async (req, res) => {
   try {
     let typeName = req.body.typeName
     let description = req.body.description
-    await ProductType.findOneAndUpdate(
-      { typeName: typeName },
-      {
-         typeName: typeName,
-         description: description,
-       }
-     ).then(() => {
-       return res.send('Cập nhật thành công');
-     })
-   } catch (error) {
+    let typeImg
+    let date = new Date()
+    let today = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
+
+    if (req.file !== undefined) {
+      typeImg = "img/proType/" + req.file.filename
+      await ProductType.findOneAndUpdate(
+        { typeName: typeName },
+        {
+          typeName: typeName,
+          description: description,
+          typeImg: typeImg,
+          last_modified: today
+        }
+      ).then(() => {
+        return res.send('Cập nhật thành công');
+      })
+    } else {
+      await ProductType.findOneAndUpdate(
+        { typeName: typeName },
+        {
+          typeName: typeName,
+          description: description,
+          last_modified: today
+        }
+      ).then(() => {
+        return res.send('Cập nhật thành công');
+      })
+    }
+  } catch (error) {
     console.log(error)
     return res.send('Có lỗi xảy ra! Cập nhật thất bại');
   }
