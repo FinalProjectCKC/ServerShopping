@@ -1,5 +1,6 @@
 const router = require('express').Router()
 const accAuth = require('../middleware/accountAuth')
+const adminAuth = require('../middleware/adminAuth')
 const accountApi = require('../api/accountApi')
 const productTypeApi = require('../api/productTypeApi')
 //const productApi = require('./api/productApi')
@@ -13,8 +14,10 @@ router.route('/register')
   .post(accountApi.register)
 router.route('/updateUserData')
   .post(accountApi.updateUserData)
-router.route('/getUserData')
-  .post(accountApi.getUserData)
+router.route('/getUserByName')
+  .post(accountApi.getUserByName)
+router.route('/getUserLogin')
+  .post(accountApi.getUserByToken)
 router.route('/changeAvatar')
   .post(accountApi.changeAvatar)
 
@@ -32,9 +35,22 @@ router.route('/getNumOfNotification')
 router.route('/clearNotification')
   .post(accountApi.clearNotification)
 
+
 //Product Type
+router.route('/ProductType/AddProductType')
+  .post(adminAuth, productTypeApi.addProductType)
+router.route('/ProductType/GetAll')
+  .post( productTypeApi.getAllProductType)
+router.route('/ProductType/GetByName')
+  .post(productTypeApi.getProductTypeByName)
+  router.route('/ProductType/GetByID')
+  .post(productTypeApi.getProductTypeById)
 
-router.route('/addProductType')
-  .post(accAuth, productTypeApi.addProductType)
-
+//Product
+router.route('/Product/GetAll')
+.post( productTypeApi.getAllProductType)
+router.route('/Product/GetByName')
+.post(productTypeApi.getProductTypeByName)
+router.route('/Product/GetByID')
+.post(productTypeApi.getProductTypeById)
 module.exports = router;

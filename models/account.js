@@ -41,10 +41,6 @@ const accountSchema = new Schema({
     required: true,
     // default: new ObjectId()
   },
-  userId: {
-    type: String,
-    require: true
-  },
   username: {
     type: String,
     require: true
@@ -78,7 +74,8 @@ const accountSchema = new Schema({
   },
   accRole: {
     type: String,
-    enum: ['user', 'admin']
+    enum: ['user', 'admin'],
+    default: 'user'
   },
   notificationToken: {
     token: {

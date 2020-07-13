@@ -12,15 +12,11 @@ API_URL = api.API_URL
 
 //ProductType
 exports.getListProductType = async (req, res) => {
-  //let queryParams = req.query
-  // let pageSize = Number.parseInt(queryParams.pageSize)
-  // let page = Number.parseInt(queryParams.page)
-  // let result = []
   try {
     const listProductType = await ProductType.find()
     return res.render('product/ProductType', { listProductType });
   } catch (error) {
-    return res.send('Có lỗi xảy ra! Thêm loại sản phẩm thất bại');;
+    return res.send('Có lỗi xảy ra! Lấy danh sách thất bại');;
   }
 }
 exports.addProductType = async (req, res) => {
@@ -45,8 +41,10 @@ exports.addProductType = async (req, res) => {
     })
     await newProductType.save().then(async () => {
       const listProductType = await ProductType.find()
+      req.flash('success', 'Registration successfully');
+      res.locals.message = req.flash();
+      res.render('login.ejs', { message: req.flash('loginMessage') });
       return res.redirect(req.get('referer'));
-      return res.render('product/ProductType', { listProductType });
     })
   } catch (error) {
     console.log(error)
@@ -119,7 +117,7 @@ exports.getListProduct = async (req, res) => {
     for (let ProType of listProductType) {
       if (ProType.product !== []) {
         for (let Product of ProType.product) {
-          listProduct = listProduct.push(Product);
+          listProduct.push(Product);
         }
       }
     }
@@ -144,7 +142,7 @@ exports.addProduct = async (req, res) => {
     if (productName == null || productName == undefined || productName == '') {
       return res.send('Tên sản phẩm không được để trống');
     }
-    let proType = await Course.findOne(
+    let proType = await ProductType.findOne(
       {
         'typeName': typeProduct,
       })
@@ -171,7 +169,7 @@ exports.addProduct = async (req, res) => {
       if (data == null) {
         return res.send('Thêm sản phẩm thất bại');
       }
-      return res.send('Thêm sản phẩm thành công');
+      return res.redirect(req.get('referer'));
     })
   } catch (error) {
     console.log(error)

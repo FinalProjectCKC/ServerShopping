@@ -13,9 +13,6 @@ API_URL = api.API_URL
 exports.login = async (req, res) => {
   let username = req.body.username
   let password = req.body.password
-  // console.log("=))", req.body)
-  // let username = 'tungtx5'
-  // let password = 'Tung!@#'
   if (username === null || username === undefined || password === null || password === undefined) {
     res.send('Tài khoản mật khẩu không được để trống');
   }
@@ -40,7 +37,14 @@ exports.login = async (req, res) => {
   }
 
 }
-
+exports.getListAccount = async (req, res) => {
+  try {
+    const listAccount = await Account.find()
+    return res.render('account/ListAccount', { listAccount });
+  } catch (error) {
+    return res.send('Có lỗi xảy ra! Lấy danh sách thất bại');;
+  }
+}
 // exports.logout = async (req, res) => {
 
 // }

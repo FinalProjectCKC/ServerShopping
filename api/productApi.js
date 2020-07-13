@@ -1,6 +1,7 @@
 var passport = require('passport')
 var Account = require('../models/account')
 var Product = require('../models/product')
+var ProductType = require('../models/ProductTypes')
 var jwt = require('jsonwebtoken')
 let request = require('request-promise')
 let base64 = require('base-64')
@@ -63,52 +64,114 @@ exports.addProduct = async (req, res) => {
   }
 }
 
-exports.getProduct = async (user) => {
+exports.getAllProduct = async (req, res) => {
+  let username = req.body.username
+  let password = req.body.password
   try {
-    //let username = user
-    let fullName = ''
-    let email = ''
-    let phone = ''
-    const account = await Account.findOne({
-      username: user
-    })
-
-    if (account.username !== null && account.username !== undefined) {
-      username = account.username
-    }
-
-    if (account.fullName !== null && account.fullName !== undefined) {
-      fullName = account.fullName
-    }
-    if (account.email !== null && account.email !== undefined) {
-      email = account.email
-    }
-
-    if (account.phone !== null && account.phone !== undefined) {
-      phone = account.phone
-    }
-
-    return {
-      username: username,
-      fullName: fullName,
-      email: email,
-      phone: phone
+    const listProductType = await ProductType.find()
+    if (listProductType !== null) {
+      return res.json({
+        status: 1,
+        message: 'Thành công',
+        data: listProductType
+      })
+    } else {
+      return res.json({
+        status: -1,
+        message: 'Không có loại sản phẩm nào',
+        data: null
+      })
     }
   } catch (error) {
-    return ''
+    console.log(error)
+    return res.json({
+      status: -1,
+      message: 'Có lỗi xảy ra. Không lấy được loại sản phẩm',
+      data: null
+    })
   }
 }
-
+exports.getProductByProType = async (req, res) => {
+  let username = req.body.username
+  let password = req.body.password
+  try {
+    const listProductType = await ProductType.find()
+    if (listProductType !== null) {
+      return res.json({
+        status: 1,
+        message: 'Thành công',
+        data: listProductType
+      })
+    } else {
+      return res.json({
+        status: -1,
+        message: 'Không có loại sản phẩm nào',
+        data: null
+      })
+    }
+  } catch (error) {
+    console.log(error)
+    return res.json({
+      status: -1,
+      message: 'Có lỗi xảy ra. Không lấy được loại sản phẩm',
+      data: null
+    })
+  }
+}
+exports.getProductByName = async (req, res) => {
+  let username = req.body.username
+  let password = req.body.password
+  try {
+    const listProductType = await ProductType.find()
+    if (listProductType !== null) {
+      return res.json({
+        status: 1,
+        message: 'Thành công',
+        data: listProductType
+      })
+    } else {
+      return res.json({
+        status: -1,
+        message: 'Không có loại sản phẩm nào',
+        data: null
+      })
+    }
+  } catch (error) {
+    console.log(error)
+    return res.json({
+      status: -1,
+      message: 'Có lỗi xảy ra. Không lấy được loại sản phẩm',
+      data: null
+    })
+  }
+}
+exports.getProductById = async (req, res) => {
+  let username = req.body.username
+  let password = req.body.password
+  try {
+    const listProductType = await ProductType.find()
+    if (listProductType !== null) {
+      return res.json({
+        status: 1,
+        message: 'Thành công',
+        data: listProductType
+      })
+    } else {
+      return res.json({
+        status: -1,
+        message: 'Không có loại sản phẩm nào',
+        data: null
+      })
+    }
+  } catch (error) {
+    console.log(error)
+    return res.json({
+      status: -1,
+      message: 'Có lỗi xảy ra. Không lấy được loại sản phẩm',
+      data: null
+    })
+  }
+}
 exports.updateProduct = async (req, res) => {
-  // const newAccount = new Account({
-  //   _id: new mongoose.Types.ObjectId(),
-  //   userId: id,
-  //   username: username,
-  //   fullName: (userData1.data === undefined || userData1.data === null) ? null : userData1.data.fullName,
-  //   email: (userData1.data === undefined || userData1.data === null) ? null : userData1.data.email,
-  //   phone: (userData1.data === undefined || userData1.data === null) ? null : userData1.data.phone,
-  //   status: 1,
-  //   created_at: new Date()
-  // })
-  // result = await newAccount.save()
+
 }

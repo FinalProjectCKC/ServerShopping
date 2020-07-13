@@ -76,7 +76,170 @@ exports.logout = async (req, res) => {
         })
     }
 }
+exports.register = async (req, res) => {
+    try {
+        let email = req.body.email
+        let username = req.body.username.toLowerCase()
+        let password = req.body.password
+        let retypePassword = req.body.retypePassword
+        email = email.toLowerCase()
+        if (email === undefined || email === null) {
+            return res.json({
+                status: -1,
+                message: ' Email không được bỏ trống!',
+                data: null
+            })
+        }
 
+        if (password === undefined || password === null || password !== retypePassword) {
+            return res.json({
+                status: -1,
+                message: 'Password is incorrect !',
+                data: null
+            })
+        }
+        const checkAccount = await Account.findOne(
+            { email: email }
+        )
+        const checkUsername = await Account.findOne(
+            { username: username }
+        )
+        if (checkAccount !== null) {
+            return res.json({
+                status: -1,
+                message: 'Email đã được đăng ký!',
+                data: null
+            })
+        } else if (checkUsername !== null) {
+            return res.json({
+                status: -1,
+                message: 'Tên tài khoản đã tồn tại!',
+                data: null
+            })
+        } else {
+            const newAccount = new Account({
+                _id: new mongoose.Types.ObjectId(),
+                email: email,
+                username: username,
+                password: password,
+                status: 1,
+                created_at: new Date()
+            })
+
+            await newAccount.save()
+
+            return res.json({
+                status: 1,
+                message: 'Đăng ký thành công!',
+                data: null
+            })
+        }
+    } catch (error) {
+        console.log(error)
+        return res.json({
+            status: -1,
+            message: 'Failed !',
+            data: null
+        })
+    }
+}
+exports.getUserByName = async (req, res) => {
+    try {
+        let username = req.body.username
+        if (username === null || username === undefined) {
+            return res.json({
+                status: -1,
+                message: 'Vui lòng nhập username',
+                data: null
+            })
+        }
+        const account = await Account.findOne(
+            { username: username }
+        )
+        if (user !== null) {
+            return res.json({
+                status: 1,
+                message: 'Lấy thông tin thành công',
+                data: {
+                    userID: account._id,
+                    username: account.username,
+                    fullName: account.fullName,
+                    email: account.email,
+                    phone: account.phone,
+                    address: account.address,
+                    avatarUrl: account.avatarUrl,
+                }
+            })
+        } else {
+            return res.json({
+                status: -1,
+                message: 'Không tìm thấy người dùng này',
+                data: null
+            })
+        }
+    } catch {
+        return res.json({
+            status: -1,
+            message: 'Có lỗi xảy ra! Không lấy được thông tin',
+            data: null
+        })
+    }
+}
+exports.getUserByToken = async (req, res) => {
+    try {
+        const bearerHeader = req.headers['authorization']
+        if (typeof bearerHeader !== 'undefined') {
+            const bearer = bearerHeader.split(' ')
+            const bearerToken = bearer[1]
+            req.token = bearerToken;
+            let accountId = handleAccountJwt.getAccountId(req)
+            if (accountId !== null || accountId !== undefined) {
+                const account = await Account.findOne(
+                    { _id: accountId }
+                )
+                if (account === null || account === undefined) {
+                    return res.json({
+                        status: -1,
+                        message: 'Không tìm thấy người dùng này !',
+                        data: null,
+                    })
+                } else {
+                    return res.json({
+                        status: 1,
+                        message: 'Lấy thông tin thành công',
+                        data: {
+                            userID: account._id,
+                            username: account.username,
+                            fullName: account.fullName,
+                            email: account.email,
+                            phone: account.phone,
+                            address: account.address,
+                            avatarUrl: account.avatarUrl,
+                        }
+                    })
+                }
+            } else {
+                return res.json({
+                    status: -1,
+                    message: 'Không tìm thấy người dùng này !',
+                    data: null,
+                })
+            }
+        } else {
+            return res.json({
+                status: -1,
+                message: 'Không tìm thấy người dùng này !',
+                data: null,
+            })
+        }
+    } catch{
+        return res.json({
+            status: -1,
+            message: 'Có lỗi xảy ra! Không lấy được thông tin',
+            data: null
+        })
+    }
+}
 exports.pushNotificationToken = async (req, res) => {
     let notificationToken = req.body.notificationToken
     let platform = req.body.platform
@@ -224,110 +387,6 @@ exports.getListNotification = async (req, res) => {
             data: null,
             error: error
         })
-    }
-}
-
-exports.register = async (req, res) => {
-    try {
-        let email = req.body.email
-        let username = req.body.username.toLowerCase()
-        let password = req.body.password
-        let retypePassword = req.body.retypePassword
-        //email = email.toLowerCase()
-        if (email === undefined || email === null) {
-            return res.json({
-                status: -1,
-                message: ' Email không được bỏ trống!',
-                data: null
-            })
-        }
-
-        if (password === undefined || password === null || password !== retypePassword) {
-            return res.json({
-                status: -1,
-                message: 'Password is incorrect !',
-                data: null
-            })
-        }
-        const checkAccount = await Account.findOne(
-            { email: email }
-        )
-        const checkUsername = await Account.findOne(
-            { username: username }
-        )
-        if (checkAccount !== null) {
-            return res.json({
-                status: -1,
-                message: 'Email đã được đăng ký!',
-                data: null
-            })
-        } else if (checkUsername !== null) {
-            return res.json({
-                status: -1,
-                message: 'Tên tài khoản đã tồn tại!',
-                data: null
-            })
-        } else {
-            const newAccount = new Account({
-                _id: new mongoose.Types.ObjectId(),
-                email: email,
-                username: username,
-                password: password,
-                status: 1,
-                created_at: new Date()
-            })
-
-            await newAccount.save()
-
-            return res.json({
-                status: 1,
-                message: 'Đăng ký thành công!',
-                data: null
-            })
-        }
-    } catch (error) {
-        console.log(error)
-        return res.json({
-            status: -1,
-            message: 'Failed !',
-            data: null
-        })
-    }
-}
-
-exports.getUserData = async (user) => {
-    try {
-        //let username = user
-        let fullName = ''
-        let email = ''
-        let phone = ''
-        const account = await Account.findOne({
-            username: user
-        })
-
-        if (account.username !== null && account.username !== undefined) {
-            username = account.username
-        }
-
-        if (account.fullName !== null && account.fullName !== undefined) {
-            fullName = account.fullName
-        }
-        if (account.email !== null && account.email !== undefined) {
-            email = account.email
-        }
-
-        if (account.phone !== null && account.phone !== undefined) {
-            phone = account.phone
-        }
-
-        return {
-            username: username,
-            fullName: fullName,
-            email: email,
-            phone: phone
-        }
-    } catch (error) {
-        return ''
     }
 }
 

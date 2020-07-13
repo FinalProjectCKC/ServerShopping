@@ -9,10 +9,10 @@
 
 			<main class="content">
 				<% if(locals.message){ %>
-				<div class="alert alert-success" role="alert">
-					<strong>Well done!</strong> <%=message.success%>
-				</div>
-				<% } %>
+    <div class="alert alert-success" role="alert">
+        <strong>Well done!</strong> <%=message.success%>
+    </div>
+<% } %>
 				<!--Form Account-->
 				<div class="col-md-12">
 					<div class="card">
@@ -103,14 +103,13 @@
 			$('#proTypeForm').attr('action', '/productType/editType');
 		});
 		$('[name=btnUpdate]').click(function () {
-			console.log("=))")
 			var img = $("#typeImg").val();
-			console.log("=>>", img)
 			if (img == null) {
 				$('#proTypeForm').attr('action', '/productType/editType1');
 				$('#proTypeForm').attr('enctype', '');
 				$('#proTypeForm').submit();
 			} else {
+				$('#proTypeForm').attr('action', '/productType/editType');
 				$('#proTypeForm').submit();
 			}
 		});

@@ -1,16 +1,15 @@
-const routeProduct = require('express').Router()
+const routeAccount = require('express').Router()
 const accAuth = require('../middleware/accountAuth')
 var bodyParser = require('body-parser');
 var path = require('path');
 var AccountController = require('../controller/AccountController');
-var ProductController = require('../controller/ProductController');
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 var passport = require('passport');
 var localStrategy = require('passport-local').Strategy;
 let multer = require('multer')
 // Set The Storage Engine
 const storage = multer.diskStorage({
-  destination: './public/img/product',
+  destination: './public/img/avatars',
   filename: function (req, file, cb) {
     cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
   }
@@ -22,9 +21,9 @@ const upload = multer({
   limits: { fileSize: 1000000 },
   fileFilter: function (req, file, cb) {
     checkFileType(file, cb);
+    return cb(null, false);
   }
 });
-
 // Check File Type
 function checkFileType(file, cb) {
   // Allowed ext
@@ -40,21 +39,21 @@ function checkFileType(file, cb) {
     cb('Error: Images Only!');
   }
 }
-
 //Navigation
-// routeProduct.get('/', function (req, res) {
-//   res.render('login/login');
-// });
-routeProduct.get('/', ProductController.getListProduct)
+routeAccount.get('/', AccountController.getListAccount)
+// routeProduct.get('/', ProductController.getListProduct)
+// proType.route('/addType')
+//   .post(upload.single('typeImg'))
+//   .post(ProductController.addProductType)
 
-routeProduct.route('/addProduct')
-  .post(upload.single('inputImg'))
-  .post(ProductController.addProduct)
+// proType.route('/editType1')
+//   .post(ProductController.editProductType)
 
-routeProduct.route('/editType')
-  .post(ProductController.editProduct)
+// proType.route('/editType')
+//   .post(upload.single('typeImg'))
+//   .post(ProductController.editProductType)
 
-routeProduct.route('/deleteType')
-  .post(ProductController.deleteProduct)
+// proType.route('/deleteType')
+//   .post(ProductController.deleteProductType)
 
-module.exports = routeProduct;
+module.exports = routeAccount;

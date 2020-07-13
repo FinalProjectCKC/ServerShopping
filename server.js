@@ -9,6 +9,9 @@ const mongoose = require('mongoose')
 const formData = require('form-data');
 let multer = require('multer')
 let upload = multer({ dest: 'public/img' })
+var flash = require('connect-flash');
+var cookieParser = require('cookie-parser');
+
 
 server.use('/css', express.static('public/css'));
 server.use('/js', express.static('public/js'));
@@ -16,8 +19,6 @@ server.use('/img', express.static('public/img'));
 server.use('/fonts', express.static('public/fonts'));
 // set the view engine to ejs
 server.set('view engine', 'ejs');
-
-
 
 //Passport
 server.use(expressSession({
@@ -29,10 +30,11 @@ server.use(expressSession({
 server.use(express.json()) // for parsing application/json
 // server.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
 server.use(bodyParser.urlencoded({ extended: true }));
-
+server.use(flash());
 server.use(passport.initialize());
 server.use(passport.session());
-
+server.use(cookieParser('secret'));
+server.use(expressSession({cookie: { maxAge: 60000 }}));
 // routes(server)
 server.use('/', routes)
 

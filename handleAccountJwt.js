@@ -6,12 +6,13 @@ exports.getAccountId = (req, res) => {
   }
   return jwt.verify(req.token, 'jwt-secret', (err, data) => {
     if (err) {
-    //   console.log(err)
-      res.json({
-        resultCode: -1,
-        message: 'Không tìm thấy người dùng này',
-        data: null,
-      })
+      //   console.log(err)
+      // res.json({
+      //   resultCode: -1,
+      //   message: 'Không tìm thấy người dùng này',
+      //   data: null,
+      // })
+      return null
     } else {
       return data.id
     }

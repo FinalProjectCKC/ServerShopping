@@ -20,7 +20,7 @@
 									<div class="row">
 										<div class="col-md-6">
 											<label class="form-label col-6 col-xl-6">Tên sản phẩm</label>
-											<input type="text" name="producName" class="form-control" required="required"
+											<input type="text" name="productName" class="form-control" required="required"
 												placeholder="Tên sản phẩm">
 										</div>
 										<div class="col-md-6">
@@ -136,6 +136,9 @@
 			var name = ($(this).parent().parent().children().eq(0).html());
 			var des = ($(this).parent().parent().children().eq(1).html());
 			var img = ($(this).parent().parent().children().eq(2).children().eq(0).attr("src"));
+			var quan = ($(this).parent().parent().children().eq(3).html());
+			var unit = ($(this).parent().parent().children().eq(4).html());
+			var price = ($(this).parent().parent().children().eq(5).html());
 			$('[name=producName]').val(name);
 			$('[name=description]').val(des);
 			$('[name=productImg]').attr('src', img);
