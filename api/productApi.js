@@ -1,6 +1,5 @@
 var passport = require('passport')
 var Account = require('../models/account')
-var Product = require('../models/product')
 var ProductType = require('../models/ProductTypes')
 var jwt = require('jsonwebtoken')
 let request = require('request-promise')
@@ -65,47 +64,70 @@ exports.addProduct = async (req, res) => {
 }
 
 exports.getAllProduct = async (req, res) => {
-  let username = req.body.username
-  let password = req.body.password
   try {
     const listProductType = await ProductType.find()
-    if (listProductType !== null) {
+    var listProduct = []
+    if (listProductType !== null || listProductType !== undefined || listProductType !== []) {
+      for (let ProType of listProductType) {
+        if (ProType.product !== []) {
+          for (let product of ProType.product) {
+            listProduct.push(product);
+          }
+        }
+      }
+
       return res.json({
         status: 1,
-        message: 'Thành công',
-        data: listProductType
+        message: 'Lấy danh sách sản phẩm thành công',
+        data: listProduct
       })
     } else {
       return res.json({
         status: -1,
-        message: 'Không có loại sản phẩm nào',
+        message: 'Không có sản phẩm nào',
         data: null
       })
     }
+
   } catch (error) {
     console.log(error)
     return res.json({
       status: -1,
-      message: 'Có lỗi xảy ra. Không lấy được loại sản phẩm',
+      message: 'Có lỗi xảy ra. Không lấy được sản phẩm',
       data: null
     })
   }
 }
 exports.getProductByProType = async (req, res) => {
-  let username = req.body.username
-  let password = req.body.password
+  let typeName = req.body.proType
   try {
-    const listProductType = await ProductType.find()
-    if (listProductType !== null) {
+    let typeName = req.body.typeName
+    if (typeName === null || typeName === undefined) {
+      return res.json({
+        status: -1,
+        message: 'Vui lòng nhập tên loại',
+        data: null
+      })
+    }
+    const productTypes = await ProductType.findOne(
+      { typeName: typeName }
+    )
+    if (productTypes !== null) {
       return res.json({
         status: 1,
-        message: 'Thành công',
-        data: listProductType
+        message: 'Lấy danh sách sản phẩm thành công',
+        data: {
+          typeId: productTypes._id,
+          typeName: productTypes.typeName,
+          typeImg: productTypes.typeImg,
+          product: productTypes.product,
+          description: productTypes.description,
+        }
       })
     } else {
       return res.json({
         status: -1,
-        message: 'Không có loại sản phẩm nào',
+        message: 'Không có loại sản phẩm này',
         data: null
       })
     }
@@ -119,47 +141,86 @@ exports.getProductByProType = async (req, res) => {
   }
 }
 exports.getProductByName = async (req, res) => {
-  let username = req.body.username
-  let password = req.body.password
   try {
+    const productName = req.body.productName
+    if (productName === null || productName === undefined) {
+      return res.json({
+        status: -1,
+        message: 'Vui lòng nhập tên sản phẩm',
+        data: null
+      })
+    }
     const listProductType = await ProductType.find()
-    if (listProductType !== null) {
+    var listProduct = []
+    if (listProductType !== null || listProductType !== undefined || listProductType !== []) {
+      for (let ProType of listProductType) {
+        if (ProType.product !== []) {
+          for (let product of ProType.product) {
+            if (product !== null || product !== []) {
+              console.log(product.productName)
+              if (product.productName.includes(productName)) {
+                listProduct.push(product);
+              }
+            }
+          }
+        }
+      }
       return res.json({
         status: 1,
-        message: 'Thành công',
-        data: listProductType
+        message: 'Lấy danh sách sản phẩm thành công',
+        data: listProduct
       })
     } else {
       return res.json({
         status: -1,
-        message: 'Không có loại sản phẩm nào',
+        message: 'Không có sản phẩm nào',
         data: null
       })
     }
+
   } catch (error) {
     console.log(error)
     return res.json({
       status: -1,
-      message: 'Có lỗi xảy ra. Không lấy được loại sản phẩm',
+      message: 'Có lỗi xảy ra. Không lấy được sản phẩm',
       data: null
     })
   }
 }
 exports.getProductById = async (req, res) => {
-  let username = req.body.username
-  let password = req.body.password
   try {
-    const listProductType = await ProductType.find()
-    if (listProductType !== null) {
+  let productID = req.body.productID
+    if (productID === null || productID === undefined) {
       return res.json({
-        status: 1,
-        message: 'Thành công',
-        data: listProductType
+        status: -1,
+        message: 'Vui lòng nhập productID',
+        data: null
+      })
+    }
+    const productTypes = await ProductType.find()
+    if (productTypes !== null) {
+      for(let type of productTypes){
+        if(type.product !== undefined || type.product !== null){
+          for(let product of type.product){
+            if(product._id == productID){
+              return res.json({
+                status: 1,
+                message: 'Lấy sản phẩm thành công',
+                data: product
+              })
+            }
+          }
+        }
+      }
+      return res.json({
+        status: -1,
+        message: 'Không tìm thấy sản phẩm này',
+        data: null
       })
     } else {
       return res.json({
         status: -1,
-        message: 'Không có loại sản phẩm nào',
+        message: 'Không có sản phẩm nào trong hệ thống',
         data: null
       })
     }

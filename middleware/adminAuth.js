@@ -40,7 +40,7 @@ const adminAuth = async (req, res, next) => {
     console.log(error)
     return res.json({
       status: -1,
-      message: 'Thất bại',
+      message: 'Có lỗi xảy ra, không tìm thấy người dùng này',
       data: null,
     })
   }

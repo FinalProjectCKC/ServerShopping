@@ -37,6 +37,7 @@ const orderDetail = new Schema({
   },
   delete_at: {
     type: Date,
+    default: null,
     timezone: "Asia/Ho_Chi_Minh",
   },
   last_modified: {
@@ -65,6 +66,7 @@ const orderSchema = new Schema({
   },
   delete_at: {
     type: Date,
+    default: null,
     timezone: "Asia/Ho_Chi_Minh"
   },
   last_modified: {

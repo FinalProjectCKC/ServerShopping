@@ -98,6 +98,7 @@ const accountSchema = new Schema({
   },
   delete_at: {
     type: Date,
+    default: null,
     timezone: "Asia/Ho_Chi_Minh"
   },
   last_modified: {

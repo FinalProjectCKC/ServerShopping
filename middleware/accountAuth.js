@@ -9,63 +9,34 @@ const checkJwt = async (req, res, next) => {
       const bearer = bearerHeader.split(' ')
       const bearerToken = bearer[1]
       req.token = bearerToken;
-      
-      console.log(req.token)
 
-      if (req.token === 'admin') {
-        return next()
+      let accountId = handleAccountJwt.getAccountId(req)
+      const account = await Account.findOne(
+        { _id: accountId }
+      )
+      if (account === null || account === undefined) {
+        return res.json({
+          status: -1,
+          message: 'Không tìm thấy người dùng này !',
+          data: null,
+        })
       } else {
-        let accountId = handleAccountJwt.getAccountId(req)
-        const account = await Account.findOne(
-          { _id: accountId }
-        )
-        if (account === null || account === undefined) {
-          return res.json({
-            resultCode: -1,
-            message: 'Không tìm thấy người dùng này !',
-            data: null,
-          })
-        } else {
-          next()
-        }
+        next()
       }
     } else {
       return res.json({
-        resultCode: -1,
-        message: 'Không tìm thấy người dùng này !',
+        status: -1,
+        message: 'Vui lòng đăng nhập để sử dụng tính năng này!',
         data: null,
       })
     }
   } catch (error) {
-    res.json(1)
+    return res.json({
+      status: -1,
+      message: 'Có lỗi xảy ra, không lấy được thông tin người dùng!',
+      data: null,
+    })
   }
 }
 
 module.exports = checkJwt
-// exports.adminRole = async (req, res, next) => {
-//     let accountId = handleAccountJwt.getAccountId(req)
-  
-//     try {
-//       const account = await Account.findOne({
-//         _id: accountId
-//       })
-  
-//       if (account.eduRole !== undefined && account.eduRole === 'admin') {
-//         next()
-//       } else {
-//         return res.json({
-//           resultCode: -1,
-//           message: 'Bạn không có quyền sử dụng tính năng này !',
-//           data: null
-//         })
-//       }
-//     } catch (error) {
-//       console.log(error)
-//       return res.json({
-//         resultCode: -1,
-//         message: 'Thất bại',
-//         data: null,
-//         error: error
-//       })
-//     }
-//   }
