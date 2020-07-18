@@ -14,7 +14,7 @@ exports.login = async (req, res) => {
   let username = req.body.username
   let password = req.body.password
   if (username == "" || username === undefined || password == "" || password === undefined) {
-    res.json({ success: false, mgs: 'Tài khoản mật khẩu không được để trống' });
+    return res.json({ success: false, mgs: 'Tài khoản mật khẩu không được để trống' });
   }
   try {
     // username = username.toLowerCase()
@@ -27,14 +27,13 @@ exports.login = async (req, res) => {
     if (check !== null) {
       req.session.isLogin = true;
       req.session.user = username;
-      res.json({ success: true ,mgs: "" });
-      // res.redirect('home')
+      return res.json({ success: true, mgs: "" });
     } else {
-      res.json({ success: false, mgs: 'Tên đăng nhập hoặc mật khẩu không đúng' });
+      return res.json({ success: false, mgs: 'Tên đăng nhập hoặc mật khẩu không đúng' });
     }
   }
   catch{
-    res.json({ success: false, mgs: 'Có sự cố xảy ra, vui lòng thử lại sau' });
+    return res.json({ success: false, mgs: 'Có sự cố xảy ra, vui lòng thử lại sau' });
   }
 
 }

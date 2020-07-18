@@ -15,7 +15,12 @@ router.get('', function (req, res) {
   res.render('login/login', { mgs : ""});
 });
 router.get('/home', function (req, res) {
-  res.render('pages/index');
+  if (req.session.isLogin){
+   return res.render('pages/index');
+  }
+  else{
+    return res.render('login/login');
+  }
 });
 router.route('/login')
   .post(AccountController.login)
