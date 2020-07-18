@@ -17,7 +17,7 @@ exports.login = async (req, res) => {
     res.send('Tài khoản mật khẩu không được để trống');
   }
   try {
-    username = username.toLowerCase()
+    // username = username.toLowerCase()
     const check = await Account.findOne(
       {
         username: username,
@@ -27,13 +27,14 @@ exports.login = async (req, res) => {
     if (check !== null) {
       req.session.isLogin = true;
       req.session.user = username;
-      res.redirect('home')
+      res.json({ success: true ,mgs: "" });
+      // res.redirect('home')
     } else {
-      res.send('Tên đăng nhập hoặc mật khẩu không đúng');
+      res.json({ success: false, mgs: 'Tên đăng nhập hoặc mật khẩu không đúng' });
     }
   }
   catch{
-    res.send('Có sự cố xảy ra, vui lòng thử lại sau');
+    res.json({ success: false, mgs: 'Có sự cố xảy ra, vui lòng thử lại sau' });
   }
 
 }
