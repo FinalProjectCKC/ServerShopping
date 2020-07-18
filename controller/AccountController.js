@@ -13,8 +13,8 @@ API_URL = api.API_URL
 exports.login = async (req, res) => {
   let username = req.body.username
   let password = req.body.password
-  if (username === null || username === undefined || password === null || password === undefined) {
-    res.send('Tài khoản mật khẩu không được để trống');
+  if (username == "" || username === undefined || password == "" || password === undefined) {
+    res.json({ success: false, mgs: 'Tài khoản mật khẩu không được để trống' });
   }
   try {
     // username = username.toLowerCase()

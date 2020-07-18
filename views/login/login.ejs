@@ -49,9 +49,9 @@
 			// event.preventDefault();
 			var user = $("[name='username']").val();
 			var pass = $("[name='password']").val();
-			if(user == '' || pass == ''){
-				alert('Username and password must required');
-			}
+			// if(user == '' || pass == ''){
+			// 	alert('Username and password must required');
+			// }
 			$.ajax({
 				url: '/login',
 				type: 'POST',
