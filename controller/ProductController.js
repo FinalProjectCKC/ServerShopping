@@ -20,57 +20,73 @@ exports.getListProductType = async (req, res) => {
   }
 }
 exports.addProductType1 = async (req, res) => {
-  let file = req.files.imgType
+  let typeName = req.body.typeName
+  let description = req.body.description
+  let date = new Date()
+  let today = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
+  if (typeName == null || typeName == undefined || typeName == '') {
+    return res.json({ success: false, mgs: "Tên loại không được để trống" });
+  }
   try {
-    if (true) {
-      let imageName = file.fieldName + '-' + Date.now() + '.png'
-      let tmp_path = file.path
-      let target_path = __dirname.replace('/controller', '') + '/public/img/proType/' + imageName
-
-      let src = fs.createReadStream(tmp_path)
-      let dest = fs.createWriteStream(target_path)
-      src.pipe(dest)
-      src.on('end', async () => {
-        try {
-          let typeName = req.body.typeName
-          let description = req.body.description
-          let typeImg = "img/proType/" + imageName
-
-          let date = new Date()
-          let today = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
-          if (typeName == null || typeName == undefined || typeName == '') {
-            return res.json({ success: false, mgs: "Tên loại không được để trống" });
+    const check = await ProductType.findOne({
+      typeName: typeName
+    })
+    if (check == null) {
+      if (req.files != null && req.files != undefined) {
+        let file = req.files.imgType
+        let imageName = file.fieldName + '-' + Date.now() + '.png'
+        let tmp_path = file.path
+        let target_path = __dirname.replace('/controller', '') + '/public/img/proType/' + imageName
+        let src = fs.createReadStream(tmp_path)
+        let dest = fs.createWriteStream(target_path)
+        src.pipe(dest)
+        src.on('end', async () => {
+          try {
+            let typeImg = "img/proType/" + imageName
+            const newProductType = new ProductType({
+              _id: new mongoose.Types.ObjectId(),
+              typeName: typeName,
+              typeImg: typeImg,
+              description: description,
+              created_at: today,
+              last_modified: today
+            })
+            await newProductType.save().then(async () => {
+              return res.json({ success: true, mgs: "Thêm loại sản phẩm thành công" });
+            })
+          } catch (error) {
+            return res.json({
+              success: false,
+              mgs: 'Có sự cố xảy ra. Không thể thêm loại sản phẩm!',
+            })
           }
-          //create new ProductType
-          const newProductType = new ProductType({
-            _id: new mongoose.Types.ObjectId(),
-            typeName: typeName,
-            typeImg: typeImg,
-            description: description,
-            created_at: today,
-            last_modified: today
-          })
-          await newProductType.save().then(async () => {
-            return res.json({ success: true, mgs: "Thêm sản phẩm thành công" });
-          })
-        } catch (error) {
-          return res.json({
-            success: false,
-            mgs: 'Có sự cố xảy ra. Không thể thêm loại sản phẩm!',
-          })
-        }
-      })
-      src.on('error', (err) => {
-        fs.unlink(tmp_path, (err) => { console.log(err) })
-        return res.json({
-          status: -1,
-          message: 'Thất bại',
         })
-      })
+        src.on('error', (err) => {
+          fs.unlink(tmp_path, (err) => { console.log(err) })
+          return res.json({
+            status: -1,
+            message: 'Thất bại',
+          })
+        })
+      } else {
+        let typeImg = "img/proType/default.png"
+        //create new ProductType
+        const newProductType = new ProductType({
+          _id: new mongoose.Types.ObjectId(),
+          typeName: typeName,
+          typeImg: typeImg,
+          description: description,
+          created_at: today,
+          last_modified: today
+        })
+        await newProductType.save().then(async () => {
+          return res.json({ success: true, mgs: "Thêm sản phẩm thành công" });
+        })
+      }
     } else {
       return res.json({
         success: false,
-        mgs: 'Tên sản phẩm đã tồn tại!',
+        mgs: 'Tên loại sản phẩm đã tồn tại!',
       })
     }
   } catch{
@@ -79,79 +95,70 @@ exports.addProductType1 = async (req, res) => {
       mgs: 'Có sự cố xảy ra. Không thể thêm loại sản phẩm!',
     })
   }
-
-}
-exports.addProductType = async (req, res) => {
-  //Type infor
-  try {
-    let typeName = req.body.typeName
-    let description = req.body.description
-    let typeImg = "img/proType/"
-    if (req.file != undefined) {
-      typeImg = "img/proType/" + req.file.filename
-    }
-
-    let date = new Date()
-    let today = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
-    if (typeName == null || typeName == undefined || typeName == '') {
-      return res.json({ success: false, mgs: "" });
-      // return res.send('Tên loại không được để trống');
-    }
-    //create new ProductType
-    const newProductType = new ProductType({
-      _id: new mongoose.Types.ObjectId(),
-      typeName: typeName,
-      typeImg: typeImg,
-      description: description,
-      created_at: today,
-      last_modified: today
-    })
-    await newProductType.save().then(async () => {
-      // const listProductType = await ProductType.find()
-      return res.json({ success: true, mgs: "Thêm sản phẩm thành công" });
-    })
-  } catch (error) {
-    console.log("=))", error)
-    return res.json({ success: false, mgs: "Có lỗi xảy ra! Thêm loại sản phẩm thất bại" });
-  }
 }
 exports.editProductType = async (req, res) => {
-  //Type infor
+  let typeName = req.body.typeName
+  let description = req.body.description
+  let date = new Date()
+  let today = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
+  if (typeName == null || typeName == undefined || typeName == '') {
+    return res.json({ success: false, mgs: "Tên loại không được để trống" });
+  }
   try {
-    let typeName = req.body.typeName
-    let description = req.body.description
-    let typeImg
-    let date = new Date()
-    let today = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
-
-    if (req.file !== undefined) {
-      typeImg = "img/proType/" + req.file.filename
-      await ProductType.findOneAndUpdate(
-        { typeName: typeName },
-        {
-          typeName: typeName,
-          description: description,
-          typeImg: typeImg,
-          last_modified: today
-        }
-      ).then(() => {
-        return res.send('Cập nhật thành công');
-      })
+    const check = await ProductType.findOne({
+      typeName: typeName
+    })
+    if (check == null) {
+      if (req.files != null && req.files != undefined) {
+        let file = req.files.imgType
+        let imageName = file.fieldName + '-' + Date.now() + '.png'
+        let tmp_path = file.path
+        let target_path = __dirname.replace('/controller', '') + '/public/img/proType/' + imageName
+        let src = fs.createReadStream(tmp_path)
+        let dest = fs.createWriteStream(target_path)
+        src.pipe(dest)
+        src.on('end', async () => {
+          try {
+            let typeImg = "img/proType/" + imageName
+            const newProductType = new ProductType({
+              _id: new mongoose.Types.ObjectId(),
+              typeName: typeName,
+              typeImg: typeImg,
+              description: description,
+              created_at: today,
+              last_modified: today
+            })
+            await newProductType.save().then(async () => {
+              return res.json({ success: true, mgs: "Thêm sản phẩm thành công" });
+            })
+          } catch (error) {
+            return res.json({
+              success: false,
+              mgs: 'Có sự cố xảy ra. Không thể thêm loại sản phẩm!',
+            })
+          }
+        })
+        src.on('error', (err) => {
+          fs.unlink(tmp_path, (err) => { console.log(err) })
+          return res.json({
+            status: -1,
+            message: 'Thất bại',
+          })
+        })
+      } else {
+          return res.json({ success: true, mgs: "Thêm loại sản phẩm thành công" });
+      }
     } else {
-      await ProductType.findOneAndUpdate(
-        { typeName: typeName },
-        {
-          typeName: typeName,
-          description: description,
-          last_modified: today
-        }
-      ).then(() => {
-        return res.send('Cập nhật thành công');
+      return res.json({
+        success: false,
+        mgs: 'Tên loại sản phẩm đã tồn tại!',
       })
     }
-  } catch (error) {
-    console.log(error)
-    return res.send('Có lỗi xảy ra! Cập nhật thất bại');
+  } catch{
+    return res.json({
+      success: false,
+      mgs: 'Có sự cố xảy ra. Không thể cập nhật loại sản phẩm!',
+    })
   }
 }
 exports.deleteProductType = async (req, res) => {
