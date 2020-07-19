@@ -20,9 +20,66 @@ exports.getListProductType = async (req, res) => {
   }
 }
 exports.addProductType1 = async (req, res) => {
-  console.log(req.body)
-  console.log(req.files.imgType)
-  return res.json({ success: false, mgs: "Có lỗi xảy ra! Thêm loại sản phẩm thất bại" });
+  let file = req.files.imgType
+  try {
+    if (true) {
+      let imageName = file.fieldName + '-' + Date.now() + '.png'
+      let tmp_path = file.path
+      let target_path = __dirname.replace('/controller', '') + '/public/img/proType/' + imageName
+
+      let src = fs.createReadStream(tmp_path)
+      let dest = fs.createWriteStream(target_path)
+      src.pipe(dest)
+      src.on('end', async () => {
+        try {
+          let typeName = req.body.typeName
+          let description = req.body.description
+          let typeImg = "img/proType/" + imageName
+
+          let date = new Date()
+          let today = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
+          if (typeName == null || typeName == undefined || typeName == '') {
+            return res.json({ success: false, mgs: "Tên loại không được để trống" });
+          }
+          //create new ProductType
+          const newProductType = new ProductType({
+            _id: new mongoose.Types.ObjectId(),
+            typeName: typeName,
+            typeImg: typeImg,
+            description: description,
+            created_at: today,
+            last_modified: today
+          })
+          await newProductType.save().then(async () => {
+            return res.json({ success: true, mgs: "Thêm sản phẩm thành công" });
+          })
+        } catch (error) {
+          return res.json({
+            success: false,
+            mgs: 'Có sự cố xảy ra. Không thể thêm loại sản phẩm!',
+          })
+        }
+      })
+      src.on('error', (err) => {
+        fs.unlink(tmp_path, (err) => { console.log(err) })
+        return res.json({
+          status: -1,
+          message: 'Thất bại',
+        })
+      })
+    } else {
+      return res.json({
+        success: false,
+        mgs: 'Tên sản phẩm đã tồn tại!',
+      })
+    }
+  } catch{
+    return res.json({
+      success: false,
+      mgs: 'Có sự cố xảy ra. Không thể thêm loại sản phẩm!',
+    })
+  }
+
 }
 exports.addProductType = async (req, res) => {
   //Type infor
