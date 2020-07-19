@@ -9,16 +9,20 @@ let multer = require('multer')
 var proType = require('./routeProductType');
 var routeAccount = require('./routeAccount');
 var routeProduct = require('./routeProduct');
+var FormData = require('form-data');
+var fs = require('fs');
 
 //Navigation
-router.get('', function (req, res) {
-  res.render('login/login', { mgs : ""});
+router.get('', function (req, res, next) {
+  req.session.isLogin = false
+  return res.render('login/login', { mgs: "" });
 });
+
 router.get('/home', function (req, res) {
-  if (req.session.isLogin){
-   return res.render('pages/index');
+  if (req.session.isLogin) {
+    return res.render('pages/index');
   }
-  else{
+  else {
     return res.render('login/login');
   }
 });
