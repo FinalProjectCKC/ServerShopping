@@ -6,13 +6,14 @@ var bodyParser = require('body-parser');
 var passport = require('passport');
 var routes = require('./routes/routeServer')
 const mongoose = require('mongoose')
-const formData = require('form-data');
 let multer = require('multer')
 let upload = multer({ dest: 'public/img' })
 var flash = require('connect-flash');
 var cookieParser = require('cookie-parser');
+var fs = require('fs');
+const formData = require('express-form-data');
 
-
+server.use(formData.parse());
 server.use('/css', express.static('public/css'));
 server.use('/js', express.static('public/js'));
 server.use('/img', express.static('public/img'));
@@ -34,7 +35,7 @@ server.use(flash());
 server.use(passport.initialize());
 server.use(passport.session());
 server.use(cookieParser('secret'));
-server.use(expressSession({cookie: { maxAge: 60000 }}));
+server.use(expressSession({ cookie: { maxAge: 60000 } }));
 // routes(server)
 server.use('/', routes)
 
