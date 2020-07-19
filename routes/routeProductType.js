@@ -6,6 +6,7 @@ var AccountController = require('../controller/AccountController');
 var ProductController = require('../controller/ProductController');
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 var passport = require('passport');
+const formidable = require('formidable');
 var localStrategy = require('passport-local').Strategy;
 let multer = require('multer')
 // Set The Storage Engine
@@ -43,9 +44,12 @@ function checkFileType(file, cb) {
 //Navigation
 proType.get('/', ProductController.getListProductType)
 
+// proType.route('/addType')
+//   .post(upload.single('typeImg'))
+//   .post(ProductController.addProductType)
+
 proType.route('/addType')
-  .post(upload.single('typeImg'))
-  .post(ProductController.addProductType)
+  .post(ProductController.addProductType1)
 
 proType.route('/editType1')
   .post(ProductController.editProductType)

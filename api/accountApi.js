@@ -391,17 +391,17 @@ exports.getListNotification = async (req, res) => {
 }
 
 exports.updateUserData = async (req, res) => {
-    // const newAccount = new Account({
-    //   _id: new mongoose.Types.ObjectId(),
-    //   userId: id,
-    //   username: username,
-    //   fullName: (userData1.data === undefined || userData1.data === null) ? null : userData1.data.fullName,
-    //   email: (userData1.data === undefined || userData1.data === null) ? null : userData1.data.email,
-    //   phone: (userData1.data === undefined || userData1.data === null) ? null : userData1.data.phone,
-    //   status: 1,
-    //   created_at: new Date()
-    // })
-    // result = await newAccount.save()
+    const newAccount = new Account({
+      _id: new mongoose.Types.ObjectId(),
+      userId: id,
+      username: username,
+      fullName: (userData1.data === undefined || userData1.data === null) ? null : userData1.data.fullName,
+      email: (userData1.data === undefined || userData1.data === null) ? null : userData1.data.email,
+      phone: (userData1.data === undefined || userData1.data === null) ? null : userData1.data.phone,
+      status: 1,
+      created_at: new Date()
+    })
+    result = await newAccount.save()
 }
 
 exports.changeAvatar = async (req, res) => {

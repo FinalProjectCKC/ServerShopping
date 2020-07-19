@@ -9,26 +9,36 @@ let fs = require('fs')
 const path = require('path')
 let api = require('../config')
 API_URL = api.API_URL
-
+const formidable = require('formidable');
 //ProductType
 exports.getListProductType = async (req, res) => {
   try {
     const listProductType = await ProductType.find()
-    return res.render('product/ProductType', { listProductType });
+    return res.render('product/ProductType', { listProductType, mgs: "" });
   } catch (error) {
-    return res.send('Có lỗi xảy ra! Lấy danh sách thất bại');;
+    return res.send({ mgs: 'Có lỗi xảy ra! Lấy danh sách thất bại' });;
   }
+}
+exports.addProductType1 = async (req, res) => {
+  console.log(req.body)
+  console.log(req.files.imgType)
+  return res.json({ success: false, mgs: "Có lỗi xảy ra! Thêm loại sản phẩm thất bại" });
 }
 exports.addProductType = async (req, res) => {
   //Type infor
   try {
     let typeName = req.body.typeName
     let description = req.body.description
-    let typeImg = "img/proType/" + req.file.filename
+    let typeImg = "img/proType/"
+    if (req.file != undefined) {
+      typeImg = "img/proType/" + req.file.filename
+    }
+
     let date = new Date()
     let today = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
     if (typeName == null || typeName == undefined || typeName == '') {
-      return res.send('Tên loại không được để trống');
+      return res.json({ success: false, mgs: "" });
+      // return res.send('Tên loại không được để trống');
     }
     //create new ProductType
     const newProductType = new ProductType({
@@ -40,15 +50,12 @@ exports.addProductType = async (req, res) => {
       last_modified: today
     })
     await newProductType.save().then(async () => {
-      const listProductType = await ProductType.find()
-      req.flash('success', 'Registration successfully');
-      res.locals.message = req.flash();
-      res.render('login.ejs', { message: req.flash('loginMessage') });
-      return res.redirect(req.get('referer'));
+      // const listProductType = await ProductType.find()
+      return res.json({ success: true, mgs: "Thêm sản phẩm thành công" });
     })
   } catch (error) {
-    console.log(error)
-    return res.send('Có lỗi xảy ra! Thêm loại sản phẩm thất bại');
+    console.log("=))", error)
+    return res.json({ success: false, mgs: "Có lỗi xảy ra! Thêm loại sản phẩm thất bại" });
   }
 }
 exports.editProductType = async (req, res) => {
@@ -121,7 +128,7 @@ exports.getListProduct = async (req, res) => {
         }
       }
     }
-    return res.render('product/Product', { listProduct, listProductType });
+    return res.render('product/Product', { listProduct, listProductType, mgs: "" });
   } catch (error) {
     return res.send('Có lỗi xảy ra! Lấy danh sách sản phẩm thất bại');;
   }

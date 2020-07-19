@@ -17,7 +17,7 @@ exports.login = async (req, res) => {
     return res.json({ success: false, mgs: 'Tài khoản mật khẩu không được để trống' });
   }
   try {
-    // username = username.toLowerCase()
+    username = username.toLowerCase()
     const check = await Account.findOne(
       {
         username: username,
