@@ -10,7 +10,13 @@ const path = require('path')
 let api = require('../config')
 API_URL = api.API_URL
 const formidable = require('formidable');
-//ProductType
+
+function objectIsEmpty(object) {
+  if (Object.keys(object).length == 0) {
+    return true
+  }
+  return false
+}
 exports.getListProductType = async (req, res) => {
   try {
     const listProductType = await ProductType.find()
@@ -32,7 +38,8 @@ exports.addProductType1 = async (req, res) => {
       typeName: typeName
     })
     if (check == null) {
-      if (req.files != null && req.files != undefined) {
+      let files = req.files
+      if (!objectIsEmpty(files)) {
         let file = req.files.imgType
         let imageName = file.fieldName + '-' + Date.now() + '.png'
         let tmp_path = file.path
@@ -97,6 +104,7 @@ exports.addProductType1 = async (req, res) => {
   }
 }
 exports.editProductType = async (req, res) => {
+  let typeId = req.body.typeId
   let typeName = req.body.typeName
   let description = req.body.description
   let date = new Date()
@@ -105,53 +113,77 @@ exports.editProductType = async (req, res) => {
     return res.json({ success: false, mgs: "Tên loại không được để trống" });
   }
   try {
-    const check = await ProductType.findOne({
+    const checkName = await ProductType.find({
       typeName: typeName
     })
-    if (check == null) {
-      if (req.files != null && req.files != undefined) {
-        let file = req.files.imgType
-        let imageName = file.fieldName + '-' + Date.now() + '.png'
-        let tmp_path = file.path
-        let target_path = __dirname.replace('/controller', '') + '/public/img/proType/' + imageName
-        let src = fs.createReadStream(tmp_path)
-        let dest = fs.createWriteStream(target_path)
-        src.pipe(dest)
-        src.on('end', async () => {
-          try {
-            let typeImg = "img/proType/" + imageName
-            const newProductType = new ProductType({
-              _id: new mongoose.Types.ObjectId(),
+    //Check ProductType Name exit
+    if (checkName != null) {
+      for (let proName of checkName) {
+        if (proName !== null && proName._id != typeId) {
+          return res.json({
+            success: false,
+            mgs: 'Tên loại sản phẩm đã tồn tại!',
+          })
+        }
+      }
+    }
+
+    //update ProductType
+    let files = req.files
+    if (!objectIsEmpty(files)) {
+      const check = await ProductType.findOne({
+        _id: typeId
+      })
+      let currenImg = check.typeImg
+      let file = req.files.imgType
+      let imageName = file.fieldName + '-' + Date.now() + '.png'
+      let tmp_path = file.path
+      let target_path = __dirname.replace('/controller', '') + '/public/img/proType/' + imageName
+      let src = fs.createReadStream(tmp_path)
+      let dest = fs.createWriteStream(target_path)
+      src.pipe(dest)
+      src.on('end', async () => {
+        try {
+          let typeImg = "img/proType/" + imageName
+          await ProductType.findOneAndUpdate(
+            { _id: typeId },
+            {
               typeName: typeName,
               typeImg: typeImg,
               description: description,
-              created_at: today,
-              last_modified: today
+              last_modified: today,
+            }
+          ).then(async () => {
+            fs.unlink(__dirname.replace('/controller', '') + '/public/' + currenImg, err => {
+              console.log(err)
             })
-            await newProductType.save().then(async () => {
-              return res.json({ success: true, mgs: "Thêm sản phẩm thành công" });
-            })
-          } catch (error) {
-            return res.json({
-              success: false,
-              mgs: 'Có sự cố xảy ra. Không thể thêm loại sản phẩm!',
-            })
-          }
-        })
-        src.on('error', (err) => {
-          fs.unlink(tmp_path, (err) => { console.log(err) })
-          return res.json({
-            status: -1,
-            message: 'Thất bại',
+            return res.json({ success: true, mgs: "Cập nhật loại sản phẩm thành công" });
           })
+        } catch (error) {
+          return res.json({
+            success: false,
+            mgs: 'Có sự cố xảy ra. Không thể thêm loại sản phẩm!',
+          })
+        }
+      })
+      src.on('error', (err) => {
+        fs.unlink(tmp_path, (err) => { console.log(err) })
+        return res.json({
+          status: -1,
+          message: 'Thất bại',
         })
-      } else {
-          return res.json({ success: true, mgs: "Thêm loại sản phẩm thành công" });
-      }
+      })
     } else {
-      return res.json({
-        success: false,
-        mgs: 'Tên loại sản phẩm đã tồn tại!',
+      //create new ProductType
+      await ProductType.findOneAndUpdate(
+        { _id: typeId },
+        {
+          typeName: typeName,
+          description: description,
+          last_modified: today,
+        }
+      ).then(async () => {
+        return res.json({ success: true, mgs: "Cập nhật loại sản phẩm thành công" });
       })
     }
   } catch{
