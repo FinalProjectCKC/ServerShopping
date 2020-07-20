@@ -43,7 +43,7 @@ exports.addProductType1 = async (req, res) => {
         let file = req.files.imgType
         let imageName = file.fieldName + '-' + Date.now() + '.png'
         let tmp_path = file.path
-        let target_path = __dirname.replace('/controller', '') + '/public/img/proType/' + imageName
+        let target_path = __dirname.replace('controller', '') + 'public/img/proType/' + imageName
         let src = fs.createReadStream(tmp_path)
         let dest = fs.createWriteStream(target_path)
         src.pipe(dest)
@@ -113,32 +113,33 @@ exports.editProductType = async (req, res) => {
     return res.json({ success: false, mgs: "Tên loại không được để trống" });
   }
   try {
-    const checkName = await ProductType.find({
-      typeName: typeName
-    })
+
     //Check ProductType Name exit
-    if (checkName != null) {
-      for (let proName of checkName) {
-        if (proName !== null && proName._id != typeId) {
-          return res.json({
-            success: false,
-            mgs: 'Tên loại sản phẩm đã tồn tại!',
-          })
-        }
+    const check = await ProductType.findOne({
+      _id: typeId
+    })
+    let currenImg = check.typeImg
+    let currenName = check.typeName
+    if (typeName !== currenName) {
+      const checkName = await ProductType.find({
+        typeName: typeName
+      })
+      if (checkName.length!= 0) {
+        return res.json({
+          success: false,
+          mgs: 'Tên loại sản phẩm đã tồn tại!',
+        })
       }
     }
 
     //update ProductType
     let files = req.files
     if (!objectIsEmpty(files)) {
-      const check = await ProductType.findOne({
-        _id: typeId
-      })
-      let currenImg = check.typeImg
+
       let file = req.files.imgType
       let imageName = file.fieldName + '-' + Date.now() + '.png'
       let tmp_path = file.path
-      let target_path = __dirname.replace('/controller', '') + '/public/img/proType/' + imageName
+      let target_path = __dirname.replace('controller', '') + 'public/img/proType/' + imageName
       let src = fs.createReadStream(tmp_path)
       let dest = fs.createWriteStream(target_path)
       src.pipe(dest)
@@ -154,7 +155,7 @@ exports.editProductType = async (req, res) => {
               last_modified: today,
             }
           ).then(async () => {
-            fs.unlink(__dirname.replace('/controller', '') + '/public/' + currenImg, err => {
+            fs.unlink(__dirname.replace('controller', '') + 'public/' + currenImg, err => {
               console.log(err)
             })
             return res.json({ success: true, mgs: "Cập nhật loại sản phẩm thành công" });
@@ -196,11 +197,11 @@ exports.editProductType = async (req, res) => {
 exports.deleteProductType = async (req, res) => {
   //Type infor
   try {
-    let typeName = req.body.typeName
+    let typeID = req.body.typeID
     let date = new Date()
     let today = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
     await ProductType.findOneAndUpdate(
-      { typeName: typeName },
+      { _id: typeID },
       {
         delete_at: today,
         last_modified: today,
