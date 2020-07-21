@@ -197,20 +197,26 @@ exports.editProductType = async (req, res) => {
 exports.deleteProductType = async (req, res) => {
   //Type infor
   try {
-    let typeID = req.body.typeID
+    let typeId = req.body.typeId
     let date = new Date()
     let today = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
     await ProductType.findOneAndUpdate(
-      { _id: typeID },
+      { _id: typeId },
       {
         delete_at: today,
         last_modified: today,
       }
     )
-    return res.send('Xoá thành công');
+    return res.json({
+      success: true,
+      mgs: 'Xoá thành công',
+    })
   } catch (error) {
     console.log(error)
-    return res.send('Có lỗi xảy ra! Xoá thất bại');
+    return res.json({
+      success: false,
+      mgs: 'Có lỗi xảy ra! Xoá thất bại',
+    })
   }
 }
 //Product
