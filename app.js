@@ -1,31 +1,52 @@
-const express = require('express')
-const app = express()
-const port = 3000
-
-
-app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`))
-const bodyParser = require('body-parser')
-const mongoose = require('mongoose')
-let server = require('http').createServer(app)
-let api = require('./config')
-
+// load the things we need
+const express = require('express');
+const server = express();
+const expressSession = require('express-session');
+const bodyParser = require('body-parser');
+const passport = require('passport');
+const routes = require('./routes/routeServer')
+const routesApi = require('./routes/routes')
 const cors = require('cors')
-app.use(cors())
+const mongoose = require('mongoose')
+const multer = require('multer')
+const upload = multer({ dest: 'public/img' })
+const flash = require('connect-flash');
+const cookieParser = require('cookie-parser');
+const fs = require('fs');
+const formData = require('express-form-data');
 
-// bodyParser
-app.use(bodyParser.urlencoded({ extended: true }))
-app.use(bodyParser.json({ strict: false }))
+server.use(formData.parse());
+server.use('/css', express.static('public/css'));
+server.use('/js', express.static('public/js'));
+server.use('/img', express.static('public/img'));
+server.use('/fonts', express.static('public/fonts'));
+server.use(cors())
 
-//route
-let routes = require('./routes/routes')
+// set the view engine to ejs
+server.set('view engine', 'ejs');
 
-// routes(app)
-app.use('/api', routes)
+//Passport
+server.use(expressSession({
+    isLogin: false,
+    resave: false,
+    saveUninitialized: true,
+    secret: 'keyboard cat',
+}))
+server.use(express.json()) // for parsing application/json
+// server.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
+server.use(bodyParser.urlencoded({ extended: true }));
+server.use(flash());
+server.use(passport.initialize());
+server.use(passport.session());
+server.use(cookieParser('secret'));
+server.use(expressSession({ cookie: { maxAge: 60000 } }));
 
-// app.use('/image', express.static(__dirname + '/uploads'))
-// app.use('/pdfFile', express.static(__dirname + '/pdfFile'))
-// app.use('/excelFile', express.static(__dirname + '/excelFile'))
-// connect database
+// routes(server)
+server.use('/', routes)
+server.use('/api', routesApi)
+server.listen(8080);
+console.log('server run in port 8080');
+
 mongoose.connect('mongodb://localhost:2x7017/ShoppingDB',
     {
         useNewUrlParser: true,

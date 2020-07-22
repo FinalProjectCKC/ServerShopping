@@ -19,8 +19,11 @@ function objectIsEmpty(object) {
 }
 exports.getListProductType = async (req, res) => {
   try {
-    const listProductType = await ProductType.find()
-    return res.render('product/ProductType', { listProductType, mgs: "" });
+    let page = 0//req.body.page
+    let limit = 10//req.body.limit
+    const listProductType = await ProductType.find().skip(page*limit).limit(limit)
+    const count = ProductType.find().length
+    return res.render('product/ProductType', { listProductType, mgs: "", countPage: count });
   } catch (error) {
     return res.send({ mgs: 'Có lỗi xảy ra! Lấy danh sách thất bại' });;
   }
@@ -113,7 +116,6 @@ exports.editProductType = async (req, res) => {
     return res.json({ success: false, mgs: "Tên loại không được để trống" });
   }
   try {
-
     //Check ProductType Name exit
     const check = await ProductType.findOne({
       _id: typeId

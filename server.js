@@ -1,16 +1,18 @@
 // load the things we need
-var express = require('express');
-var server = express();
-var expressSession = require('express-session');
-var bodyParser = require('body-parser');
-var passport = require('passport');
-var routes = require('./routes/routeServer')
+const express = require('express');
+const server = express();
+const expressSession = require('express-session');
+const bodyParser = require('body-parser');
+const passport = require('passport');
+const routes = require('./routes/routeServer')
+const routesApi = require('./routes/routes')
+const cors = require('cors')
 const mongoose = require('mongoose')
-let multer = require('multer')
-let upload = multer({ dest: 'public/img' })
-var flash = require('connect-flash');
-var cookieParser = require('cookie-parser');
-var fs = require('fs');
+const multer = require('multer')
+const upload = multer({ dest: 'public/img' })
+const flash = require('connect-flash');
+const cookieParser = require('cookie-parser');
+const fs = require('fs');
 const formData = require('express-form-data');
 
 server.use(formData.parse());
@@ -18,6 +20,8 @@ server.use('/css', express.static('public/css'));
 server.use('/js', express.static('public/js'));
 server.use('/img', express.static('public/img'));
 server.use('/fonts', express.static('public/fonts'));
+server.use(cors())
+
 // set the view engine to ejs
 server.set('view engine', 'ejs');
 
@@ -36,9 +40,10 @@ server.use(passport.initialize());
 server.use(passport.session());
 server.use(cookieParser('secret'));
 server.use(expressSession({ cookie: { maxAge: 60000 } }));
+
 // routes(server)
 server.use('/', routes)
-
+server.use('/api', routesApi)
 server.listen(8080);
 console.log('server run in port 8080');
 
