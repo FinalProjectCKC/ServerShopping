@@ -1,6 +1,6 @@
 // load the things we need
 const express = require('express');
-const server = express();
+const app = express();
 const expressSession = require('express-session');
 const bodyParser = require('body-parser');
 const passport = require('passport');
@@ -15,48 +15,46 @@ const cookieParser = require('cookie-parser');
 const fs = require('fs');
 const formData = require('express-form-data');
 
-server.use(formData.parse());
-server.use('/css', express.static('public/css'));
-server.use('/js', express.static('public/js'));
-server.use('/img', express.static('public/img'));
-server.use('/fonts', express.static('public/fonts'));
-server.use(cors())
+app.use(formData.parse());
+app.use('/css', express.static('public/css'));
+app.use('/js', express.static('public/js'));
+app.use('/img', express.static('public/img'));
+app.use('/fonts', express.static('public/fonts'));
+app.use(cors())
 
 // set the view engine to ejs
-server.set('view engine', 'ejs');
+app.set('view engine', 'ejs');
 
 //Passport
-server.use(expressSession({
+app.use(expressSession({
     isLogin: false,
     resave: false,
     saveUninitialized: true,
     secret: 'keyboard cat',
 }))
-server.use(express.json()) // for parsing application/json
-// server.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
-server.use(bodyParser.urlencoded({ extended: true }));
-server.use(flash());
-server.use(passport.initialize());
-server.use(passport.session());
-server.use(cookieParser('secret'));
-server.use(expressSession({ cookie: { maxAge: 60000 } }));
+app.use(express.json()) // for parsing application/json
+// app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(flash());
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(cookieParser('secret'));
+app.use(expressSession({ cookie: { maxAge: 60000 } }));
 
-// routes(server)
-server.use('/', routes)
-server.use('/api', routesApi)
-server.listen(8080);
-console.log('server run in port 8080');
-
-mongoose.connect('mongodb://localhost:2x7017/ShoppingDB',
-    {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        useFindAndModify: false
-    },
-    (err) => {
-        if (err) {
-            console.log(err)
-        } else {
-            console.log('Connect database successfully!')
-        }
-    })
+// routes(app)
+app.use('/', routes)
+app.use('/api', routesApi)
+module.exports = app;
+// mongoose.connect('mongodb://localhost:2x7017/ShoppingDB',
+//     {
+//         useNewUrlParser: true,
+//         useUnifiedTopology: true,
+//         useFindAndModify: false
+//     },
+//     (err) => {
+//         if (err) {
+//             console.log(err)
+//         } else {
+//             console.log('Connect database successfully!')
+//         }
+//     })
