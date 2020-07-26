@@ -132,14 +132,12 @@
 						</div>
 					</div>
 				</div>
-				<!--ListAccount-->
+				<!--table-->
 				<div class="col-12 col-xl-12">
+					<h2>Danh sách loại sản phẩm</h2>
 					<div class="card">
-						<div class="card-header">
-							<h5 class="card-title">Danh sách loại sản phẩm</h5>
-							<h6 class="card-subtitle text-muted">Loại sản phẩm</h6>
-						</div>
-						<table class="table">
+						<br />
+						<table class="table" id="myTable">
 							<thead>
 								<tr>
 									<th hidden></th>
@@ -149,7 +147,7 @@
 									<th style="width:20%">Tuỳ chỉnh</th>
 								</tr>
 							</thead>
-							<tbody>
+							<tbody id="bodyTable">
 								<% for (var i = 0; i < listProductType.length; i++) { %>
 								<tr>
 									<td hidden><%= listProductType[i]._id %></td>
@@ -169,6 +167,13 @@
 
 							</tbody>
 						</table>
+
+					</div>
+					<!-- Page phân trang -->
+					<div>
+						<% for (var i = 0; i < countPage; i++) { %>
+						<button onclick="pageType(event)" style="background-color:dimgray;" type="button"><i><%= i %></i></button>
+						<% } %>
 					</div>
 				</div>
 			</main>
@@ -176,6 +181,10 @@
 		</div>
 	</div>
 	<script type="text/javascript">
+		// 	$(document).ready( function () {
+		//     $('#myTable').DataTable();
+		// } );
+
 		var addType = function (event) {
 			event.preventDefault();
 			var formData = new FormData();
@@ -264,6 +273,32 @@
 				alert("Không kết nối được với server")
 			})
 		}
+		var pageType = function (event) {
+			event.preventDefault();
+			var formData = new FormData();
+			var page = 2// ($(this).children().html());
+			$.ajax({
+				url: 'productType/getTypePage',
+				type: 'POST',
+				data: formData,
+				cache: false,
+				contentType: false,
+				processData: false,
+			}).done(function (result) {
+				if (result.success) {
+					$('#bodyTable').empty();
+					for (let type of result.listProductType) {
+						$('#bodyTable').append(
+							`<tr><td hidden> ${type._id} </td><td> ${type.typeName} </td><td> ${type.description}</td><td><img src="${type.typeImg}" class="avatar img-fluid" alt="No IMG"></td><td class="table-action"><button type="button" name="btn_edit" data-toggle="modal" data-target="#editTypeModal"><iclass="align-middle" data-feather="edit-2"></i></button><button type="button" name="btn_delete" data-toggle="modal" data-target="#DeleteProductTypeModal"><iclass="align-middle" data-feather="trash"></i></button></td></tr>`
+						)
+					}
+				} else {
+					alert(result.mgs)
+				}
+			}).fail(() => {
+				alert("Không kết nối được với server")
+			})
+		}
 		var loadImg = function (event) {
 			$('#typeImgForm').attr('src', URL.createObjectURL(event.target.files[0]));
 		};
@@ -288,6 +323,7 @@
 		});
 	</script>
 	<script src="js/app.js"></script>
+	<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
 </body>
 
 </html>

@@ -410,7 +410,7 @@ exports.changeAvatar = async (req, res) => {
     let randomNumber = Math.floor(Math.random() * 1000000000) + 1
     let imageName = `${file.originalname}_${randomNumber}.png`
     let tmp_path = file.path
-    let target_path = __dirname.replace('/api', '') + '/uploads/' + imageName
+    let target_path = __dirname.replace('/api', '') + '/public/img/avatars' + imageName
     let src = fs.createReadStream(tmp_path)
     let dest = fs.createWriteStream(target_path)
     src.pipe(dest)

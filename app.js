@@ -45,8 +45,8 @@ app.use(expressSession({ cookie: { maxAge: 60000 } }));
 app.use('/', routes)
 app.use('/api', routesApi)
 module.exports = app;
-
-mongoose.connect('mongodb+srv://TungTrana3:Mobile%4012345@cluster0.ti2bm.mongodb.net/AhihiShopDB?authSource=admin&replicaSet=atlas-djj53t-shard-0&readPreference=primary&appname=MongoDB%20Compass&ssl=true',
+mongoose.connect('mongodb://localhost:2x7017/ShoppingDB',
+// mongoose.connect('mongodb+srv://TungTrana3:Mobile%4012345@cluster0.ti2bm.mongodb.net/AhihiShopDB?authSource=admin&replicaSet=atlas-djj53t-shard-0&readPreference=primary&appname=MongoDB%20Compass&ssl=true',
     {
         useNewUrlParser: true,
         useUnifiedTopology: true,
