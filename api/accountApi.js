@@ -1,5 +1,6 @@
 var passport = require('passport')
 var Account = require('../models/account')
+var Cart = require('../models/Cart')
 var jwt = require('jsonwebtoken')
 let request = require('request-promise')
 let base64 = require('base-64')
@@ -52,7 +53,6 @@ exports.login = async (req, res) => {
         })
     }
 }
-
 exports.logout = async (req, res) => {
     let accountId = handleAccountJwt.getAccountId(req)
     try {
@@ -84,7 +84,7 @@ exports.register = async (req, res) => {
         let email = req.body.email
         let username = req.body.username.toLowerCase()
         let password = req.body.password
-        let retypePassword = req.body.retypePassword
+        const date = new Date()
         email = email.toLowerCase()
         if (email === undefined || email === null) {
             return res.json({
@@ -93,11 +93,10 @@ exports.register = async (req, res) => {
                 data: null
             })
         }
-
-        if (password === undefined || password === null || password !== retypePassword) {
+        if (password === undefined || password === null || password === "") {
             return res.json({
                 status: -1,
-                message: 'Password is incorrect !',
+                message: 'Vui lòng nhập mật khẩu!',
                 data: null
             })
         }
@@ -126,15 +125,27 @@ exports.register = async (req, res) => {
                 username: username,
                 password: password,
                 status: 1,
-                created_at: new Date()
+                created_at: date
             })
-
-            await newAccount.save()
+            const newCart = new Cart({
+                _id: new mongoose.Types.ObjectId(),
+                userId: newAccount._id,
+                cartDetail: null,
+                delete_at: null,
+                total: null,
+                last_modified: date,
+                created_at: date
+            })
+            await newAccount.save().then(async () => {
+                await newCart.save()
+            })
 
             return res.json({
                 status: 1,
                 message: 'Đăng ký thành công!',
-                data: null
+                data: {
+                    username: username,
+                }
             })
         }
     } catch (error) {
@@ -187,6 +198,19 @@ exports.getUserByName = async (req, res) => {
             data: null
         })
     }
+}
+exports.updateUserData = async (req, res) => {
+    const newAccount = new Account({
+        _id: new mongoose.Types.ObjectId(),
+        userId: id,
+        username: username,
+        fullName: (userData1.data === undefined || userData1.data === null) ? null : userData1.data.fullName,
+        email: (userData1.data === undefined || userData1.data === null) ? null : userData1.data.email,
+        phone: (userData1.data === undefined || userData1.data === null) ? null : userData1.data.phone,
+        status: 1,
+        created_at: new Date()
+    })
+    result = await newAccount.save()
 }
 exports.getUserByToken = async (req, res) => {
     try {
@@ -393,19 +417,7 @@ exports.getListNotification = async (req, res) => {
     }
 }
 
-exports.updateUserData = async (req, res) => {
-    const newAccount = new Account({
-        _id: new mongoose.Types.ObjectId(),
-        userId: id,
-        username: username,
-        fullName: (userData1.data === undefined || userData1.data === null) ? null : userData1.data.fullName,
-        email: (userData1.data === undefined || userData1.data === null) ? null : userData1.data.email,
-        phone: (userData1.data === undefined || userData1.data === null) ? null : userData1.data.phone,
-        status: 1,
-        created_at: new Date()
-    })
-    result = await newAccount.save()
-}
+
 
 exports.changeAvatar = async (req, res) => {
     let file = req.file

@@ -75,36 +75,7 @@ exports.createCart = async (req, res) => {
       { userId: accountId }
     ).then(() => {
       if (userCart !== null) {
-        // const cartDetail = 
-        if(userCart.cartDetail !== null){
-          return res.json({
-            status: 1,
-            message: 'Lấy thông tin giỏ hàng thành công!',
-            data: {
-              CartId: userCart._id,
-              Total: userCart.total,
-              UserId: userCart.userId,
-              created_at: userCart.created_at,
-              delete_at: userCart.delete_at,
-              last_modified: userCart.last_modified,
-              cartDetail: userCart.cartDetail,
-            }
-          })
-        } else{
-          return res.json({
-            status: 1,
-            message: 'Không có sản phẩm nào trong giỏ hàng!',
-            data: {
-              CartId: userCart._id,
-              Total: userCart.total,
-              UserId: userCart.userId,
-              created_at: userCart.created_at,
-              delete_at: userCart.delete_at,
-              last_modified: userCart.last_modified,
-              cartDetail: null,
-            }
-          })
-        }
+       
       } else {
         return res.json({
           status: -1,
