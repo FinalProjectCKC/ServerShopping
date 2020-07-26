@@ -13,7 +13,7 @@ API_URL = api.API_URL
 exports.login = async (req, res) => {
     let username = req.body.username
     let password = req.body.password
-    if (username === null || username === undefined || password === null || password === undefined) {
+    if (username === null || username === undefined || password === null || password === undefined || password === "" || username === "") {
         return res.json({
             status: -1,
             message: 'Vui lòng nhập đầy đủ tài khoản và mật khẩu',
@@ -23,7 +23,10 @@ exports.login = async (req, res) => {
 
     username = username.toLowerCase()
     const check = await Account.findOne(
-        { username: username }
+        {
+            username: username,
+            password: password
+        }
     )
     if (check !== null) {
         const token1 = jwt.sign({ id: check.id }, 'jwt-secret')
@@ -392,14 +395,14 @@ exports.getListNotification = async (req, res) => {
 
 exports.updateUserData = async (req, res) => {
     const newAccount = new Account({
-      _id: new mongoose.Types.ObjectId(),
-      userId: id,
-      username: username,
-      fullName: (userData1.data === undefined || userData1.data === null) ? null : userData1.data.fullName,
-      email: (userData1.data === undefined || userData1.data === null) ? null : userData1.data.email,
-      phone: (userData1.data === undefined || userData1.data === null) ? null : userData1.data.phone,
-      status: 1,
-      created_at: new Date()
+        _id: new mongoose.Types.ObjectId(),
+        userId: id,
+        username: username,
+        fullName: (userData1.data === undefined || userData1.data === null) ? null : userData1.data.fullName,
+        email: (userData1.data === undefined || userData1.data === null) ? null : userData1.data.email,
+        phone: (userData1.data === undefined || userData1.data === null) ? null : userData1.data.phone,
+        status: 1,
+        created_at: new Date()
     })
     result = await newAccount.save()
 }
