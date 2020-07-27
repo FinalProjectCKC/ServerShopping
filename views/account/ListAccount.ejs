@@ -11,105 +11,337 @@
 				<!--Form Account-->
 				<div class="col-md-12">
 					<div class="card">
-						<div class="card-header">
-							<h2 class="card-title">Thêm tài khoản</h2>
-							<!-- <h6 class="card-subtitle text-muted">Thêm tài khoản</h6> -->
-						</div>
 						<div class="card-body">
-							<form>
-								<div class="form-row">
-									<div class="form-group col-md-6">
-										<label for="txt_UserName">Tài khoản</label>
-										<input type="text" class="form-control" id="txt_UserName" placeholder="Nhập tài khoản">
+							<!-- BEGIN AddProductType modal -->
+							<button type="button" class="btn btn-success" data-toggle="modal" data-target="#addAccount">
+								Thêm tài khoản
+							</button>
+							<div class="modal fade" id="addAccount" tabindex="-1" role="dialog" aria-hidden="true">
+								<div class="modal-dialog" role="document">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title">Thêm tài khoản</h5>
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<div class="modal-body m-3">
+                                                <form>
+                                                    <div class="form-row">
+                                                        <div class="form-group col-md-6">
+                                                            <label for="txt_UserName">Tài khoản</label>
+                                                            <input type="text" name="accountName"" class="form-control" id="txt_UserName" placeholder="Nhập tài khoản">
+                                                        </div>
+                                                        <div class="form-group col-md-6">
+                                                            <label for="txt_Email">Email</label>
+                                                            <input type="email" name="email" class="form-control" id="txt_Email" placeholder="Nhập Email">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        </br>
+                                                        <h6 class="card-subtitle text-muted">Địa chỉ</h6></br>
+                                                        <label for="txt_Address">Số nhà / Đường</label>
+                                                        <input type="text" name='address1' class="form-control" id="txt_Address" placeholder="Số nhà / Đường">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="txt_Address2">Phường / Quận / Huyện</label>
+                                                        <input type="text" name='address1' class="form-control" id="txt_Address2" placeholder="Công ty, Xã, Phường, Quận, Huyện">
+                                                    </div>
+                                                    <div class="form-row">
+                                                        <div class="form-group col-md-6">
+                                                            <label for="txt_City">Tỉnh Thành Phố</label>
+                                                            <input type="text" name="City" class="form-control" id="txt_City">
+                                                        </div>
+                                                        <div class="form-group col-md-4">
+                                                            <label for="inputState">Trạng thái</label>
+                                                            <select id="inputState" name="Status" class="form-control">
+                                                                <option selected>Hoạt Động</option>
+                                                                <option>Khoá</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="custom-control custom-checkbox m-0">
+                                                            <input type="checkbox" name="role" class="custom-control-input">
+                                                            <span class="custom-control-label">Quyền Admin</span>
+                                                        </label>
+                                                    </div>
+                                                    <button type="submit" class="btn btn-primary">Thêm tài khoản</button>
+                                                </form>
+										</div>
 									</div>
-									<div class="form-group col-md-6">
-										<label for="txt_Email">Email</label>
-										<input type="email" class="form-control" id="txt_Email" placeholder="Nhập Email">
+								</div>
+							</div>
+							<!-- END AddProductType modal -->
+							<!-- BEGIN EditProductType modal -->
+							<div class="modal fade" id="editAccount" tabindex="-1" role="dialog" aria-hidden="true">
+								<div class="modal-dialog" role="document">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title">Cập nhật loại sản phẩm</h5>
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<div class="modal-body m-3">
+											<form id="editAccountForm" enctype="multipart/form-data">
+												<div class="form-group">
+													<input type="text" name="editTypeId" hidden class="form-control">
+													<label class="form-label">Tên loại</label>
+													<input type="text" name="editTypeName" class="form-control" placeholder="Tên loại sản phẩm">
+												</div>
+												<div class="form-group">
+													<label class="form-label">Mô tả</label>
+													<textarea class="form-control" name="editDescription" placeholder="Mô tả loại sản phẩm"
+														rows="3"></textarea>
+												</div>
+												<div class="form-group">
+													<label class="form-label w-100">Ảnh loại</label>
+													<input name="editTypeImg" id="editTypeImg" type="file" onchange="loadImgEdit(event)"
+														accept="image/png, image/jpeg">
+													<small class="form-text text-muted">
+														<img name="editTypeImgForm" id="editTypeImgForm" src="#" height="200px" width="200px"
+															alt="No IMG">
+													</small>
+												</div>
+												<div class="form-group">
+													<label class="custom-control custom-checkbox">
+													</label>
+												</div>
+											</form>
+										</div>
+										<div class="modal-footer">
+											<button type="button" class="btn btn-secondary" data-dismiss="modal">Huỷ</button>
+											<button type="button" id="btnSubmit" onclick="editType(event)" name="btnCreate"
+												class="btn btn-success">Cập nhật</button>
+										</div>
 									</div>
 								</div>
-								<div class="form-group">
-									</br>
-									<h6 class="card-subtitle text-muted">Địa chỉ</h6></br>
-									<label for="txt_Address">Số nhà / Đường</label>
-									<input type="text" class="form-control" id="txt_Address" placeholder="Số nhà / Đường">
-								</div>
-								<div class="form-group">
-									<label for="txt_Address2">Phường / Quận / Huyện</label>
-									<input type="text" class="form-control" id="txt_Address2"
-										placeholder="Công ty, Xã, Phường, Quận, Huyện">
-								</div>
-								<div class="form-row">
-									<div class="form-group col-md-6">
-										<label for="txt_City">Tỉnh Thành Phố</label>
-										<input type="text" class="form-control" id="txt_City">
+							</div>
+							<!-- END EditProductType modal -->
+							<!-- BEGIN DeleteProductType modal -->
+							<div class="modal modal-colored modal-danger fade" id="DeleteAccountModal" tabindex="-1" role="dialog"
+								aria-hidden="true">
+								<div class="modal-dialog" role="document">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title">Cảnh báo</h5>
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<div class="modal-body m-3">
+											<p name="typeIdDel" hidden></p>
+											<p class="mb-0">Bạn có muốn xoá loại sản phẩm này?</p>
+											<p name="typeNameDel"></p>
+										</div>
+										<div class="modal-footer">
+											<button type="button" class="btn btn-light" data-dismiss="modal">Huỷ</button>
+											<button type="button" onclick="deleteType(event)" class="btn btn-light">Xoá</button>
+										</div>
 									</div>
-									<div class="form-group col-md-4">
-										<label for="inputState">Trạng thái</label>
-										<select id="inputState" class="form-control">
-											<option selected>Hoạt Động</option>
-											<option>Khoá</option>
-										</select>
-									</div>
 								</div>
-								<div class="form-group">
-									<label class="custom-control custom-checkbox m-0">
-										<input type="checkbox" class="custom-control-input">
-										<span class="custom-control-label">Quyền Admin</span>
-									</label>
-								</div>
-								<button type="submit" class="btn btn-primary">Thêm tài khoản</button>
-							</form>
+							</div>
+							<!-- END DeleteProductType modal -->
 						</div>
 					</div>
 				</div>
-				<!--ListAccount-->
+				<!--table-->
 				<div class="col-12 col-xl-12">
+					<h2>Danh sách loại sản phẩm</h2>
 					<div class="card">
-						<div class="card-header">
-							<h5 class="card-title">Danh sách tài khoản</h5>
-							<h6 class="card-subtitle text-muted">Danh sách tài khoản khách hàng.</h6>
-						</div>
-						<table class="table">
+						<br />
+						<table class="table" id="myTable">
 							<thead>
 								<tr>
-									<th style="width:20%;">Tên tài khoản</th>
-									<th style="width:20%">Tên khách hàng</th>
-									<th style="width:20%">Số điện thoại</th>
-									<th class="d-none d-md-table-cell" style="width:20%">Email</th>
-									<th style="width:20%">Ảnh đại diện</th>
-									<th style="width:20%">Địa chỉ</th>
-									<th>Actions</th>
+                                    <th style="width:15%;">Tên tài khoản</th>
+                                    <th style="width:15%">Tên khách hàng</th>
+                                    <th style="width:15%">Số điện thoại</th>
+                                    <th class="d-none d-md-table-cell" style="width:15%">Email</th>
+                                    <th style="width:15%">Ảnh đại diện</th>
+                                    <th style="width:15%">Địa chỉ</th>
+									<th style="width:15%">Tuỳ chỉnh</th>
 								</tr>
 							</thead>
-							<tbody>
-								<% for (var i = 0; i < listAccount.length; i++) { %>
-								<tr>
-									<td><%= listAccount[i].username %></td>
-									<td><%= listAccount[i].fullName %></td>
-									<td class="d-none d-md-table-cell"><%= listAccount[i].phone %></td>
-									<td class="d-none d-md-table-cell"><%= listAccount[i].email %></td>
-									<td>
-										<img src="<%= listAccount[i].avatarUrl %>" class="avatar img-fluid" alt="No IMG">
-									</td>
-									<td class="d-none d-md-table-cell"><%= listAccount[i].address %></td>
-									<td class="table-action">
-										<button type="button" name="btn_edit"><i class="align-middle" data-feather="edit-2"></i></button>
-										<button type="button" name="btn_delete"><i class="align-middle" data-feather="trash"></i></button>
-									</td>
-								</tr>
-								<% } %>
+							<tbody id="bodyTable">
+                                <% for (var i = 0; i < listAccount.length; i++) { %>
+                                <tr>
+                                    <td><%= listAccount[i].username %></td>
+                                    <td><%= listAccount[i].fullName %></td>
+                                    <td class="d-none d-md-table-cell"><%= listAccount[i].phone %></td>
+                                    <td class="d-none d-md-table-cell"><%= listAccount[i].email %></td>
+                                    <td>
+                                        <img src="<%= listAccount[i].avatarUrl %>" class="avatar img-fluid" alt="No IMG">
+                                    </td>
+                                    <td class="d-none d-md-table-cell"><%= listAccount[i].address %></td>
+                                    <td class="table-action">
+                                        <button type="button" name="btn_edit"><i class="align-middle" data-target='#editAccount' data-feather="edit-2"></i></button>
+                                        <button type="button" name="btn_delete"><i class="align-middle" data-target='#DeleteAccountModal' data-feather="deletetrash"></i></button>
+                                    </td>
+                                </tr>
+                                <% } %>
 							</tbody>
 						</table>
+
 					</div>
+					<!-- Page phân trang -->
 				</div>
 			</main>
 			<% include ../partials/Footer %>
 		</div>
 	</div>
+	<script type="text/javascript">
+		// 	$(document).ready( function () {
+		//     $('#myTable').DataTable();
+		// } );
 
-	<script src="js/vendor.js"></script>
+		var addType = function (event) {
+			event.preventDefault();
+			var formData = new FormData();
+
+			var accountName = $('[name=accountName]').val();
+            var email = $('[email=email]').val();
+            var address1 = $('[address1=address1]').val();
+            var City = $('[city=City]').val();
+            var Status =$('[status=Status]').val();
+            var address2 = $('[address2=address2]').val();
+			var file = $('[name=typeImg]').get(0).files;
+
+			formData.append('imgType', file[0]);
+			formData.append('accountName', accountName);
+            formData.append('email', email);
+            formData.append('address1',address1);
+            formData.append('address2',address2);
+            formData.append('city',City);
+            formData.append('status',Status);
+
+			$.ajax({
+				url: 'Account/addAccount',
+				type: 'POST',
+				data: formData,
+				cache: false,
+				contentType: false,
+				processData: false,
+			}).done(function (result) {
+				if (result.success) {
+					alert(result.mgs)
+					location.reload()
+				} else {
+					alert(result.mgs)
+				}
+			}).fail(() => {
+				alert("Không kết nối được với server")
+			})
+		}
+		var editType = function (event) {
+			event.preventDefault();
+
+			var formData = new FormData();
+			var typeId = $('[name=editTypeId]').val();
+			var typeName = $('[name=editTypeName]').val();
+			var des = $('[name=editDescription]').val();
+			var file = $('[name=editTypeImg]').get(0).files;
+
+			formData.append('typeId', typeId);
+			formData.append('imgType', file[0]);
+			formData.append('typeName', typeName);
+			formData.append('description', des);
+
+			$.ajax({
+				url: 'productType/editType',
+				type: 'POST',
+				data: formData,
+				cache: false,
+				contentType: false,
+				processData: false,
+			}).done(function (result) {
+				if (result.success) {
+					alert(result.mgs)
+					location.reload()
+				} else {
+					alert(result.mgs)
+				}
+			}).fail(() => {
+				alert("Không kết nối được với server")
+			})
+		}
+		var deleteType = function (event) {
+			event.preventDefault();
+
+			var formData = new FormData();
+			var typeId = $('[name=typeIdDel]').text();
+
+			formData.append('typeId', typeId);
+
+			$.ajax({
+				url: 'productType/deleteType',
+				type: 'POST',
+				data: formData,
+				cache: false,
+				contentType: false,
+				processData: false,
+			}).done(function (result) {
+				if (result.success) {
+					alert(result.mgs)
+					location.reload()
+				} else {
+					alert(result.mgs)
+				}
+			}).fail(() => {
+				alert("Không kết nối được với server")
+			})
+		}
+		var pageType = function (event) {
+			event.preventDefault();
+			var formData = new FormData();
+			var page = 2// ($(this).children().html());
+			$.ajax({
+				url: 'productType/getTypePage',
+				type: 'POST',
+				data: formData,
+				cache: false,
+				contentType: false,
+				processData: false,
+			}).done(function (result) {
+				if (result.success) {
+					$('#bodyTable').empty();
+					for (let type of result.listProductType) {
+						$('#bodyTable').append(
+							`<tr><td hidden> ${type._id} </td><td> ${type.typeName} </td><td> ${type.description}</td><td><img src="${type.typeImg}" class="avatar img-fluid" alt="No IMG"></td><td class="table-action"><button type="button" name="btn_edit" data-toggle="modal" data-target="#editTypeModal"><iclass="align-middle" data-feather="edit-2"></i></button><button type="button" name="btn_delete" data-toggle="modal" data-target="#DeleteProductTypeModal"><iclass="align-middle" data-feather="trash"></i></button></td></tr>`
+						)
+					}
+				} else {
+					alert(result.mgs)
+				}
+			}).fail(() => {
+				alert("Không kết nối được với server")
+			})
+		}
+		var loadImg = function (event) {
+			$('#typeImgForm').attr('src', URL.createObjectURL(event.target.files[0]));
+		};
+		var loadImgEdit = function (event) {
+			$('#editAccountForm').attr('src', URL.createObjectURL(event.target.files[0]));
+		};
+		$('[name=btn_edit]').click(function () {
+			var typeId = ($(this).parent().parent().children().eq(0).html());
+			var name = ($(this).parent().parent().children().eq(1).html());
+			var des = ($(this).parent().parent().children().eq(2).html());
+			var img = ($(this).parent().parent().children().eq(3).children().eq(0).attr("src"));
+			$('#editAccountForm').attr('src', img);
+			$('[name=editTypeId]').val(typeId);
+			$('[name=editTypeName]').val(name);
+			$('[name=editDescription]').val(des);
+		});
+		$('[name=btn_delete]').click(function () {
+			var typeIdDel = ($(this).parent().parent().children().eq(0).html());
+			var name = ($(this).parent().parent().children().eq(1).html());
+			$('[name=typeIdDel]').text(typeIdDel);
+			$('[name=typeNameDel]').text(name);
+		});
+	</script>
 	<script src="js/app.js"></script>
-
+	<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
 </body>
 
 </html>

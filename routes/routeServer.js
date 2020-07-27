@@ -9,7 +9,6 @@ let multer = require("multer");
 var proType = require("./routeProductType");
 var routeAccount = require("./routeAccount");
 var routeProduct = require("./routeProduct");
-var routeProductDiscount = require(".routeProductDiscount");
 var FormData = require("form-data");
 var fs = require("fs");
 
@@ -31,5 +30,4 @@ router.route("/login").post(AccountController.login);
 router.use("/productType", proType);
 router.use("/account", routeAccount);
 router.use("/product", routeProduct);
-router.use("/productDiscount", routeProductDiscount);
 module.exports = router;

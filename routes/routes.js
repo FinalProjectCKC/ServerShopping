@@ -42,17 +42,17 @@ router.route("/Product/GetByID").post(productApi.getProductById);
 
 //ProductDiscount
 
-router
-  .route("/ProductDiscount/GetAll")
-  .post(productDiscountApi.getAllProductDiscounts);
-router
-  .route("/ProductDiscount/GetByProType")
-  .post(productDiscountApi.getProductDiscountByProType);
-router
-  .route("/ProductDiscount/GetByName")
-  .post(productDiscountApi.getProductDiscountByName);
-router
-  .route("/ProductDiscount/GetByID")
-  .post(productDiscountApi.getProductDiscountById);
+// router
+//   .route("/ProductDiscount/GetAll")
+//   .post(productDiscountApi.getAllProductDiscounts);
+// router
+//   .route("/ProductDiscount/GetByProType")
+//   .post(productDiscountApi.getProductDiscountByProType);
+// router
+//   .route("/ProductDiscount/GetByName")
+//   .post(productDiscountApi.getProductDiscountByName);
+// router
+//   .route("/ProductDiscount/GetByID")
+//   .post(productDiscountApi.getProductDiscountById);
 
 module.exports = router;
