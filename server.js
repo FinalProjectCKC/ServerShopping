@@ -20,6 +20,7 @@ server.use('/css', express.static('public/css'));
 server.use('/js', express.static('public/js'));
 server.use('/img', express.static('public/img'));
 server.use('/fonts', express.static('public/fonts'));
+server.use('/images', express.static(__dirname+'/public/img'))
 server.use(cors())
 
 // set the view engine to ejs
@@ -47,7 +48,8 @@ server.use('/api', routesApi)
 server.listen(8080);
 console.log('server run in port 8080');
 
-mongoose.connect('mongodb+srv://TungTrana3:Mobile%4012345@cluster0.ti2bm.mongodb.net/AhihiShopDB?authSource=admin&replicaSet=atlas-djj53t-shard-0&readPreference=primary&appname=MongoDB%20Compass&ssl=true',
+mongoose.connect('mongodb://localhost:2x7017/ShoppingDB',
+// mongoose.connect('mongodb+srv://TungTrana3:Mobile%4012345@cluster0.ti2bm.mongodb.net/AhihiShopDB?authSource=admin&replicaSet=atlas-djj53t-shard-0&readPreference=primary&appname=MongoDB%20Compass&ssl=true',
     {
         useNewUrlParser: true,
         useUnifiedTopology: true,

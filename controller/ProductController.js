@@ -20,18 +20,41 @@ function objectIsEmpty(object) {
 exports.getListProductType = async (req, res) => {
   try {
     let page = 0; //req.body.page
-    let limit = 10; //req.body.limit
-    const listProductType = await ProductType.find()
-      .skip(page * limit)
-      .limit(limit);
-    const count = ProductType.find().length;
+    let limit = 1; //req.body.limit
+    // const listProductType = await ProductType.find().skip(page*limit).limit(limit)
+    console.log(__dirname);
+    const listProductType = await ProductType.find();
+    const listAll = ProductType.find();
+    const countPage = (await listAll).length / limit;
     return res.render("product/ProductType", {
       listProductType,
       mgs: "",
-      countPage: count,
+      countPage: countPage,
     });
   } catch (error) {
     return res.send({ mgs: "Có lỗi xảy ra! Lấy danh sách thất bại" });
+  }
+};
+exports.getListPageType = async (req, res) => {
+  try {
+    let page = req.body.page;
+    let limit = 2; //req.body.limit
+    const listProductType = await ProductType.find()
+      .skip(page * limit)
+      .limit(limit);
+    const listAll = ProductType.find();
+    const countPage = (await listAll).length / limit;
+    return res.json({
+      success: true,
+      listProductType,
+      mgs: "shihi ",
+      countPage: countPage,
+    });
+  } catch (error) {
+    return res.json({
+      success: false,
+      mgs: "Có lỗi xảy ra! Lấy danh sách thất bại",
+    });
   }
 };
 exports.addProductType1 = async (req, res) => {
