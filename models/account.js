@@ -24,14 +24,13 @@ const notification = new Schema({
     type: Date,
     timezone: "Asia/Ho_Chi_Minh"
   },
-  created_at: {
+  delete_at: {
     type: Date,
     timezone: "Asia/Ho_Chi_Minh"
   },
   last_modified: {
     type: Date,
     timezone: "Asia/Ho_Chi_Minh",
-    default: Date.now
   },
 })
 

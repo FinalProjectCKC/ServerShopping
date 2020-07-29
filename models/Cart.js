@@ -19,12 +19,16 @@ const cartDetail = new Schema({
     type: String,
     require: true
   },
+  productImg: {
+    type: String,
+    require: false
+  },
   unit: {
     type: String,
     require: true
   },
   quan: {
-    type: String,
+    type: Number,
     require: true
   },
   price: {

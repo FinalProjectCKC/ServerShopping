@@ -4,6 +4,7 @@ const adminAuth = require('../middleware/adminAuth')
 const accountApi = require('../api/accountApi')
 const productTypeApi = require('../api/productTypeApi')
 const productApi = require('../api/productApi')
+const cartApi = require('../api/cartApi')
 const accountAuth = require('../middleware/accountAuth')
 
 let multer = require('multer')
@@ -55,5 +56,13 @@ router.route('/Product/GetByName')
   .post(productApi.getProductByName)
 router.route('/Product/GetByID')
   .post(productApi.getProductById)
+
+//Cart
+router.route('/Cart/GetCart')
+  .post(cartApi.findCartByUser)
+  router.route('/Cart/AddToCart')
+  .post(cartApi.addToCart)
+  router.route('/Cart/EditQuanTi')
+  .post(cartApi.addToCart)
 
 module.exports = router;

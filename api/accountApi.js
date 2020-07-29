@@ -130,7 +130,6 @@ exports.register = async (req, res) => {
             const newCart = new Cart({
                 _id: new mongoose.Types.ObjectId(),
                 userId: newAccount._id,
-                cartDetail: null,
                 delete_at: null,
                 total: null,
                 last_modified: date,
@@ -214,42 +213,30 @@ exports.updateUserData = async (req, res) => {
 }
 exports.getUserByToken = async (req, res) => {
     try {
-        const bearerHeader = req.headers['authorization']
-        if (typeof bearerHeader !== 'undefined') {
-            const bearer = bearerHeader.split(' ')
-            const bearerToken = bearer[1]
-            req.token = bearerToken;
-            let accountId = handleAccountJwt.getAccountId(req)
-            if (accountId !== null || accountId !== undefined) {
-                const account = await Account.findOne(
-                    { _id: accountId }
-                )
-                if (account === null || account === undefined) {
-                    return res.json({
-                        status: -1,
-                        message: 'Không tìm thấy người dùng này !',
-                        data: null,
-                    })
-                } else {
-                    return res.json({
-                        status: 1,
-                        message: 'Lấy thông tin thành công',
-                        data: {
-                            userID: account._id,
-                            username: account.username,
-                            fullName: account.fullName,
-                            email: account.email,
-                            phone: account.phone,
-                            address: account.address,
-                            avatarUrl: account.avatarUrl,
-                        }
-                    })
-                }
-            } else {
+        let accountId = handleAccountJwt.getAccountId(req)
+        if (accountId !== null || accountId !== undefined) {
+            const account = await Account.findOne(
+                { _id: accountId }
+            )
+            if (account === null || account === undefined) {
                 return res.json({
                     status: -1,
                     message: 'Không tìm thấy người dùng này !',
                     data: null,
+                })
+            } else {
+                return res.json({
+                    status: 1,
+                    message: 'Lấy thông tin thành công',
+                    data: {
+                        userID: account._id,
+                        username: account.username,
+                        fullName: account.fullName,
+                        email: account.email,
+                        phone: account.phone,
+                        address: account.address,
+                        avatarUrl: account.avatarUrl,
+                    }
                 })
             }
         } else {
@@ -271,7 +258,6 @@ exports.pushNotificationToken = async (req, res) => {
     let notificationToken = req.body.notificationToken
     let platform = req.body.platform
     let accountId = handleAccountJwt.getAccountId(req)
-
     try {
         await Account.findOneAndUpdate(
             {
@@ -314,7 +300,6 @@ exports.pushNotificationToken = async (req, res) => {
         })
     }
 }
-
 exports.getNumOfNotification = async (req, res) => {
     let accountId = handleAccountJwt.getAccountId(req)
 

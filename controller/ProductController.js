@@ -254,7 +254,6 @@ exports.getListProduct = async (req, res) => {
   }
 }
 exports.addProduct = async (req, res) => {
-  //Type infor
   try {
     let typeProduct = req.body.typeProduct
     let description = req.body.description
