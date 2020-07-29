@@ -103,8 +103,12 @@ exports.addToCart = async (req, res) => {
 
     if (cartDetail.length === 0) {
       //get productHave product
-      const productTypes = await ProductType.find()
-      const Products = productTypes.Product.filter(data => data.productId.toString() === productID.toString())
+
+      // const productTypes = await ProductType.find()
+      const productTypes = await ProductType.findOne({
+        'product._id': productID
+      })
+      const Products = productTypes.product.filter(data => data._id.toString() === productID.toString())
       const Product = Products[0]
       //add product to cart      
       let newDetails = {
@@ -179,93 +183,161 @@ exports.addToCart = async (req, res) => {
     })
   }
 }
-// exports.changeQuanti = async (req, res) => {
-//   try {
-//     //get data when addproduct to cart
-//     let productID = req.body.productID
-//     let quan = req.body.quan
-//     let accountId = handleAccountJwt.getAccountId(req)
-//     let date = new Date()
-//     let today = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
-//     //check account
-//     if (accountId == null) {
-//       return res.json({
-//         status: -1,
-//         message: 'Không tìm thấy người dùng này!',
-//         data: null,
-//       })
-//     }
-//     //check product is exit
-//     if (productID == null) {
-//       return res.json({
-//         status: -1,
-//         message: 'Không tìm thấy sản phẩm này!',
-//         data: null,
-//       })
-//     }
-//     //get cart by user
-//     let userCart = await Cart.findOne(
-//       { userId: accountId }
-//     )
-//     //check if product is exit in cart
-//     const cartDetail = userCart.cartDetail.filter(data => data.productId.toString() === productID.toString())
-//     let cartDetailIndex = userCart.cartDetail.findIndex(data => data.productId.toString() === productID.toString())
+exports.changeQuanti = async (req, res) => {
+  try {
+    //get data when addproduct to cart
+    let productID = req.body.productID
+    let accountId = handleAccountJwt.getAccountId(req)
+    let date = new Date()
+    let today = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
+    //check account
+    if (accountId == null) {
+      return res.json({
+        status: -1,
+        message: 'Không tìm thấy người dùng này!',
+        data: null,
+      })
+    }
+    //check product is exit
+    if (productID == null) {
+      return res.json({
+        status: -1,
+        message: 'Không tìm thấy sản phẩm này!',
+        data: null,
+      })
+    }
+    //get cart by user
+    let userCart = await Cart.findOne(
+      { userId: accountId }
+    )
+    //check if product is exit in cart
+    const cartDetail = userCart.cartDetail.filter(data => data.productId.toString() === productID.toString())
+    let cartDetailIndex = userCart.cartDetail.findIndex(data => data.productId.toString() === productID.toString())
 
-//     if (cartDetail.length === 0) {
-//       return res.json({
-//         status: -1,
-//         message: 'Sản phẩm không tồn tại trong giỏ hàng',
-//         data: {
-//           productID: productID
-//         }
-//       })
-//     } else {
-//       //edit quanti
-//       let oldQuan = cartDetail[0].quan
-//       if (oldQuan > 0) {
-//         let newQuan = parseInt(oldQuan) - 1
-//         //
-//         // await Cart.findOneAndUpdate(
-//         //   {
-//         //     userId: accountId,
-//         //   },
-//         //   { $unset: { [`cartDetail`]: cartDetailIndex } }
-//         // )
-//         await Cart.findOneAndUpdate(
-//           {
-//             userId: accountId,
-//           },
-//           { $set: { [`cartDetail.${cartDetailIndex}.quan`]: newQuan } }
-//         ).then(async (data) => {
-//           if (data == null) {
-//             return res.json({
-//               status: -1,
-//               message: 'Cập nhật số lượng thất bại!',
-//               data: {
-//                 productID: productID,
-//               }
-//             })
-//           }
-//           return res.json({
-//             status: 1,
-//             message: 'Cập nhật số lượng thành công!',
-//             data: {
-//               productID: productID
-//             }
-//           })
-//         })
-//       } else {
+    if (cartDetail.length === 0) {
+      return res.json({
+        status: -1,
+        message: 'Sản phẩm không tồn tại trong giỏ hàng',
+        data: {
+          productID: productID
+        }
+      })
+    } else {
+      //edit quanti
+      let oldQuan = cartDetail[0].quan
+      if (oldQuan > 1) {
+        let newQuan = parseInt(oldQuan) - 1
+        await Cart.findOneAndUpdate(
+          {
+            userId: accountId,
+          },
+          { $set: { [`cartDetail.${cartDetailIndex}.quan`]: newQuan } }
+        ).then(async (data) => {
+          if (data == null) {
+            return res.json({
+              status: -1,
+              message: 'Cập nhật số lượng thất bại!',
+              data: {
+                productID: productID,
+              }
+            })
+          }
+          return res.json({
+            status: 1,
+            message: 'Cập nhật số lượng thành công!',
+            data: {
+              productID: productID
+            }
+          })
+        })
+      } else {
 
-//         userCart.update({}, { $unset: { "userCart.cartDetail": cartDetailIndex } })
-//         userCart.update({}, { $pull: { "interests": null } })
-//       }
+        let userCart = await Cart.findOne(
+          { userId: accountId }
+        )
+        userCart.update({ $unset: { [`cartDetail.${cartDetailIndex}`]: 1 } })
+          .then(async (data) => {
+            console.log(data)
+            userCart.update({ $pull: { "cartDetail": null } })
+              .then(async (data) => {
+                console.log(data)
+                return res.json({
+                  status: 1,
+                  message: 'Đã xoá sản phẩm khỏi giỏ hàng',
+                  data: null,
+                })
+              })
+          })
+      }
+    }
+  } catch (error) {
+    return res.json({
+      status: -1,
+      message: 'Có sự cố xảy ra. Không thêm được vào giỏ hàng!',
+      data: null,
+    })
+  }
+}
+exports.removeFromCart = async (req, res) => {
+  try {
+    //get data when addproduct to cart
+    let productID = req.body.productID
+    let accountId = handleAccountJwt.getAccountId(req)
+    let date = new Date()
+    let today = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
+    //check account
+    if (accountId == null) {
+      return res.json({
+        status: -1,
+        message: 'Không tìm thấy người dùng này!',
+        data: null,
+      })
+    }
+    //check product is exit
+    if (productID == null) {
+      return res.json({
+        status: -1,
+        message: 'Không tìm thấy sản phẩm này!',
+        data: null,
+      })
+    }
+    //get cart by user
+    let userCart = await Cart.findOne(
+      { userId: accountId }
+    )
+    //check if product is exit in cart
+    const cartDetail = userCart.cartDetail.filter(data => data.productId.toString() === productID.toString())
+    let cartDetailIndex = userCart.cartDetail.findIndex(data => data.productId.toString() === productID.toString())
 
-//     }
-//   } catch (error) {
-//     return res.json({
-//       status: -1,
-//       message: 'Có sự cố xảy ra. Không thêm được vào giỏ hàng!',
-//       data: null,
-//     })
-//   }
-// }
+    if (cartDetail.length === 0) {
+      return res.json({
+        status: -1,
+        message: 'Sản phẩm không tồn tại trong giỏ hàng',
+        data: {
+          productID: productID
+        }
+      })
+    } else {
+      let userCart = await Cart.findOne(
+        { userId: accountId }
+      )
+      userCart.update({ $unset: { [`cartDetail.${cartDetailIndex}`]: 1 } })
+        .then(async (data) => {
+          userCart.update({ $pull: { "cartDetail": null } })
+            .then(async (data) => {
+              return res.json({
+                status: 1,
+                message: 'Đã xoá sản phẩm khỏi giỏ hàng',
+                data: null,
+              })
+            })
+        })
+    }
+  } catch (error) {
+    return res.json({
+      status: -1,
+      message: 'Có sự cố xảy ra. Không xoá được sản phẩm!',
+      data: null,
+    })
+  }
+}
