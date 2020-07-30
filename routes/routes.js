@@ -72,4 +72,7 @@ router.route('/Order/NewOrder')
 .post(orderApi.newOrder)
 router.route('/Order/Ordered')
 .post(orderApi.Ordered)
+router.route('/Order/DowloadOrder')
+.post(orderApi.downloadOrder)
+
 module.exports = router;
