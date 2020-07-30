@@ -170,6 +170,7 @@ exports.downloadOrder = async (req, res) => {
         detail.productName,
         detail.quan,
         detail.price,
+        detail.price,
       ])
       ++index
     }
@@ -190,20 +191,153 @@ exports.downloadOrder = async (req, res) => {
     var docDefinition = {
       content: [
         {
-          layout: 'lightHorizontalLines',
+          image: 'public/img/logo_Shop.png',
+          width: 150,
+          style: 'logo'
+        },
+        {
+          stack: [
+            'Hoá đơn bán hàng',
+            {text: 'Số hoá đơn: xxxx-xxxx-xxxx-xxx', style: 'subheader'},
+          ],
+          style: 'header'
+        },
+          '    ',
+         '- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ',
+        {
+          columns: [
+            {
+              text: 'Khách hàng: ',
+            },
+            {
+              text: 'Khá Bảnh',
+            }
+          ],style: 'infor'
+        },
+        {
+          columns: [
+            {
+              text: 'Địa chỉ: '
+            },
+            {
+              text: 'Trong trại'
+            }
+          ],style: 'infor'
+        },
+        {
+          columns: [
+            {
+              text: 'SĐT: '
+            },
+            {
+              text: '0378314546'
+            }
+          ],
+          style: 'infor'
+        },
+         '- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ',
+        {
+              layout: 'lightHorizontalLines',
+              table: {
+                headerRows: 1,
+                widths: ['10%', '30%', '10%', '25%', "25%"],
+                body: [
+                  [{ text: 'STT', bold: true }, { text: 'Tên SP', bold: true }, { text: 'SL', bold: true }, { text: 'Đơn giá', bold: true },{ text: 'Thành tiền', bold: true }],
+                ]
+              },
+              style: 'table'
+            },
+            '- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ',
+                 {
+          columns: [
+            {
+              text: 'Tổng số: '
+            },
+            {
+              text: '10'
+            }
+          ],
+          style: 'infor'
+        },
+              {
+          columns: [
+            {
+              text: 'Tổng cộng: '
+            },
+            {
+              text: '9999999'
+            }
+          ],
+          style: 'infor'
+        },
+              {
+          columns: [
+            {
+              text: 'Chiết khấu: '
+            },
+            {
+              text: '10'
+            }
+          ],
+          style: 'infor'
+        },
+                  {
+          columns: [
+            {
+              text: 'Tổng tiền phải trả: '
+            },
+            {
+              text: '10000 $'
+            }
+          ],
+          style: 'infor'
+        },
+            
+            '- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ',
+      {
+          stack: [
+              'Xin Chân Thành Cảm Ơn',
+              ' ',
+              'Ahihi Shop',
+            '65 Huỳnh Thúc Kháng - P.Bến Nghé - Q.1',
+            {text: 'Tel: +84378314546 Email: AhihiShop@gmail.com', style: 'subheader'},
+          ],
+          style: 'Address'
+        },
+      ],
+      styles: {
+          logo:{
+              alignment: 'center',
+          },
+            Address: {
+          fontSize: 18,
+          bold: false,
+          alignment: 'center',
+          margin: [0, 20, 0, 0]
+        },
+        header: {
+          fontSize: 18,
+          bold: true,
+          alignment: 'center',
+          margin: [0, 20, 0, 0]
+        },
+          infor: {
+          fontSize: 16,
+          margin: [0, 5, 0, 0]
+        },
           table: {
-            headerRows: 1,
-            widths: ['10%', '30%', '30%', '30%'],
-            body: [
-              [{ text: 'STT', bold: true }, { text: 'Tên SP', bold: true }, { text: 'SL', bold: true }, { text: 'Đơn giá', bold: true }],
-            ]
-          }
-        }
-      ]
+          fontSize: 15,
+          bold: false,
+          margin: [0, 20, 0, 0]
+        },
+        subheader: {
+          fontSize: 14
+        },
+      }
+      
     }
-
     for (const product of result) {
-      docDefinition.content[0].table.body.push(product)
+      docDefinition.content[8].table.body.push(product)
     }
 
     var pdfDoc = printer.createPdfKitDocument(docDefinition);
