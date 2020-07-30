@@ -130,51 +130,28 @@ exports.Ordered = async (req, res) => {
 }
 exports.downloadOrder = async (req, res) => {
   let orderID = req.body.orderID
-  let date = new Date()
+  let date = Date.now()
   try {
     const orderDownload = await Order.findOne({
       '_id': orderID
     })
-    convertDay = (date) => {
-      if (date === null) {
-        return ''
-      }
-      let day = new Date(date)
-      return `${day.getDate()}/${day.getMonth() + 1}/${day.getFullYear()}`
-    }
-    convertTime = (date1) => {
-      if (date1 === null) {
-        return ''
-      }
-      let date = new Date(date1)
-      let hour = date.getUTCHours()
-      let minutes = date.getMinutes()
-      let seconds = date.getSeconds()
-      if (hour < 10) {
-        hour = '0' + hour
-      }
-      if (minutes < 10) {
-        minutes = '0' + minutes
-      }
-      if ((seconds < 10)) {
-        seconds = '0' + seconds
-      }
-      return `${hour}:${minutes}:${seconds}`
-    }
-
     let result = []
     let index = 1
+    let total = 0
+    let numProduct = 0
     for (const detail of orderDownload.orderDetail) {
+      let cost = parseInt(detail.price) * parseInt(detail.quan)
       result.push([
         index,
         detail.productName,
         detail.quan,
         detail.price,
-        detail.price,
+        cost,
       ])
-      ++index
+      total += cost
+      numProduct += detail.quan,
+        ++index
     }
-    let randomNumber = Math.floor(Math.random() * 10000) + 1
     let name = orderDownload.cusName
     let fileName = `${date}.pdf`
 
@@ -198,21 +175,21 @@ exports.downloadOrder = async (req, res) => {
         {
           stack: [
             'Hoá đơn bán hàng',
-            {text: 'Số hoá đơn: xxxx-xxxx-xxxx-xxx', style: 'subheader'},
+            { text: `Số hoá đơn: ${orderID}`, style: 'subheader' },
           ],
           style: 'header'
         },
-          '    ',
-         '- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ',
+        '    ',
+        '- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ',
         {
           columns: [
             {
               text: 'Khách hàng: ',
             },
             {
-              text: 'Khá Bảnh',
+              text: orderDownload.cusName,
             }
-          ],style: 'infor'
+          ], style: 'infor'
         },
         {
           columns: [
@@ -220,9 +197,9 @@ exports.downloadOrder = async (req, res) => {
               text: 'Địa chỉ: '
             },
             {
-              text: 'Trong trại'
+              text: orderDownload.address
             }
-          ],style: 'infor'
+          ], style: 'infor'
         },
         {
           columns: [
@@ -230,86 +207,86 @@ exports.downloadOrder = async (req, res) => {
               text: 'SĐT: '
             },
             {
-              text: '0378314546'
+              text: orderDownload.phone
             }
           ],
           style: 'infor'
         },
-         '- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ',
+        '- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ',
         {
-              layout: 'lightHorizontalLines',
-              table: {
-                headerRows: 1,
-                widths: ['10%', '30%', '10%', '25%', "25%"],
-                body: [
-                  [{ text: 'STT', bold: true }, { text: 'Tên SP', bold: true }, { text: 'SL', bold: true }, { text: 'Đơn giá', bold: true },{ text: 'Thành tiền', bold: true }],
-                ]
-              },
-              style: 'table'
-            },
-            '- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ',
-                 {
+          layout: 'lightHorizontalLines',
+          table: {
+            headerRows: 1,
+            widths: ['10%', '30%', '10%', '25%', "25%"],
+            body: [
+              [{ text: 'STT', bold: true }, { text: 'Tên SP', bold: true }, { text: 'SL', bold: true }, { text: 'Đơn giá', bold: true }, { text: 'Thành tiền', bold: true }],
+            ]
+          },
+          style: 'table'
+        },
+        '- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ',
+        {
           columns: [
             {
               text: 'Tổng số: '
             },
             {
-              text: '10'
+              text: numProduct
             }
           ],
           style: 'infor'
         },
-              {
-          columns: [
-            {
-              text: 'Tổng cộng: '
-            },
-            {
-              text: '9999999'
-            }
-          ],
-          style: 'infor'
-        },
-              {
-          columns: [
-            {
-              text: 'Chiết khấu: '
-            },
-            {
-              text: '10'
-            }
-          ],
-          style: 'infor'
-        },
-                  {
+        // {
+        //   columns: [
+        //     {
+        //       text: 'Tổng cộng: '
+        //     },
+        //     {
+        //       text: '9999999'
+        //     }
+        //   ],
+        //   style: 'infor'
+        // },
+        // {
+        //   columns: [
+        //     {
+        //       text: 'Chiết khấu: '
+        //     },
+        //     {
+        //       text: '10'
+        //     }
+        //   ],
+        //   style: 'infor'
+        // },
+        {
           columns: [
             {
               text: 'Tổng tiền phải trả: '
             },
             {
-              text: '10000 $'
+              text: `${total} $`,
             }
           ],
           style: 'infor'
         },
-            
-            '- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ',
-      {
+
+        '- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ',
+        {
           stack: [
-              'Xin Chân Thành Cảm Ơn',
-              ' ',
-              'Ahihi Shop',
+            'Xin Chân Thành Cảm Ơn',
+            ' ',
+            'Ahihi Shop',
             '65 Huỳnh Thúc Kháng - P.Bến Nghé - Q.1',
-            {text: 'Tel: +84378314546 Email: AhihiShop@gmail.com', style: 'subheader'},
+            { text: 'Tel: +84378314546 Email: AhihiShop@gmail.com', style: 'subheader' },
           ],
           style: 'Address'
         },
       ],
       styles: {
-          logo:{
-              alignment: 'center',
-          },
-            Address: {
+        logo: {
+          alignment: 'center',
+        },
+        Address: {
           fontSize: 18,
           bold: false,
           alignment: 'center',
@@ -321,11 +298,11 @@ exports.downloadOrder = async (req, res) => {
           alignment: 'center',
           margin: [0, 20, 0, 0]
         },
-          infor: {
+        infor: {
           fontSize: 16,
           margin: [0, 5, 0, 0]
         },
-          table: {
+        table: {
           fontSize: 15,
           bold: false,
           margin: [0, 20, 0, 0]
@@ -334,7 +311,7 @@ exports.downloadOrder = async (req, res) => {
           fontSize: 14
         },
       }
-      
+
     }
     for (const product of result) {
       docDefinition.content[8].table.body.push(product)
@@ -349,7 +326,7 @@ exports.downloadOrder = async (req, res) => {
       status: 1,
       message: 'Thành công',
       data: {
-        fileUrl: `${API_URL.API_URL}/public/pdfFile/${fileName}`,
+        fileUrl: `http://localhost:8080/pdf/${fileName}`,
         fileName: name
       }
     })

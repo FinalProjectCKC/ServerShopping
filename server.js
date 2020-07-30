@@ -21,6 +21,7 @@ server.use('/js', express.static('public/js'));
 server.use('/img', express.static('public/img'));
 server.use('/fonts', express.static('public/fonts'));
 server.use('/images', express.static(__dirname+'/public/img'))
+server.use('/pdf', express.static(__dirname+'/public/pdfFile'))
 server.use(cors())
 
 // set the view engine to ejs
