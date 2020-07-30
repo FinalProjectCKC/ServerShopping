@@ -50,6 +50,7 @@ const accountSchema = new Schema({
   },
   fullName: {
     type: String,
+    default: ""
   },
   email: {
     type: String,

@@ -5,6 +5,7 @@ const accountApi = require('../api/accountApi')
 const productTypeApi = require('../api/productTypeApi')
 const productApi = require('../api/productApi')
 const cartApi = require('../api/cartApi')
+const orderApi = require('../api/orderApi')
 const accountAuth = require('../middleware/accountAuth')
 
 let multer = require('multer')
@@ -62,10 +63,13 @@ router.route('/Cart/GetCart')
   .post(cartApi.findCartByUser)
   router.route('/Cart/AddToCart')
   .post(cartApi.addToCart)
-
   router.route('/Cart/EditQuanTi')
   .post(cartApi.changeQuanti)
   router.route('/Cart/RemoveFromCart')
   .post(cartApi.removeFromCart)
-  
+//Order
+router.route('/Order/NewOrder')
+.post(orderApi.newOrder)
+router.route('/Order/Ordered')
+.post(orderApi.Ordered)
 module.exports = router;

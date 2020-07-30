@@ -255,7 +255,7 @@ exports.changeQuanti = async (req, res) => {
         let userCart = await Cart.findOne(
           { userId: accountId }
         )
-        userCart.update({ $unset: { [`cartDetail.${cartDetailIndex}`]: 1 } })
+        userCart.updateOne({ $unset: { [`cartDetail.${cartDetailIndex}`]: 1 } })
           .then(async (data) => {
             console.log(data)
             userCart.update({ $pull: { "cartDetail": null } })
@@ -321,14 +321,16 @@ exports.removeFromCart = async (req, res) => {
       let userCart = await Cart.findOne(
         { userId: accountId }
       )
-      userCart.update({ $unset: { [`cartDetail.${cartDetailIndex}`]: 1 } })
+      userCart.updateOne({ $unset: { [`cartDetail.${cartDetailIndex}`]: 1 } })
         .then(async (data) => {
           userCart.update({ $pull: { "cartDetail": null } })
             .then(async (data) => {
               return res.json({
                 status: 1,
                 message: 'Đã xoá sản phẩm khỏi giỏ hàng',
-                data: null,
+                data: {
+                  productID: productID
+                }
               })
             })
         })
@@ -337,7 +339,9 @@ exports.removeFromCart = async (req, res) => {
     return res.json({
       status: -1,
       message: 'Có sự cố xảy ra. Không xoá được sản phẩm!',
-      data: null,
+      data: {
+        productID: productID
+      }
     })
   }
 }

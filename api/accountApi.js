@@ -12,8 +12,7 @@ let api = require('../config')
 API_URL = api.API_URL
 
 exports.login = async (req, res) => {
-    let username = req.body.username
-    let password = req.body.password
+    let {username, password} = req.body
     if (username === null || username === undefined || password === null || password === undefined || password === "" || username === "") {
         return res.json({
             status: -1,
@@ -81,11 +80,10 @@ exports.logout = async (req, res) => {
 }
 exports.register = async (req, res) => {
     try {
-        let email = req.body.email
+        let email = req.body.email.toLowerCase()
         let username = req.body.username.toLowerCase()
         let password = req.body.password
         const date = new Date()
-        email = email.toLowerCase()
         if (email === undefined || email === null) {
             return res.json({
                 status: -1,
@@ -401,8 +399,6 @@ exports.getListNotification = async (req, res) => {
         })
     }
 }
-
-
 
 exports.changeAvatar = async (req, res) => {
     let file = req.file

@@ -53,16 +53,33 @@ const orderSchema = new Schema({
     // default: new ObjectId()
   },
   orderDetail: [orderDetail],
-  price: {
+  total: {
     type: String,
   },
   cusID: {
     type: Schema.Types.ObjectId,
     required: true,
   },
+  cusName: {
+    type: String,
+    required: true,
+  },
+  address: {
+    type: String,
+    required: true,
+  },
+  phone: {
+    type: String,
+    required: true,
+  },
   created_at: {
     type: Date,
     timezone: "Asia/Ho_Chi_Minh"
+  },
+  status: {
+    type: Number,
+    enum: [0, 1, 2],
+    default: 0
   },
   delete_at: {
     type: Date,
