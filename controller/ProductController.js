@@ -21,11 +21,10 @@ exports.getListProductType = async (req, res) => {
   try {
     let page = 0//req.body.page
     let limit = 1//req.body.limit
-    // const listProductType = await ProductType.find().skip(page*limit).limit(limit)
-    console.log(__dirname)
-    const listProductType = await ProductType.find()
-    const listAll = ProductType.find()
-    const countPage = (await listAll).length/limit
+    const listProductType = await ProductType.find().skip(page * limit).limit(limit)
+    const listAll = await ProductType.find()
+    // const listAll = await ProductType.find().skip(page * limit).limit(limit)
+    const countPage = parseInt((await listAll).length / limit)
     return res.render('product/ProductType', { listProductType, mgs: "", countPage: countPage });
   } catch (error) {
     return res.send({ mgs: 'Có lỗi xảy ra! Lấy danh sách thất bại' });;
@@ -34,13 +33,14 @@ exports.getListProductType = async (req, res) => {
 exports.getListPageType = async (req, res) => {
   try {
     let page = req.body.page
-    let limit = 2//req.body.limit
-    const listProductType = await ProductType.find().skip(page*limit).limit(limit)
-    const listAll = ProductType.find()
-    const countPage = (await listAll).length/limit
-    return res.json({success: true, listProductType, mgs: "shihi ", countPage: countPage });
+    let limit = parseInt(req.body.limit)
+    const listAll = ProductType.find({})
+    let listProductType = await ProductType.find().skip(page * limit).limit(limit)
+    const countPage = parseInt((await listAll).length / limit)
+    return res.json({ success: true, listProductType: listProductType, mgs: "Ahihi ", countPage: countPage });
   } catch (error) {
-    return res.json({success: false, mgs: 'Có lỗi xảy ra! Lấy danh sách thất bại' });;
+    console.log(error)
+    return res.json({ success: false, mgs: 'Có lỗi xảy ra! Lấy danh sách thất bại' });;
   }
 }
 exports.addProductType1 = async (req, res) => {
@@ -141,7 +141,7 @@ exports.editProductType = async (req, res) => {
       const checkName = await ProductType.find({
         typeName: typeName
       })
-      if (checkName.length!= 0) {
+      if (checkName.length != 0) {
         return res.json({
           success: false,
           mgs: 'Tên loại sản phẩm đã tồn tại!',
@@ -254,52 +254,70 @@ exports.getListProduct = async (req, res) => {
   }
 }
 exports.addProduct = async (req, res) => {
+  let { description, productName, unit,  price, typeProduct } = req.body
+  let quan =req.body.quan
+  let files = req.files
+  let date = new Date()
+  let today = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
+  if (productName == null || productName == undefined || productName == '') {
+    return res.json({ success: false, mgs: "Tên sản phẩm không được để trống" });
+  }
   try {
-    let typeProduct = req.body.typeProduct
-    let description = req.body.description
-    let productName = req.body.productName
-    let unit = req.body.unit
-    let quan = req.body.quan
-    let price = req.body.price
-    let productImg = "img/product/" + req.file.filename
-    let date = new Date()
-    let today = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
-
-    if (productName == null || productName == undefined || productName == '') {
-      return res.send('Tên sản phẩm không được để trống');
-    }
-    let proType = await ProductType.findOne(
-      {
-        'typeName': typeProduct,
+    const check = await ProductType.findOne({
+      _id: typeProduct
+    })
+    if (check == null) {
+      return res.json({
+        success: false,
+        mgs: 'Không tìm thấy loại sản phẩm này!',
       })
-    if (proType == null) {
-      return res.send('Không tìm thấy loại sản phẩm này');
     }
-    //create new Products
-    const newProducts = {
+    let typeImg = "img/product/default.png"
+    if (!objectIsEmpty(files)) {
+      var file = req.files.addInputImg
+      var imageName = file.fieldName + '-' + Date.now() + '.png'
+      var tmp_path = file.path
+      var target_path = __dirname.replace('controller', '') + 'public/img/product/' + imageName
+      let src = fs.createReadStream(tmp_path)
+      let dest = fs.createWriteStream(target_path)
+      src.pipe(dest)
+      src.on('end', async () => {
+        typeImg = "img/product/" + imageName
+      })
+      src.on('error', (err) => {
+        fs.unlink(tmp_path, (err) => { console.log(err) })
+        return res.json({
+          status: -1,
+          message: 'Thất bại',
+        })
+      })
+    }
+    const newProduct = {
       _id: new mongoose.Types.ObjectId(),
       productName: productName,
       unit: unit,
       quan: quan,
       price: price,
-      typeProduct: typeProduct,
-      productImg: productImg,
+      typeProduct: check.typeName,
+      productImg: 'img/product/'+imageName,
       description: description,
       created_at: today,
       last_modified: today
     }
-    proType = await ProductType.findOneAndUpdate(
-      { typeName: typeProduct },
-      { $push: { product: newProducts } }
+    await ProductType.findOneAndUpdate(
+      { _id: typeProduct },
+      { $push: { product: newProduct } }
     ).then(async (data) => {
-      if (data == null) {
-        return res.send('Thêm sản phẩm thất bại');
+      if (data !== null) {
+        return res.json({ success: true, mgs: "Thêm sản phẩm thành công" });
       }
-      return res.redirect(req.get('referer'));
     })
-  } catch (error) {
+  } catch(error){
     console.log(error)
-    return res.send('Có lỗi xảy ra! Thêm sản phẩm thất bại');
+    return res.json({
+      success: false,
+      mgs: 'Có sự cố xảy ra. Không thể thêm sản phẩm!',
+    })
   }
 }
 exports.editProduct = async (req, res) => {

@@ -162,7 +162,6 @@ exports.getProductByName = async (req, res) => {
         if (ProType.product !== []) {
           for (let product of ProType.product) {
             if (product !== null || product !== []) {
-              console.log(product.productName);
               if (product.productName.includes(productName)) {
                 listProduct.push(product);
               }

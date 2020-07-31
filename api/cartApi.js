@@ -257,10 +257,8 @@ exports.changeQuanti = async (req, res) => {
         )
         userCart.updateOne({ $unset: { [`cartDetail.${cartDetailIndex}`]: 1 } })
           .then(async (data) => {
-            console.log(data)
             userCart.update({ $pull: { "cartDetail": null } })
               .then(async (data) => {
-                console.log(data)
                 return res.json({
                   status: 1,
                   message: 'Đã xoá sản phẩm khỏi giỏ hàng',

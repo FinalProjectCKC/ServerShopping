@@ -8,7 +8,7 @@
 			<% include ../partials/SearchBar %>
 
 			<main class="content">
-				<!--Form Account-->
+				<!--Form ProductType-->
 				<div class="col-md-12">
 					<div class="card">
 						<div class="card-body">
@@ -135,6 +135,23 @@
 				<!--table-->
 				<div class="col-12 col-xl-12">
 					<h2>Danh sách loại sản phẩm</h2>
+					<div style="text-align:center;">
+						<input style="display: inline;" type="text" class="form-control col-6" placeholder="Search…">
+						<div style="display: inline;" class="input-group-append">
+							<button class="btn" type="button">
+								<i class="align-middle" data-feather="search"></i>
+							</button>
+						</div>
+						<select style="display: inline;" id="limit" class="form-control col-2">
+							<option value="1">1</option>
+							<option value="10">10</option>
+							<option value="25">25</option>
+							<option value="50">50</option>
+							<option value="100">100</option>
+							<option value="500">500</option>
+							<option value="9999">all</option>
+						</select>
+					</div>
 					<div class="card">
 						<br />
 						<table class="table" id="myTable">
@@ -167,12 +184,11 @@
 
 							</tbody>
 						</table>
-
 					</div>
 					<!-- Page phân trang -->
-					<div>
+					<div id="countPage">
 						<% for (var i = 0; i < countPage; i++) { %>
-						<button onclick="pageType(event)" style="background-color:dimgray;" type="button"><i><%= i %></i></button>
+						<button name="pagetype" style="background-color:dimgray;" value="<%= i %>" type="button"><%= i %></button>
 						<% } %>
 					</div>
 				</div>
@@ -181,10 +197,6 @@
 		</div>
 	</div>
 	<script type="text/javascript">
-		// 	$(document).ready( function () {
-		//     $('#myTable').DataTable();
-		// } );
-
 		var addType = function (event) {
 			event.preventDefault();
 			var formData = new FormData();
@@ -273,10 +285,21 @@
 				alert("Không kết nối được với server")
 			})
 		}
-		var pageType = function (event) {
-			event.preventDefault();
+		var loadImg = function (event) {
+			$('#typeImgForm').attr('src', URL.createObjectURL(event.target.files[0]));
+		};
+		var loadImgEdit = function (event) {
+			$('#editTypeImgForm').attr('src', URL.createObjectURL(event.target.files[0]));
+		};
+		//Phan trang
+		$('#limit').on('change', function () {
+			var optionSelected = $("option:selected", this);
+			var valueSelected = this.value;
+			var page = 0;
+			var limit = valueSelected;
 			var formData = new FormData();
-			var page = 2// ($(this).children().html());
+			formData.append('page', page);
+			formData.append('limit', limit);
 			$.ajax({
 				url: 'productType/getTypePage',
 				type: 'POST',
@@ -287,9 +310,24 @@
 			}).done(function (result) {
 				if (result.success) {
 					$('#bodyTable').empty();
+					$('#countPage').empty();
+					for (var i = 0; i < result.countPage; i++) {
+						$('#countPage').append(`<button name="pagetype" style="background-color:dimgray;" value="${i}" type="button">${i}</button>`)
+					}
 					for (let type of result.listProductType) {
 						$('#bodyTable').append(
-							`<tr><td hidden> ${type._id} </td><td> ${type.typeName} </td><td> ${type.description}</td><td><img src="${type.typeImg}" class="avatar img-fluid" alt="No IMG"></td><td class="table-action"><button type="button" name="btn_edit" data-toggle="modal" data-target="#editTypeModal"><iclass="align-middle" data-feather="edit-2"></i></button><button type="button" name="btn_delete" data-toggle="modal" data-target="#DeleteProductTypeModal"><iclass="align-middle" data-feather="trash"></i></button></td></tr>`
+							`<tr>
+								<td hidden> ${type._id} </td>
+								<td> ${type.typeName} </td>
+								<td> ${type.description}</td>
+								<td>
+									<img src="${type.typeImg}" class="avatar img-fluid" alt="No IMG">
+								</td>
+									<td class="table-action">
+										<button type="button" name="btn_edit" data-toggle="modal" data-target="#editTypeModal"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 align-middle"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></button>
+										<button type="button" name="btn_delete" data-toggle="modal" data-target="#DeleteProductTypeModal"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash align-middle"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+									</td>
+							</tr>`
 						)
 					}
 				} else {
@@ -298,13 +336,50 @@
 			}).fail(() => {
 				alert("Không kết nối được với server")
 			})
-		}
-		var loadImg = function (event) {
-			$('#typeImgForm').attr('src', URL.createObjectURL(event.target.files[0]));
-		};
-		var loadImgEdit = function (event) {
-			$('#editTypeImgForm').attr('src', URL.createObjectURL(event.target.files[0]));
-		};
+		});
+		$('[name=pagetype]').click(function () {
+			var page = ($(this).val());
+			var limit = $("#limit option:selected").text();
+			var formData = new FormData();
+			formData.append('page', page);
+			formData.append('limit', limit);
+			$.ajax({
+				url: 'productType/getTypePage',
+				type: 'POST',
+				data: formData,
+				cache: false,
+				contentType: false,
+				processData: false,
+			}).done(function (result) {
+				if (result.success) {
+					$('#bodyTable').empty();
+					// $('#countPage').empty();
+					// for (var i = 0; i < result.countPage; i++) {
+					// 	$('#countPage').append(	`<button  name="pageType" style="background-color:dimgray;" value="${i}" type="button">${i}</button>`)
+					// }
+					for (let type of result.listProductType) {
+						$('#bodyTable').append(
+							`<tr>
+								<td hidden> ${type._id} </td>
+								<td> ${type.typeName} </td>
+								<td> ${type.description}</td>
+								<td>
+									<img src="${type.typeImg}" class="avatar img-fluid" alt="No IMG">
+								</td>
+									<td class="table-action">
+										<button type="button" name="btn_edit" data-toggle="modal" data-target="#editTypeModal"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 align-middle"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></button>
+										<button type="button" name="btn_delete" data-toggle="modal" data-target="#DeleteProductTypeModal"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash align-middle"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+									</td>
+							</tr>`
+						)
+					}
+				} else {
+					alert(result.mgs)
+				}
+			}).fail(() => {
+				alert("Không kết nối được với server")
+			})
+		});
 		$('[name=btn_edit]').click(function () {
 			var typeId = ($(this).parent().parent().children().eq(0).html());
 			var name = ($(this).parent().parent().children().eq(1).html());
