@@ -36,20 +36,13 @@
 														</div>
 														<div class="col-md-6">
 															<label class="form-label">Loại sản phẩm</label>
-															<select id="addTypeProduct" name="addTypeProduct" class="custom-select mb-3">
-																<option value="<%= listProductType[0]._id %>" selected="">
+															<select id="addProductType" name="addProductType" class="custom-select mb-3">
+																<option value="<%= listProductType[0].typeName %>" selected="">
 																	<%= listProductType[0].typeName %></option>
 																<% for (var i = 1; i < listProductType.length; i++) { %>
-																<option value="<%= listProductType[i]._id %>"><%= listProductType[i].typeName %>
+																<option value="<%= listProductType[i].typeName %>"><%= listProductType[i].typeName %>
 																</option>
 																<% } %>
-															</select>
-														</div>
-														<div class="col-md-6">
-															<label class="form-label">Trạng thái</label>
-															<select name="addStatus" class="custom-select mb-3">
-																<option value="1" selected="">Còn hàng</option>
-																<option value="0" selected="">Hết hàng</option>
 															</select>
 														</div>
 													</div>
@@ -107,7 +100,7 @@
 								<div class="modal-dialog" role="document">
 									<div class="modal-content">
 										<div class="modal-header">
-											<h5 class="modal-title">Cập nhật loại sản phẩm</h5>
+											<h5 class="modal-title">Cập nhật sản phẩm</h5>
 											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 												<span aria-hidden="true">&times;</span>
 											</button>
@@ -117,27 +110,21 @@
 												<div class="form-group">
 													<div class="row">
 														<div class="col-md-6">
+															<input hidden name="productIdEdit">
 															<label class="form-label col-6 col-xl-6">Tên sản phẩm</label>
-															<input type="text" name="productName" class="form-control" required="required"
+															<input type="text" name="productNameEdit" class="form-control" required="required"
 																placeholder="Tên sản phẩm">
 														</div>
 														<div class="col-md-6">
 															<label class="form-label">Loại sản phẩm</label>
-															<select name="typeProduct" class="custom-select mb-3">
+															<select name="productTypeEdit" class="form-control">
 																<option value="<%= listProductType[0].typeName %>" selected="">
-																	<%= listProductType[0].typeName %></option>
+																  <%= listProductType[0].typeName %></option>
 																<% for (var i = 1; i < listProductType.length; i++) { %>
 																<option value="<%= listProductType[i].typeName %>"><%= listProductType[i].typeName %>
 																</option>
 																<% } %>
-															</select>
-														</div>
-														<div class="col-md-6">
-															<label class="form-label">Trạng thái</label>
-															<select name="status" class="custom-select mb-3">
-																<option value="1" selected="">Còn hàng</option>
-																<option value="0" selected="">Hết hàng</option>
-															</select>
+															  </select>
 														</div>
 													</div>
 												</div>
@@ -145,44 +132,43 @@
 													<div class="row">
 														<div class="col-md-4">
 															<label class="form-label col-6 col-xl-6">Đơn vị</label>
-															<input type="text" name="unit" class="form-control" required="required"
+															<input type="text" name="unitEdit" class="form-control" required="required"
 																placeholder="Đơn vị">
 														</div>
 														<div class="col-md-4">
 															<label class="form-label">Số lượng</label>
-															<input type="number" min="0" name="quan" required="required" class="form-control"
+															<input type="number" min="0" name="quanEdit" required="required" class="form-control"
 																placeholder="Số lượng">
 														</div>
 														<div class="col-md-4">
 															<label class="form-label col-6 col-xl-6">Đơn giá</label>
-															<input type="number" min="0" name="price" required="required" class="form-control"
+															<input type="number" min="0" name="priceEdit" required="required" class="form-control"
 																placeholder="Đơn giá">
 														</div>
 													</div>
 												</div>
 												<div class="form-group">
 													<label class="form-label">Mô tả</label>
-													<textarea class="form-control" name="description" placeholder="Mô tả sản phẩm"
+													<textarea class="form-control" name="descriptionEdit" placeholder="Mô tả sản phẩm"
 														rows="3"></textarea>
 												</div>
 												<div class="form-group">
 													<label class="form-label w-100">Ảnh sản phẩm</label>
-													<input name="inputImg" id="inputImg" type="file" required="required" onchange="loadImg(event)"
+													<input name="inputImgEdit" id="inputImgEdit" type="file" required="required" onchange="loadImgEdit(event)"
 														accept="image/png, image/jpeg">
 													<small class="form-text text-muted">
-														<img name="productImg" id="productImg" src="#" height="200px" width="200px" alt="No IMG">
+														<img name="productImgEdit" id="productImgEdit" src="#" height="200px" width="200px" alt="No IMG">
 													</small>
 												</div>
 												<div class="form-group">
 													<label class="custom-control custom-checkbox">
 													</label>
 												</div>
-												<button type="submit" name="btnCreate" class="btn btn-primary">Thêm loại sản phẩm</button>
 											</form>
 										</div>
 										<div class="modal-footer">
 											<button type="button" class="btn btn-secondary" data-dismiss="modal">Huỷ</button>
-											<button type="button" id="btnSubmit" onclick="editType(event)" name="btnCreate"
+											<button type="button" id="btnSubmit" onclick="editProduct(event)" name="btnCreate"
 												class="btn btn-success">Cập nhật</button>
 										</div>
 									</div>
@@ -242,7 +228,9 @@
 						<table class="table">
 							<thead>
 								<tr>
+									<th hidden></th>
 									<th style="width:15%;">Tên sản phẩm</th>
+									<th style="width:15%;">Loại sản phẩm</th>
 									<th style="width:15%">Mô tả</th>
 									<th style="width:15%">Hình ảnh</th>
 									<th style="width:15%;">Số lượng</th>
@@ -254,7 +242,9 @@
 							<tbody>
 								<% for (var i = 0; i < listProduct.length; i++) { %>
 								<tr>
+									<td hidden><%= listProduct[i]._id %></td>
 									<td><%= listProduct[i].productName %></td>
+									<td><%= listProduct[i].productType%></td>
 									<td><%= listProduct[i].description %></td>
 									<td>
 										<img src="<%= listProduct[i].productImg %>" class="avatar img-fluid" alt="No IMG">
@@ -264,7 +254,7 @@
 									<td><%= listProduct[i].price %></td>
 
 									<td class="table-action">
-										<button type="button" name="btn_edit"><i class="align-middle" data-feather="edit-2"></i></button>
+										<button type="button" data-toggle="modal" data-target="#editProductModal" name="btn_edit"><i class="align-middle" data-feather="edit-2"></i></button>
 										<button type="button" name="btn_delete"><i class="align-middle" data-feather="trash"></i></button>
 									</td>
 								</tr>
@@ -274,248 +264,264 @@
 						</table>
 					</div>
 					<!-- Page phân trang -->
-					<div id="countPage">
+					<!-- <div id="countPage">
 						<% for (var i = 0; i < 10; i++) { %>
 						<button name="pagetype" style="background-color:dimgray;" value="<%= i %>" type="button"><%= i %></button>
 						<% } %>
-					</div>
+					</div> -->
 				</div>
 			</main>
 			<% include ../partials/Footer %>
 		</div>
 	</div>
 	<script type="text/javascript">
-		var loadImg = function (event) {
-			$('#productImg').attr('src', URL.createObjectURL(event.target.files[0]));
-		};
-
-		$('[name=btn_edit]').click(function () {
-			var name = ($(this).parent().parent().children().eq(0).html());
-			var des = ($(this).parent().parent().children().eq(1).html());
-			var img = ($(this).parent().parent().children().eq(2).children().eq(0).attr("src"));
-			var quan = ($(this).parent().parent().children().eq(3).html());
-			var unit = ($(this).parent().parent().children().eq(4).html());
-			var price = ($(this).parent().parent().children().eq(5).html());
-			$('[name=producName]').val(name);
-			$('[name=description]').val(des);
-			$('[name=productImg]').attr('src', img);
-			$('[name=btnCreate]').html('Cập nhật');
-			$('#productForm').attr('action', '/productType/editType');
-			$('[name=btnCreate]').attr('name', 'btnUpdate');
-		});
-	</script>
-	<script type="text/javascript">
 		var addProduct = function (event) {
-			event.preventDefault();
-			var formData1 = new FormData();
-			var typeProduct= 	$( "#addTypeProduct option:selected" ).val();
-			var productName = $('[name=addProductName]').val();
-			var des = $('[name=addDescription]').val();
-			// var status = $('[name=addStatus]').val();
-			var unit = $('[name=addUnit]').val();
-			var quan = $('[name=addQuan]').val();
-			var price = $('[name=addPrice]').val();
-			var file = $('[name=addInputImg]').get(0).files;
+		  event.preventDefault();
+		  var formData = new FormData();
+		  var proName = $("[name=addProductName]").val();
+		  var typeName = $("[name=addProductType]").val();
+		  var des = $("[name=addDescription]").val();
+		  var quan = $("[name=addQuan]").val();
+		  var price = $("[name=addPrice]").val();
+		  var unit = $("[name=addUnit]").val();
+		  var file = $("[name=addInputImg]").get(0).files;
 
-			formData1.append('addInputImg', file[0]);
-			formData1.append('typeProduct', typeProduct);
-			formData1.append('description', des);
-			// formData1.append('status', status);
-			formData1.append('productName', productName);
-			formData1.append('unit', unit);
-			formData1.append('quan', quan);
-			formData1.append('price', price);
-
-			console.log(formData1.append)
-			$.ajax({
-				url: 'product/addProduct',
-				type: 'POST',
-				data: formData1,
-				cache: false,
-				contentType: false,
-				processData: false,
-			}).done(function (result) {
-				if (result.success) {
-					alert(result.mgs)
-					location.reload()
-				} else {
-					alert(result.mgs)
-				}
-			}).fail(() => {
-				alert("Không kết nối được với server")
+		  formData.append("productName", proName);
+		  formData.append("productType", typeName);
+		  formData.append("description", des);
+		  formData.append("quan", quan);
+		  formData.append("unit", unit);
+		  formData.append("price", price);
+		  formData.append("imgProduct", file[0]);
+	
+		  $.ajax({
+			url: "product/addProduct",
+			type: "POST",
+			data: formData,
+			cache: false,
+			contentType: false,
+			processData: false,
+		  })
+			.done(function (result) {
+			  if (result.success) {
+				alert(result.mgs);
+				location.reload();
+			  } else {
+				alert(result.mgs);
+			  }
 			})
-		}
+			.fail(() => {
+			  alert("Không kết nối được với server");
+			});
+		};
 		var editProduct = function (event) {
-			event.preventDefault();
-			alert("editProduct")
-			// var formData = new FormData();
-			// var typeId = $('[name=editTypeId]').val();
-			// var typeName = $('[name=editTypeName]').val();
-			// var des = $('[name=editDescription]').val();
-			// var file = $('[name=editTypeImg]').get(0).files;
+		  event.preventDefault();
+	
+		  var formData = new FormData();
+		  var productId= $("[name=productIdEdit]").val();
+		  var proName = $("[name=productNameEdit]").val();
+		  var typeName = $("#productTypeEdit option:selected").text();
 
-			// formData.append('typeId', typeId);
-			// formData.append('imgType', file[0]);
-			// formData.append('typeName', typeName);
-			// formData.append('description', des);
-
-			// $.ajax({
-			// 	url: 'productType/editType',
-			// 	type: 'POST',
-			// 	data: formData,
-			// 	cache: false,
-			// 	contentType: false,
-			// 	processData: false,
-			// }).done(function (result) {
-			// 	if (result.success) {
-			// 		alert(result.mgs)
-			// 		location.reload()
-			// 	} else {
-			// 		alert(result.mgs)
-			// 	}
-			// }).fail(() => {
-			// 	alert("Không kết nối được với server")
-			// })
-		}
-		var deleteProduct = function (event) {
-			event.preventDefault();
-			alert("deleteProduct")
-			// var formData = new FormData();
-			// var typeId = $('[name=typeIdDel]').text();
-
-			// formData.append('typeId', typeId);
-
-			// $.ajax({
-			// 	url: 'productType/deleteType',
-			// 	type: 'POST',
-			// 	data: formData,
-			// 	cache: false,
-			// 	contentType: false,
-			// 	processData: false,
-			// }).done(function (result) {
-			// 	if (result.success) {
-			// 		alert(result.mgs)
-			// 		location.reload()
-			// 	} else {
-			// 		alert(result.mgs)
-			// 	}
-			// }).fail(() => {
-			// 	alert("Không kết nối được với server")
-			// })
-		}
+		  var des = $("[name=descriptionEdit]").val();
+		  var quan = $("[name=quanEdit]").val();
+		  var price = $("[name=priceEdit]").val();
+		  var unit = $("[name=unitEdit]").val();
+		  var file = $("[name=inputImgEdit]").get(0).files;
+	
+		  formData.append("productId", productId);
+		  formData.append("productName", proName);
+		  formData.append("productType", typeName);
+		  formData.append("description", des);
+		  formData.append("quan", quan);
+		  formData.append("unit", unit);
+		  formData.append("price", price);
+		  formData.append("imgProduct", file[0]);
+	
+		  $.ajax({
+			url: "product/editProduct",
+			type: "POST",
+			data: formData,
+			cache: false,
+			contentType: false,
+			processData: false,
+		  })
+			.done(function (result) {
+			  if (result.success) {
+				//   alert(result.mgs);
+				location.reload();
+			  } else {
+				alert(result.mgs);
+			  }
+			})
+			.fail(() => {
+			  alert("Không kết nối được với server");
+			});
+		};
+		var deleteProduct= function (event) {
+		  event.preventDefault();
+	
+		  var formData = new FormData();
+		  var productId = $("[name=productIdDel]").text();
+	
+		  formData.append("productId", productId);
+	
+		  $.ajax({
+			url: "product/deleteProduct",
+			type: "POST",
+			data: formData,
+			cache: false,
+			contentType: false,
+			processData: false,
+		  })
+			.done(function (result) {
+			  if (result.success) {
+				  alert(result.mgs);
+				location.reload();
+			  } else {
+				alert(result.mgs);
+			  }
+			})
+			.fail(() => {
+			  alert("Không kết nối được với server");
+			});
+		};
 		var loadImg = function (event) {
-			$('#productImg').attr('src', URL.createObjectURL(event.target.files[0]));
+		  $("#productImg").attr(
+			"src",
+			URL.createObjectURL(event.target.files[0])
+		  );
 		};
 		var loadImgEdit = function (event) {
-			$('#editTypeImgForm').attr('src', URL.createObjectURL(event.target.files[0]));
+		  $("#productImgEdit").attr(
+			"src",
+			URL.createObjectURL(event.target.files[0])
+		  );
 		};
+		$("[name=btn_edit]").click(function () {
+		  var productId=$(this).parent().parent().children().eq(0).html();
+		  var productName = $(this).parent().parent().children().eq(1).html();
+		  var productType= $(this).parent().parent().children().eq(2).html();
+		  var des = $(this).parent().parent().children().eq(3).html();
+		  var img = $(this)
+			  .parent()
+			  .parent()
+			  .children()
+			  .eq(4)
+			  .children()
+			  .eq(0)
+			  .attr("src");
+	
+		  var quan = $(this).parent().parent().children().eq(5).html();
+		  var price = $(this).parent().parent().children().eq(7).html();
+		  var unit = $(this).parent().parent().children().eq(6).html();
+		  
+			  $("[name=productIdEdit]").val(productId);
+			 $("#productImgEdit").attr("src", img);
+			 $("[name=productNameEdit]").val(productName);
+			 $("[name=productTypeEdit]").val(productType);
+			 $("[name=descriptionEdit]").val(des);
+			  $("[name=quanEdit]").val(quan);
+			  $("[name=priceEdit]").val(price);
+			  $("[name=unitEdit]").val(unit);
+		});
+		$("[name=btn_delete]").click(function () {
+		  var productIdDel = $(this).parent().parent().children().eq(0).html();
+		  var name = $(this).parent().parent().children().eq(1).html();
+		  $("[name=productIdDel]").text(productIdDel);
+		  $("[name=productNameDel]").text(name);
+		});
+	  </script>
+	<script type="text/javascript">
 		//Phan trang
-		$('#limit').on('change', function () {
-			var optionSelected = $("option:selected", this);
-			var valueSelected = this.value;
-			var page = 0;
-			var limit = valueSelected;
-			var formData = new FormData();
-			formData.append('page', page);
-			formData.append('limit', limit);
-			$.ajax({
-				url: 'productType/getTypePage',
-				type: 'POST',
-				data: formData,
-				cache: false,
-				contentType: false,
-				processData: false,
-			}).done(function (result) {
-				if (result.success) {
-					$('#bodyTable').empty();
-					$('#countPage').empty();
-					for (var i = 0; i < result.countPage; i++) {
-						$('#countPage').append(`<button name="pagetype" style="background-color:dimgray;" value="${i}" type="button">${i}</button>`)
-					}
-					for (let type of result.listProductType) {
-						$('#bodyTable').append(
-							`<tr>
-									<td hidden> ${type._id} </td>
-									<td> ${type.typeName} </td>
-									<td> ${type.description}</td>
-									<td>
-										<img src="${type.typeImg}" class="avatar img-fluid" alt="No IMG">
-									</td>
-										<td class="table-action">
-											<button type="button" name="btn_edit" data-toggle="modal" data-target="#editProductModal"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 align-middle"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></button>
-											<button type="button" name="btn_delete" data-toggle="modal" data-target="#DeleteProductModal"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash align-middle"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
-										</td>
-								</tr>`
-						)
-					}
-				} else {
-					alert(result.mgs)
-				}
-			}).fail(() => {
-				alert("Không kết nối được với server")
-			})
-		});
-		$('[name=pagetype]').click(function () {
-			var page = ($(this).val());
-			var limit = $("#limit option:selected").text();
-			var formData = new FormData();
-			formData.append('page', page);
-			formData.append('limit', limit);
-			$.ajax({
-				url: 'productType/getTypePage',
-				type: 'POST',
-				data: formData,
-				cache: false,
-				contentType: false,
-				processData: false,
-			}).done(function (result) {
-				if (result.success) {
-					$('#bodyTable').empty();
-					// $('#countPage').empty();
-					// for (var i = 0; i < result.countPage; i++) {
-					// 	$('#countPage').append(	`<button  name="pageType" style="background-color:dimgray;" value="${i}" type="button">${i}</button>`)
-					// }
-					for (let type of result.listProductType) {
-						$('#bodyTable').append(
-							`<tr>
-									<td hidden> ${type._id} </td>
-									<td> ${type.typeName} </td>
-									<td> ${type.description}</td>
-									<td>
-										<img src="${type.typeImg}" class="avatar img-fluid" alt="No IMG">
-									</td>
-										<td class="table-action">
-											<button type="button" name="btn_edit" data-toggle="modal" data-target="#editProductModal"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 align-middle"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></button>
-											<button type="button" name="btn_delete" data-toggle="modal" data-target="#DeleteProductModal"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash align-middle"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
-										</td>
-								</tr>`
-						)
-					}
-				} else {
-					alert(result.mgs)
-				}
-			}).fail(() => {
-				alert("Không kết nối được với server")
-			})
-		});
-		$('[name=btn_edit]').click(function () {
-			var typeId = ($(this).parent().parent().children().eq(0).html());
-			var name = ($(this).parent().parent().children().eq(1).html());
-			var des = ($(this).parent().parent().children().eq(2).html());
-			var img = ($(this).parent().parent().children().eq(3).children().eq(0).attr("src"));
-			$('#editTypeImgForm').attr('src', img);
-			$('[name=editTypeId]').val(typeId);
-			$('[name=editTypeName]').val(name);
-			$('[name=editDescription]').val(des);
-		});
-		$('[name=btn_delete]').click(function () {
-			var typeIdDel = ($(this).parent().parent().children().eq(0).html());
-			var name = ($(this).parent().parent().children().eq(1).html());
-			$('[name=typeIdDel]').text(typeIdDel);
-			$('[name=typeNameDel]').text(name);
-		});
+		// $('#limit').on('change', function () {
+		// 	var optionSelected = $("option:selected", this);
+		// 	var valueSelected = this.value;
+		// 	var page = 0;
+		// 	var limit = valueSelected;
+		// 	var formData = new FormData();
+		// 	formData.append('page', page);
+		// 	formData.append('limit', limit);
+		// 	$.ajax({
+		// 		url: 'productType/getTypePage',
+		// 		type: 'POST',
+		// 		data: formData,
+		// 		cache: false,
+		// 		contentType: false,
+		// 		processData: false,
+		// 	}).done(function (result) {
+		// 		if (result.success) {
+		// 			$('#bodyTable').empty();
+		// 			$('#countPage').empty();
+		// 			for (var i = 0; i < result.countPage; i++) {
+		// 				$('#countPage').append(`<button name="pagetype" style="background-color:dimgray;" value="${i}" type="button">${i}</button>`)
+		// 			}
+		// 			for (let type of result.listProductType) {
+		// 				$('#bodyTable').append(
+		// 					`<tr>
+		// 							<td hidden> ${type._id} </td>
+		// 							<td> ${type.typeName} </td>
+		// 							<td> ${type.description}</td>
+		// 							<td>
+		// 								<img src="${type.typeImg}" class="avatar img-fluid" alt="No IMG">
+		// 							</td>
+		// 								<td class="table-action">
+		// 									<button type="button" name="btn_edit" data-toggle="modal" data-target="#editProductModal"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 align-middle"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></button>
+		// 									<button type="button" name="btn_delete" data-toggle="modal" data-target="#DeleteProductModal"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash align-middle"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+		// 								</td>
+		// 						</tr>`
+		// 				)
+		// 			}
+		// 		} else {
+		// 			alert(result.mgs)
+		// 		}
+		// 	}).fail(() => {
+		// 		alert("Không kết nối được với server")
+		// 	})
+		// });
+		// $('[name=pagetype]').click(function () {
+		// 	var page = ($(this).val());
+		// 	var limit = $("#limit option:selected").text();
+		// 	var formData = new FormData();
+		// 	formData.append('page', page);
+		// 	formData.append('limit', limit);
+		// 	$.ajax({
+		// 		url: 'productType/getTypePage',
+		// 		type: 'POST',
+		// 		data: formData,
+		// 		cache: false,
+		// 		contentType: false,
+		// 		processData: false,
+		// 	}).done(function (result) {
+		// 		if (result.success) {
+		// 			$('#bodyTable').empty();
+		// 			// $('#countPage').empty();
+		// 			// for (var i = 0; i < result.countPage; i++) {
+		// 			// 	$('#countPage').append(	`<button  name="pageType" style="background-color:dimgray;" value="${i}" type="button">${i}</button>`)
+		// 			// }
+		// 			for (let type of result.listProductType) {
+		// 				$('#bodyTable').append(
+		// 					`<tr>
+		// 							<td hidden> ${type._id} </td>
+		// 							<td> ${type.typeName} </td>
+		// 							<td> ${type.description}</td>
+		// 							<td>
+		// 								<img src="${type.typeImg}" class="avatar img-fluid" alt="No IMG">
+		// 							</td>
+		// 								<td class="table-action">
+		// 									<button type="button" name="btn_edit" data-toggle="modal" data-target="#editProductModal"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 align-middle"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></button>
+		// 									<button type="button" name="btn_delete" data-toggle="modal" data-target="#DeleteProductModal"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash align-middle"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+		// 								</td>
+		// 						</tr>`
+		// 				)
+		// 			}
+		// 		} else {
+		// 			alert(result.mgs)
+		// 		}
+		// 	}).fail(() => {
+		// 		alert("Không kết nối được với server")
+		// 	})
+		// });
 	</script>
-	<script sr 
 	<script src="js/app.js"></script>
 
 </body>
