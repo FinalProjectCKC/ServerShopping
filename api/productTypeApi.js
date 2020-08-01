@@ -114,6 +114,7 @@ exports.getAllProductType = async (req, res) => {
   try {
     let page = req.body.page
     let limit = parseInt(req.body.limit)
+    console.log(111111, limit)
     const listProductType = await ProductType.find().skip(page * limit).limit(limit)
     if (listProductType !== null) {
       return res.json({
