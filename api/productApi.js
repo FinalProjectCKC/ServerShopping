@@ -62,7 +62,6 @@ exports.addProduct = async (req, res) => {
     });
   }
 };
-
 exports.getAllProduct = async (req, res) => {
   try {
     const listProductType = await ProductType.find();
@@ -104,7 +103,6 @@ exports.getAllProduct = async (req, res) => {
 exports.getProductByProType = async (req, res) => {
   let typeName = req.body.proType;
   try {
-    let typeName = req.body.typeName;
     if (typeName === null || typeName === undefined) {
       return res.json({
         status: -1,

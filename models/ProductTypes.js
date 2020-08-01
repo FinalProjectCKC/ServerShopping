@@ -23,11 +23,11 @@ const productSchema = new Schema({
     require: true
   },
   status: {
-    type: Number,
+    type: String,
     default: 0,
   },
-  quanti: {
-    type: Number,
+  quan: {
+    type: String,
     default: 0,
   },
   price: {

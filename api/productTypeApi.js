@@ -112,7 +112,9 @@ exports.updateProductType = async (req, res) => {
 }
 exports.getAllProductType = async (req, res) => {
   try {
-    const listProductType = await ProductType.find()
+    let page = req.body.page
+    let limit = parseInt(req.body.limit)
+    const listProductType = await ProductType.find().skip(page * limit).limit(limit)
     if (listProductType !== null) {
       return res.json({
         status: 1,
