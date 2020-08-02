@@ -101,7 +101,9 @@ exports.getAllProduct = async (req, res) => {
   }
 };
 exports.getProductByProType = async (req, res) => {
-  let typeName = req.body.proType;
+
+  let {typeName, limit, page} = req.body;
+  let skip =parseInt(limit)*parseInt(page)
   try {
     if (typeName === null || typeName === undefined) {
       return res.json({
@@ -110,7 +112,9 @@ exports.getProductByProType = async (req, res) => {
         data: null,
       });
     }
-    const productTypes = await ProductType.findOne({ typeName: typeName });
+    let productTypes = await ProductType.find({"typeName":typeName}, {product:{$slice:[skip, parseInt(limit) ]}})
+  console.log("productTypes",productTypes)
+   productTypes= productTypes[0]
     if (productTypes !== null) {
       return res.json({
         status: 1,

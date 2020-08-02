@@ -31,11 +31,7 @@ const productSchema = new Schema({
     default: 0,
   },
   quan: {
-<<<<<<< HEAD
     type: Number,
-=======
-    type: String,
->>>>>>> 895f5e942ad8c4084d2aea4c71c73e84e7560f75
     default: 0,
   },
   price: {
