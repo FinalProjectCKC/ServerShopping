@@ -134,15 +134,15 @@ exports.register = async (req, res) => {
                 created_at: date
             })
             await newAccount.save().then(async () => {
-                await newCart.save()
-            })
-
-            return res.json({
-                status: 1,
-                message: 'Đăng ký thành công!',
-                data: {
-                    username: username,
-                }
+                await newCart.save().then(()=>{
+                    return res.json({
+                        status: 1,
+                        message: 'Đăng ký thành công!',
+                        data: {
+                            username: username,
+                        }
+                    })
+                })
             })
         }
     } catch (error) {

@@ -7,17 +7,18 @@ let mongoose = require('mongoose')
 let handleAccountJwt = require('../handleAccountJwt')
 let fs = require('fs')
 const path = require('path')
-let api = require('../config')
+let api = require('../config');
+const { query } = require('express');
 
 API_URL = api.API_URL
 
-const getProductByID = async (productID) => {
+const getProductByID = async (productId) => {
   const productTypes = await ProductType.find();
   if (productTypes !== null) {
     for (let type of productTypes) {
       if (type.product !== undefined || type.product !== null) {
         for (let product of type.product) {
-          if (product._id == productID) {
+          if (product._id == productId) {
             return product
           }
         }
@@ -72,8 +73,8 @@ exports.findCartByUser = async (req, res) => {
 exports.addToCart = async (req, res) => {
   try {
     //get data when addproduct to cart
-    let productID = req.body.productID
-    let quan = req.body.quan
+    let productId = req.body.productId
+     let quan = req.body.quan
     let accountId = handleAccountJwt.getAccountId(req)
     let date = new Date()
     let today = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
@@ -85,8 +86,16 @@ exports.addToCart = async (req, res) => {
         data: null,
       })
     }
+    if (quan == null || quan == undefined) {
+      return res.json({
+        status: -1,
+        message: 'Vui lòng nhập số lượng!',
+        data: null,
+      })
+    }
+    quan = parseInt(quan)
     //check product is exit
-    if (productID == null) {
+    if (productId == null) {
       return res.json({
         status: -1,
         message: 'Không tìm thấy sản phẩm này!',
@@ -98,23 +107,22 @@ exports.addToCart = async (req, res) => {
       { userId: accountId }
     )
     //check if product is exit in cart
-    const cartDetail = userCart.cartDetail.filter(data => data.productId.toString() === productID.toString())
-    let cartDetailIndex = userCart.cartDetail.findIndex(data => data.productId.toString() === productID.toString())
-
-    if (cartDetail.length === 0) {
+    const cartDetail = userCart.cartDetail.filter(data => data.productId.toString() === productId.toString())
+    let cartDetailIndex = userCart.cartDetail.findIndex(data => data.productId.toString() === productId.toString())
+    if (cartDetail.length == 0) {
       //get productHave product
 
       // const productTypes = await ProductType.find()
       const productTypes = await ProductType.findOne({
-        'product._id': productID
+        'product._id': productId
       })
-      const Products = productTypes.product.filter(data => data._id.toString() === productID.toString())
+      const Products = productTypes.product.filter(data => data._id.toString() === productId.toString())
       const Product = Products[0]
       //add product to cart      
       let newDetails = {
         _id: new mongoose.Types.ObjectId(),
         productName: Product.productName,
-        productId: productID,
+        productId: productId,
         quan: quan,
         price: Product.price,
         typeProduct: Product.typeProduct,
@@ -135,7 +143,7 @@ exports.addToCart = async (req, res) => {
             status: -1,
             message: 'Thêm vào giỏ hàng thất bại!',
             data: {
-              productID: productID
+              productId: productId
             }
           })
         }
@@ -143,26 +151,29 @@ exports.addToCart = async (req, res) => {
           status: 1,
           message: 'Thêm vào giỏ hàng thành công!',
           data: {
-            productID: productID
+            productId: productId
           }
         })
       })
     } else {
       //edit quanti
+
       let oldQuan = cartDetail[0].quan
-      let newQuan = parseInt(oldQuan) + parseInt(quan)
+      let newQuan = parseInt(oldQuan) + quan
+
       await Cart.findOneAndUpdate(
         {
           userId: accountId,
         },
         { $set: { [`cartDetail.${cartDetailIndex}.quan`]: newQuan } }
       ).then(async (data) => {
+
         if (data == null) {
           return res.json({
             status: -1,
             message: 'Thêm vào giỏ hàng thất bại!',
             data: {
-              productID: productID,
+              productId: productId,
             }
           })
         }
@@ -170,7 +181,7 @@ exports.addToCart = async (req, res) => {
           status: 1,
           message: 'Thêm vào giỏ hàng thành công!',
           data: {
-            productID: productID
+            productId: productId
           }
         })
       })
@@ -186,7 +197,7 @@ exports.addToCart = async (req, res) => {
 exports.changeQuanti = async (req, res) => {
   try {
     //get data when addproduct to cart
-    let productID = req.body.productID
+    let productId = req.body.productId
     let accountId = handleAccountJwt.getAccountId(req)
     let date = new Date()
     let today = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
@@ -199,7 +210,7 @@ exports.changeQuanti = async (req, res) => {
       })
     }
     //check product is exit
-    if (productID == null) {
+    if (productId == null) {
       return res.json({
         status: -1,
         message: 'Không tìm thấy sản phẩm này!',
@@ -211,15 +222,15 @@ exports.changeQuanti = async (req, res) => {
       { userId: accountId }
     )
     //check if product is exit in cart
-    const cartDetail = userCart.cartDetail.filter(data => data.productId.toString() === productID.toString())
-    let cartDetailIndex = userCart.cartDetail.findIndex(data => data.productId.toString() === productID.toString())
+    const cartDetail = userCart.cartDetail.filter(data => data.productId.toString() === productId.toString())
+    let cartDetailIndex = userCart.cartDetail.findIndex(data => data.productId.toString() === productId.toString())
 
     if (cartDetail.length === 0) {
       return res.json({
         status: -1,
         message: 'Sản phẩm không tồn tại trong giỏ hàng',
         data: {
-          productID: productID
+          productId: productId
         }
       })
     } else {
@@ -238,7 +249,7 @@ exports.changeQuanti = async (req, res) => {
               status: -1,
               message: 'Cập nhật số lượng thất bại!',
               data: {
-                productID: productID,
+                productId: productId,
               }
             })
           }
@@ -246,7 +257,7 @@ exports.changeQuanti = async (req, res) => {
             status: 1,
             message: 'Cập nhật số lượng thành công!',
             data: {
-              productID: productID
+              productId: productId
             }
           })
         })
@@ -279,7 +290,7 @@ exports.changeQuanti = async (req, res) => {
 exports.removeFromCart = async (req, res) => {
   try {
     //get data when addproduct to cart
-    let productID = req.body.productID
+    let productId = req.body.productId
     let accountId = handleAccountJwt.getAccountId(req)
     let date = new Date()
     let today = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
@@ -292,7 +303,7 @@ exports.removeFromCart = async (req, res) => {
       })
     }
     //check product is exit
-    if (productID == null) {
+    if (productId == null) {
       return res.json({
         status: -1,
         message: 'Không tìm thấy sản phẩm này!',
@@ -304,15 +315,15 @@ exports.removeFromCart = async (req, res) => {
       { userId: accountId }
     )
     //check if product is exit in cart
-    const cartDetail = userCart.cartDetail.filter(data => data.productId.toString() === productID.toString())
-    let cartDetailIndex = userCart.cartDetail.findIndex(data => data.productId.toString() === productID.toString())
+    const cartDetail = userCart.cartDetail.filter(data => data.productId.toString() === productId.toString())
+    let cartDetailIndex = userCart.cartDetail.findIndex(data => data.productId.toString() === productId.toString())
 
     if (cartDetail.length === 0) {
       return res.json({
         status: -1,
         message: 'Sản phẩm không tồn tại trong giỏ hàng',
         data: {
-          productID: productID
+          productId: productId
         }
       })
     } else {
@@ -327,7 +338,7 @@ exports.removeFromCart = async (req, res) => {
                 status: 1,
                 message: 'Đã xoá sản phẩm khỏi giỏ hàng',
                 data: {
-                  productID: productID
+                  productId: productId
                 }
               })
             })
@@ -338,7 +349,7 @@ exports.removeFromCart = async (req, res) => {
       status: -1,
       message: 'Có sự cố xảy ra. Không xoá được sản phẩm!',
       data: {
-        productID: productID
+        productId: productId
       }
     })
   }

@@ -102,19 +102,18 @@ exports.getAllProduct = async (req, res) => {
 };
 exports.getProductByProType = async (req, res) => {
 
-  let {typeName, limit, page} = req.body;
-  let skip =parseInt(limit)*parseInt(page)
+  let { ProTypeId, limit, page } = req.body;
+  let skip = parseInt(limit) * parseInt(page)
   try {
-    if (typeName === null || typeName === undefined) {
+    if (ProTypeId === null || ProTypeId === undefined) {
       return res.json({
         status: -1,
         message: "Vui lòng nhập tên loại",
         data: null,
       });
     }
-    let productTypes = await ProductType.find({"typeName":typeName}, {product:{$slice:[skip, parseInt(limit) ]}})
-  console.log("productTypes",productTypes)
-   productTypes= productTypes[0]
+    let productTypes = await ProductType.find({ "_id": ProTypeId }, { product: { $slice: [skip, parseInt(limit)] } })
+    productTypes = productTypes[0]
     if (productTypes !== null) {
       return res.json({
         status: 1,
@@ -194,11 +193,11 @@ exports.getProductByName = async (req, res) => {
 };
 exports.getProductById = async (req, res) => {
   try {
-    let productID = req.body.productID;
-    if (productID === null || productID === undefined) {
+    let productId = req.body.productId;
+    if (productId === null || productId === undefined) {
       return res.json({
         status: -1,
-        message: "Vui lòng nhập productID",
+        message: "Vui lòng nhập productId",
         data: null,
       });
     }
@@ -207,7 +206,7 @@ exports.getProductById = async (req, res) => {
       for (let type of productTypes) {
         if (type.product !== undefined || type.product !== null) {
           for (let product of type.product) {
-            if (product._id == productID) {
+            if (product._id == productId) {
               return res.json({
                 status: 1,
                 message: "Lấy sản phẩm thành công",
@@ -238,4 +237,4 @@ exports.getProductById = async (req, res) => {
     });
   }
 };
-exports.updateProduct = async (req, res) => {};
+exports.updateProduct = async (req, res) => { };
