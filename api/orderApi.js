@@ -17,7 +17,7 @@ exports.newOrder = async (req, res) => {
     //get data when create new order
     let accountId = handleAccountJwt.getAccountId(req)
     let date = new Date()
-    let { address, phone } = req.body
+    let { address, phone, receiver } = req.body
     let today = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
     if (accountId == null) {
       return res.json({
@@ -32,6 +32,7 @@ exports.newOrder = async (req, res) => {
       let customer = await Account.findOne(
         { _id: accountId }
       )
+      let cusName = receiver
       if (userCart !== null) {
         const cartDetail = userCart.cartDetail
         const newOrder = new Order({
@@ -40,14 +41,28 @@ exports.newOrder = async (req, res) => {
           cusID: accountId,
           address: address,
           phone: phone,
-          cusName: (customer.fullName == "" || customer.fullName === null) ? customer.username : customer.fullName,
+          cusName: cusName,
+          // cusName: (customer.fullName == "" || customer.fullName === null) ? customer.username : customer.fullName,
           total: userCart.total,
           status: 0,
           created_at: today,
           last_modified: today
         })
 
-        await newOrder.save().then(async () => {
+        await newOrder.save().then(async (data) => {
+          if (data !== null) {
+            userCart.updateOne({ $unset: { [`cartDetail`]: 1 }, total: 0 })
+              .then(async (data) => {
+                userCart.update({ $pull: { "cartDetail": null } })
+              })
+            return res.json({
+              status: 1,
+              message: 'Tạo hoá đơn thành công!',
+              data: {
+                orderId: newOrder._id
+              }
+            })
+          }
           return res.json({
             status: 1,
             message: 'Tạo hoá đơn thành công!',

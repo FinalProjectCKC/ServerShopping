@@ -9,6 +9,7 @@ let fs = require('fs')
 const path = require('path')
 let api = require('../config');
 const { query } = require('express');
+const passport = require('passport');
 
 API_URL = api.API_URL
 
@@ -74,7 +75,7 @@ exports.addToCart = async (req, res) => {
   try {
     //get data when addproduct to cart
     let productId = req.body.productId
-     let quan = req.body.quan
+    let quan = req.body.quan
     let accountId = handleAccountJwt.getAccountId(req)
     let date = new Date()
     let today = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
@@ -118,6 +119,7 @@ exports.addToCart = async (req, res) => {
       })
       const Products = productTypes.product.filter(data => data._id.toString() === productId.toString())
       const Product = Products[0]
+      let ProductPrice = Product.price
       //add product to cart      
       let newDetails = {
         _id: new mongoose.Types.ObjectId(),
@@ -130,11 +132,17 @@ exports.addToCart = async (req, res) => {
         created_at: today,
         last_modified: today
       }
+      let oldTotal = 0
+      if (userCart.total !== null) {
+        oldTotal = userCart.total
+      }
+      let total = parseInt(oldTotal) + parseInt(quan) * parseInt(ProductPrice)
       //add to cart
       userCart = await Cart.findOneAndUpdate(
         { userId: accountId },
         {
           last_modified: today,
+          total: total,
           $push: { cartDetail: newDetails }
         }
       ).then(async (data) => {
@@ -157,7 +165,11 @@ exports.addToCart = async (req, res) => {
       })
     } else {
       //edit quanti
-
+      let oldTotal = 0
+      if (userCart.total !== null) {
+        oldTotal = userCart.total
+      }
+      let total = parseInt(oldTotal) + parseInt(quan) * parseInt(ProductPrice)
       let oldQuan = cartDetail[0].quan
       let newQuan = parseInt(oldQuan) + quan
 
@@ -165,7 +177,10 @@ exports.addToCart = async (req, res) => {
         {
           userId: accountId,
         },
-        { $set: { [`cartDetail.${cartDetailIndex}.quan`]: newQuan } }
+        {
+          $set: { [`cartDetail.${cartDetailIndex}.quan`]: newQuan },
+          total: total
+        }
       ).then(async (data) => {
 
         if (data == null) {
@@ -198,6 +213,7 @@ exports.changeQuanti = async (req, res) => {
   try {
     //get data when addproduct to cart
     let productId = req.body.productId
+    let quan = parseInt(req.body.quan)
     let accountId = handleAccountJwt.getAccountId(req)
     let date = new Date()
     let today = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
@@ -221,6 +237,10 @@ exports.changeQuanti = async (req, res) => {
     let userCart = await Cart.findOne(
       { userId: accountId }
     )
+    let oldTotal = 0
+    if (userCart.total !== null) {
+      oldTotal = userCart.total
+    }
     //check if product is exit in cart
     const cartDetail = userCart.cartDetail.filter(data => data.productId.toString() === productId.toString())
     let cartDetailIndex = userCart.cartDetail.findIndex(data => data.productId.toString() === productId.toString())
@@ -236,13 +256,62 @@ exports.changeQuanti = async (req, res) => {
     } else {
       //edit quanti
       let oldQuan = cartDetail[0].quan
-      if (oldQuan > 1) {
-        let newQuan = parseInt(oldQuan) - 1
+      let priceProduct = cartDetail[0].price
+      if (quan < 0) {
+        if (oldQuan > 1) {
+          let newQuan = parseInt(oldQuan) - 1
+          let newTotal = parseInt(oldTotal) - parseInt(priceProduct)
+          await Cart.findOneAndUpdate(
+            {
+              userId: accountId,
+            },
+            {
+              $set: { [`cartDetail.${cartDetailIndex}.quan`]: newQuan },
+              total: newTotal
+            }
+          ).then(async (data) => {
+            if (data == null) {
+              return res.json({
+                status: -1,
+                message: 'Cập nhật số lượng thất bại!',
+                data: {
+                  productId: productId,
+                }
+              })
+            }
+            return res.json({
+              status: 1,
+              message: 'Cập nhật số lượng thành công!',
+              data: {
+                productId: productId
+              }
+            })
+          })
+        } else {
+          let userCart = await Cart.findOne(
+            { userId: accountId }
+          )
+          userCart.updateOne({ $unset: { [`cartDetail.${cartDetailIndex}`]: 1 } })
+            .then(async (data) => {
+              userCart.update({ $pull: { "cartDetail": null } })
+                .then(async (data) => {
+                  return res.json({
+                    status: 1,
+                    message: 'Đã xoá sản phẩm khỏi giỏ hàng',
+                    data: null,
+                  })
+                })
+            })
+        }
+      } else {
+        let newQuan = parseInt(oldQuan) + 1
+        let newTotal = parseInt(oldTotal) + parseInt(priceProduct)
         await Cart.findOneAndUpdate(
           {
             userId: accountId,
           },
-          { $set: { [`cartDetail.${cartDetailIndex}.quan`]: newQuan } }
+          { $set: { [`cartDetail.${cartDetailIndex}.quan`]: newQuan },
+        total : newTotal }
         ).then(async (data) => {
           if (data == null) {
             return res.json({
@@ -261,23 +330,8 @@ exports.changeQuanti = async (req, res) => {
             }
           })
         })
-      } else {
-
-        let userCart = await Cart.findOne(
-          { userId: accountId }
-        )
-        userCart.updateOne({ $unset: { [`cartDetail.${cartDetailIndex}`]: 1 } })
-          .then(async (data) => {
-            userCart.update({ $pull: { "cartDetail": null } })
-              .then(async (data) => {
-                return res.json({
-                  status: 1,
-                  message: 'Đã xoá sản phẩm khỏi giỏ hàng',
-                  data: null,
-                })
-              })
-          })
       }
+
     }
   } catch (error) {
     return res.json({
@@ -314,10 +368,16 @@ exports.removeFromCart = async (req, res) => {
     let userCart = await Cart.findOne(
       { userId: accountId }
     )
+    let oldTotal = 0
+    if (userCart.total !== null) {
+      oldTotal = userCart.total
+    }
     //check if product is exit in cart
     const cartDetail = userCart.cartDetail.filter(data => data.productId.toString() === productId.toString())
     let cartDetailIndex = userCart.cartDetail.findIndex(data => data.productId.toString() === productId.toString())
-
+    let oldQuan = cartDetail[0].quan
+    let priceProduct = cartDetail[0].price
+    let newTotal = parseInt(oldTotal)-parseInt(oldQuan)*parseInt(priceProduct)
     if (cartDetail.length === 0) {
       return res.json({
         status: -1,
@@ -330,9 +390,9 @@ exports.removeFromCart = async (req, res) => {
       let userCart = await Cart.findOne(
         { userId: accountId }
       )
-      userCart.updateOne({ $unset: { [`cartDetail.${cartDetailIndex}`]: 1 } })
+      userCart.updateOne({ $unset: { [`cartDetail.${cartDetailIndex}`]: 1 }, total:newTotal })
         .then(async (data) => {
-          userCart.update({ $pull: { "cartDetail": null } })
+          userCart.update({ $pull: { "cartDetail": null } } )
             .then(async (data) => {
               return res.json({
                 status: 1,
