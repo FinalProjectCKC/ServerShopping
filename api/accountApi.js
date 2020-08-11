@@ -3,6 +3,8 @@ var Account = require('../models/account')
 var Cart = require('../models/Cart')
 var jwt = require('jsonwebtoken')
 let request = require('request-promise')
+const bcrypt = require('bcryptjs');
+var salt = bcrypt.genSaltSync(10);
 let base64 = require('base-64')
 let mongoose = require('mongoose')
 let handleAccountJwt = require('../handleAccountJwt')
@@ -12,7 +14,7 @@ let api = require('../config')
 API_URL = api.API_URL
 
 exports.login = async (req, res) => {
-    let {username, password} = req.body
+    let { username, password } = req.body
     if (username === null || username === undefined || password === null || password === undefined || password === "" || username === "") {
         return res.json({
             status: -1,
@@ -20,15 +22,15 @@ exports.login = async (req, res) => {
             data: null
         })
     }
-
     username = username.toLowerCase()
     const check = await Account.findOne(
         {
             username: username,
-            password: password
+            // password: password
         }
     )
-    if (check !== null) {
+    console.log(bcrypt.compareSync(`${password}`, check.password))
+    if (bcrypt.compareSync(`${password}`, check.password)) {
         const token1 = jwt.sign({ id: check.id }, 'jwt-secret')
         return res.json({
             status: 1,
@@ -83,6 +85,7 @@ exports.register = async (req, res) => {
         let email = req.body.email.toLowerCase()
         let username = req.body.username.toLowerCase()
         let password = req.body.password
+        password = bcrypt.hashSync(password);
         const date = new Date()
         if (email === undefined || email === null) {
             return res.json({
@@ -134,7 +137,7 @@ exports.register = async (req, res) => {
                 created_at: date
             })
             await newAccount.save().then(async () => {
-                await newCart.save().then(()=>{
+                await newCart.save().then(() => {
                     return res.json({
                         status: 1,
                         message: 'Đăng ký thành công!',
@@ -197,17 +200,113 @@ exports.getUserByName = async (req, res) => {
     }
 }
 exports.updateUserData = async (req, res) => {
-    const newAccount = new Account({
-        _id: new mongoose.Types.ObjectId(),
-        userId: id,
-        username: username,
-        fullName: (userData1.data === undefined || userData1.data === null) ? null : userData1.data.fullName,
-        email: (userData1.data === undefined || userData1.data === null) ? null : userData1.data.email,
-        phone: (userData1.data === undefined || userData1.data === null) ? null : userData1.data.phone,
-        status: 1,
-        created_at: new Date()
-    })
-    result = await newAccount.save()
+    try {
+        let accountId = handleAccountJwt.getAccountId(req)
+        let { phone, fullName, address } = req.body
+        let date = new Date()
+        let today = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
+        if (accountId == null) {
+            return res.json({
+                status: -1,
+                message: 'Không tìm thấy người dùng này!',
+                data: null,
+            })
+        }
+        await Account.findOneAndUpdate(
+            {
+                _id: accountId
+            },
+            {
+                phone: phone,
+                fullName: fullName,
+                address: address,
+                last_modified: today
+            })
+            .then(async (data) => {
+                if (data !== null) {
+                    return res.json({
+                        status: 1,
+                        message: "Cập nhật thành công",
+                        data: {
+                            accountId: accountId
+                        },
+                    })
+                }
+                return res.json({
+                    status: -1,
+                    message: 'Cập nhật thất bại',
+                    data: null,
+                })
+            })
+    } catch (error) {
+        return res.json({
+            status: -1,
+            message: 'Có sự cố xảy ra. Không cập nhật được thông tin!',
+            data: null,
+        })
+    }
+}
+exports.updatePassword = async (req, res) => {
+    try {
+        let accountId = handleAccountJwt.getAccountId(req)
+        let newPass = req.body.newpass
+        let password = req.body.password
+        let date = new Date()
+        let today = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
+        if (accountId == null) {
+            return res.json({
+                status: -1,
+                message: 'Không tìm thấy người dùng này!',
+                data: null,
+            })
+        }
+        const check = await Account.findOne(
+            {
+                _id: accountId,
+            }
+        )
+        let newPassWord = bcrypt.hashSync(newPass);
+        // console.log(bcrypt.compareSync(password, newPassWord))
+        if (bcrypt.compareSync(password, check.password)) {
+            await Account.findOneAndUpdate(
+                {
+                    _id: accountId
+                },
+                {
+                    password: newPassWord,
+                    last_modified: today
+                })
+                .then(async (data) => {
+                    if (data !== null) {
+                        return res.json({
+                            status: 1,
+                            message: "Cập nhật thành công",
+                            data: {
+                                accountId: accountId
+                            },
+                        })
+                    }
+                    return res.json({
+                        status: -1,
+                        message: 'Cập nhật thất bại',
+                        data: null,
+                    })
+                })
+        } else {
+            return res.json({
+                status: -1,
+                message: 'Mật khẩu cũ không đúng!',
+                data: null,
+            })
+        }
+    } catch (error) {
+        console.log(error)
+        return res.json({
+            status: -1,
+            message: 'Có sự cố xảy ra. Không cập nhật được mật khẩu!',
+            data: null,
+        })
+    }
 }
 exports.getUserByToken = async (req, res) => {
     try {
@@ -337,7 +436,6 @@ exports.getNumOfNotification = async (req, res) => {
         })
     }
 }
-
 exports.clearNotification = async (req, res) => {
     let accountId = handleAccountJwt.getAccountId(req)
     let date = new Date()
@@ -362,7 +460,6 @@ exports.clearNotification = async (req, res) => {
         })
     }
 }
-
 exports.getListNotification = async (req, res) => {
     let queryParams = req.query
     let accountId = handleAccountJwt.getAccountId(req)
@@ -399,7 +496,6 @@ exports.getListNotification = async (req, res) => {
         })
     }
 }
-
 exports.changeAvatar = async (req, res) => {
     let file = req.file
     let accountId = handleAccountJwt.getAccountId(req)

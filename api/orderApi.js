@@ -88,15 +88,109 @@ exports.newOrder = async (req, res) => {
     })
   }
 }
-//Xác nhận đã nhận được hàng
-exports.Ordered = async (req, res) => {
+exports.listOrder = async (req, res) => {
   try {
     //get data when create new order
+    let status = req.body.status
+    let accountId = handleAccountJwt.getAccountId(req)
+    if (accountId == null) {
+      return res.json({
+        status: -1,
+        message: 'Không tìm thấy người dùng này!',
+        data: null,
+      })
+    } else {
+      let userOrder = await Order.find(
+        {
+          cusID: accountId,
+          status: status
+        }
+      )
+      if (userOrder.length > 0) {
+        return res.json({
+          status: 1,
+          message: 'Lấy danh sách đơn hàng thành công!',
+          data: userOrder
+        })
+      } else {
+        return res.json({
+          status: -1,
+          message: 'Bạn không có đơn hàng nào!',
+          data: null
+        })
+      }
+    }
+  } catch (error) {
+    return res.json({
+      status: -1,
+      message: 'Có sự cố xảy ra. Không lấy được hoá đơn!',
+      data: null,
+    })
+  }
+}
+exports.orderDetails = async (req, res) => {
+  try {
+    //get data when create new order
+    let { status, orderID } = req.body
+    let accountId = handleAccountJwt.getAccountId(req)
+    if (orderID == null) {
+      return res.json({
+        status: -1,
+        message: 'Không tìm thấy đơn hàng này!',
+        data: null,
+      })
+    }
+    if (accountId == null) {
+      return res.json({
+        status: -1,
+        message: 'Không tìm thấy người dùng này!',
+        data: null,
+      })
+    } else {
+      let userOrder = await Order.find(
+        {
+          cusID: accountId,
+          _id: orderID,
+          status: status
+        }
+      )
+      if (userOrder.length > 0) {
+        return res.json({
+          status: 1,
+          message: 'Lấy đơn hàng thành công!',
+          data: userOrder[0]
+        })
+      } else {
+        return res.json({
+          status: -1,
+          message: 'Bạn không có đơn hàng nào!',
+          data: null
+        })
+      }
+    }
+  } catch (error) {
+    return res.json({
+      status: -1,
+      message: 'Có sự cố xảy ra. Không lấy được đơn hàng!',
+      data: null,
+    })
+  }
+}
+//Xác nhận đã nhận được hàng
+exports.ChangeStatus = async (req, res) => {
+  try {
     let accountId = handleAccountJwt.getAccountId(req)
     let orderID = req.body.orderID
+    let status = parseInt(req.body.status)
     let date = new Date()
     let today = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
-
+    let message = "Cập nhật đơn hàng thành công"
+    switch (status) {
+      case 0: message = "Đã đặt lại đơn hàng"; break;
+      case 2: message = "Đã xác nhận đơn hàng thành công"; break;
+      case -2: message = "Đã huỷ đơn hàng"; break;
+      default: message = "Cập nhật đơn hàng thành công"; break;
+    }
     if (orderID == null) {
       return res.json({
         status: -1,
@@ -116,12 +210,15 @@ exports.Ordered = async (req, res) => {
         cusID: accountId,
         _id: orderID
       },
-      { $set: { status: 3 } })
+      {
+        $set: { status: status },
+        last_modified: today
+      })
       .then(async (data) => {
         if (data !== null) {
           return res.json({
             status: 1,
-            message: 'Đã xác nhận thành công',
+            message: message,
             data: {
               orderID: orderID
             },
