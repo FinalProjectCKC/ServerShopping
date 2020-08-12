@@ -23,6 +23,10 @@ const orderDetail = new Schema({
     type: String,
     require: true
   },
+  reasonCancel: {
+    type: String,
+    default: null
+  },
   quan: {
     type: String,
     require: true

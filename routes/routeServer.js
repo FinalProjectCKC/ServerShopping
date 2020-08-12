@@ -9,6 +9,7 @@ let multer = require('multer')
 var proType = require('./routeProductType');
 var routeAccount = require('./routeAccount');
 var routeProduct = require('./routeProduct');
+var routeOrder = require('./routeOrder');
 var FormData = require('form-data');
 var fs = require('fs');
 
@@ -32,5 +33,6 @@ router.route('/login')
 router.use('/productType', proType);
 router.use('/account', routeAccount);
 router.use('/product', routeProduct);
+router.use('/order', routeOrder);
 
 module.exports = router;

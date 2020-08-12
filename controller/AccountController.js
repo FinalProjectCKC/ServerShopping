@@ -1,6 +1,7 @@
 var passport = require('passport')
 var Account = require('../models/account')
 var jwt = require('jsonwebtoken')
+const bcrypt = require('bcryptjs');
 let request = require('request-promise')
 let base64 = require('base-64')
 let mongoose = require('mongoose')
@@ -21,13 +22,14 @@ exports.login = async (req, res) => {
     const check = await Account.findOne(
       {
         username: username,
-        password: password
       }
     )
     if (check !== null) {
-      req.session.isLogin = true;
-      req.session.user = username;
-      return res.json({ success: true, mgs: "" });
+      if (bcrypt.compareSync(`${password}`, check.password)) {
+        req.session.isLogin = true;
+        req.session.user = username;
+        return res.json({ success: true, mgs: "" });
+      }
     } else {
       return res.json({ success: false, mgs: 'Tên đăng nhập hoặc mật khẩu không đúng' });
     }
