@@ -11,6 +11,10 @@ let multer = require("multer");
 routeOrder.get("/", OrderController.getListOrder1);
 routeOrder.route('/getList')
   .post(OrderController.getListOrder)
-routeOrder.route("/changeStatus").post(OrderController.changeStatus);
-
+routeOrder.route("/changeStatus")
+  .post(OrderController.changeStatus);
+routeOrder.route("/getDetails")
+  .post(OrderController.orderDetails);
+routeOrder.route("/downloadOrder")
+  .post(OrderController.downloadOrder);
 module.exports = routeOrder;

@@ -29,27 +29,36 @@ exports.login = async (req, res) => {
             // password: password
         }
     )
-    console.log(bcrypt.compareSync(`${password}`, check.password))
-    if (bcrypt.compareSync(`${password}`, check.password)) {
-        const token1 = jwt.sign({ id: check.id }, 'jwt-secret')
-        return res.json({
-            status: 1,
-            message: 'Thành công',
-            data: {
-                token: token1,
-                userId: check.userId,
-                username: check.username,
-                fullName: check.fullName,
-                email: check.email,
-                avatarUrl: check.avatarUrl,
-                address: check.address,
-                accRole: check.accRole
-            }
-        })
-    } else {
+    if (check !== null) {
+        if (bcrypt.compareSync(`${password}`, check.password)) {
+            const token1 = jwt.sign({ id: check.id }, 'jwt-secret')
+            return res.json({
+                status: 1,
+                message: 'Thành công',
+                data: {
+                    token: token1,
+                    userId: check.userId,
+                    username: check.username,
+                    fullName: check.fullName,
+                    email: check.email,
+                    avatarUrl: check.avatarUrl,
+                    address: check.address,
+                    accRole: check.accRole
+                }
+            })
+        }
+        else {
+            return res.json({
+                status: -1,
+                message: 'Tên đăng nhập hoặc mật khẩu không chính xác',
+                data: null
+            })
+        }
+    }
+    else {
         return res.json({
             status: -1,
-            message: 'Tên đăng nhập hoặc mật khẩu không chính xác',
+            message: 'Không tìm thấy người dùng này',
             data: null
         })
     }

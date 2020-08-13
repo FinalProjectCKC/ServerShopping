@@ -25,7 +25,6 @@
 										</div>
 										<div class="modal-body m-3">
 											<p name="typeIdDel" hidden></p>
-											<!-- <p class="mb-0">Bạn có muốn huỷ đơn hàng của: </p> -->
 											<p s="mb-0" name="cusNameOrderCancel"></p>
 											<label class="form-label">Vui lòng nhập lý do</label>
 											<input type="text" name="reasonCancel" class="form-control" placeholder="Lý do huỷ">
@@ -38,6 +37,51 @@
 								</div>
 							</div>
 							<!-- END DeleteOrder modal -->
+							<!-- BEGIN detailsModal modal -->
+							<div class="modal fade" id="detailsModal" tabindex="-1" role="dialog" aria-hidden="true">
+								<div class="modal-dialog" role="document">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title">Chi tiết hoá đơn</h5>
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<div class="modal-body m-3">
+											<p s="mb-0" name="orderIDBill"></p>
+											<p s="mb-0" name="cusName"></p>
+											<p s="mb-0" name="cusPhone"></p>
+											<p s="mb-0" name="cusAddress"></p>
+											<div class="scrollmenu">
+												<div class="card">
+													<br />
+													<table class="table" id="myTable">
+														<thead>
+															<tr>
+																<th hidden></th>
+																<th style="width:20%;">Tên sản phẩm<noscript></noscript></th>
+																<th style="width:20%;">Hình ảnh</th>
+																<th style="width:20%">Size</th>
+																<th style="width:20%;">Số lương</th>
+																<th style="width:20%;">Đơn giá</th>
+																<th style="width:20%">Thành tiền</th>
+															</tr>
+														</thead>
+														<tbody id="detailsTable">
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</div>
+										<div class="modal-footer">
+											<button type="button" id="btnSubmit" name="btnCreate" onclick="getBill(event)"
+												class="btn btn-success">Xuất hoá
+												đơn</button>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- END EditProductType modal -->
 						</div>
 					</div>
 				</div>
@@ -95,7 +139,19 @@
 										<td><%= listOrder[i].address %></td>
 										<td><%= listOrder[i].phone %></td>
 										<td><%= listOrder[i].total %></td>
-										<td><%= listOrder[i].status %></td>
+										<% if (	listOrder[i].status == 1	) { %>
+										<td>Đã xác nhận</td>
+										<% } else if(listOrder[i].status == 0){ %>
+										<td>Chưa xác nhận</td>
+										<% } else if(listOrder[i].status == 2){ %>
+										<td>Đang giao hàng</td>
+										<% } else if(listOrder[i].status == -1){ %>
+										<td>Đã bị huỷ</td>
+										<% } else if(listOrder[i].status == -2){ %>
+										<td>Khách hàng huỷ</td>
+										<% } else if(listOrder[i].status == 3){ %>
+										<td>Đã thanh toán</td>
+										<% } %>
 										<!-- <td>
 										<img src="<%= listOrder[i].typeImg %>" class="avatar img-fluid" alt="No IMG">
 									</td> -->
@@ -103,8 +159,12 @@
 											<button type="button" name="btn_edit" data-toggle="modal" data-target="#editTypeModal"><i
 													class="align-middle" data-feather="edit-2"></i></button>
 											<!-- <button type="button" name="btn_delete" orderCancel"> -->
-											<button type="button" value="'{'id': '<%= listOrder[i]._id %>' , 'cusname':'<%= listOrder[i].cusName %>' }'" onclick="showDelete(this)" name="btn_delete">
+											<button type="button" value="<%= listOrder[i]._id %>,<%= listOrder[i].cusName %>"
+												onclick="showDelete(this)" name="btn_delete">
 												Huỷ đơn hàng</button>
+											<button type="button" value="<%= listOrder[i]._id %>" onclick="showDetails(this)"
+												name="btn_detail">
+												Chi tiết</button>
 										</td>
 									</tr>
 									<% } %>
@@ -130,10 +190,11 @@
 	<script type="text/javascript">
 		var phanTrang = function (page) {
 			var limit = $("#limit option:selected").text();
+			var status = $("#status option:selected").val();
 			var formData = new FormData();
 			formData.append('page', page);
 			formData.append('limit', limit);
-			formData.append('status', "0");
+			formData.append('status', status);
 			$.ajax({
 				url: 'order/getList',
 				type: 'POST',
@@ -145,6 +206,29 @@
 				if (result.success) {
 					$('#bodyTable').empty();
 					for (let order of result.listOrder) {
+						let status = ""
+						switch (order.status) {
+							case -2:
+								status = "Khách đã huỷ"
+								break;
+							case -1:
+								status = "Đã bị huỷ"
+								break;
+							case -0:
+								status = "Chưa xác nhận"
+								break;
+							case 1:
+								status = "Đã xác nhận"
+								break;
+							case 2:
+								status = "Đang giao hàng"
+								break;
+							case 3:
+								status = "Đã thanh toán"
+								break;
+							default: status = "Chưa xác nhận"
+								break;
+						}
 						$('#bodyTable').append(
 							`<tr>
 									<td hidden>${order._id}</td>
@@ -154,10 +238,15 @@
 									<td>${order.phone}</td>
 									<td>${order.total}</td>
 									<td>${order.status}</td>
+										<td>${status}</td>
 									<td class="table-action">
 										<button type="button" name="btn_edit" data-toggle="modal" data-target="#editTypeModal"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 align-middle"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></button>
-										<button type="button" onclick="showDelete(event)" name="btn_delete" orderCancel">
+										<button type="button" value="${order._id},${order.cusName}"
+												onclick="showDelete(this)" name="btn_delete">
 											Huỷ đơn hàng</button>
+											<button type="button" value="${order._id}" onclick="showDetails(this)"
+												name="btn_delete">
+												Chi tiết</button>
 									</td>
 								</tr>`
 						)
@@ -169,22 +258,19 @@
 				alert("Không kết nối được với server")
 			})
 		}
-		var editType = function (event) {
+		var cancelOrder = function (event) {
 			event.preventDefault();
 
 			var formData = new FormData();
-			var typeId = $('[name=editTypeId]').val();
-			var typeName = $('[name=editTypeName]').val();
-			var des = $('[name=editDescription]').val();
-			var file = $('[name=editTypeImg]').get(0).files;
+			var orderId = $('[name=typeIdDel]').html();
+			var reasonCancel = $('[name=reasonCancel]').val();
 
-			formData.append('typeId', typeId);
-			formData.append('imgType', file[0]);
-			formData.append('typeName', typeName);
-			formData.append('description', des);
+			formData.append('orderId', orderId);
+			formData.append('reasonCancel', reasonCancel);
+			formData.append('status', -1);
 
 			$.ajax({
-				url: 'Order/editType',
+				url: 'Order/changeStatus',
 				type: 'POST',
 				data: formData,
 				cache: false,
@@ -192,78 +278,114 @@
 				processData: false,
 			}).done(function (result) {
 				if (result.success) {
-					alert(result.mgs)
-					location.reload()
+					alert("Huỷ đơn hàng thành công")
+					$('#DeleteOrderModal').modal('hide');
+					phanTrang(0)
+					// location.reload()
+				} else {
+				}
+			}).fail(() => {
+				alert("Không kết nối được với server")
+			})
+		}
+		var getBill = function (event) {
+			event.preventDefault();
+
+			var formData = new FormData();
+			var orderId = $('[name=orderIDBill]').html();
+			formData.append('orderID', orderId);
+
+			$.ajax({
+				url: 'Order/downloadOrder',
+				type: 'POST',
+				data: formData,
+				cache: false,
+				contentType: false,
+				processData: false,
+			}).done(function (result) {
+				if (result.success) {
+					var win = window.open(`${result.data}`, '_blank');
+					if (win) {
+						win.focus();
+					}
+					// else {
+					// 		//Browser has blocked it
+					// 		alert('Please allow popups for this website');
+					// }
+				} else {
+					alert("Không thể xuất hoá đơn")
+				}
+			}).fail(() => {
+				alert("Không kết nối được với server")
+			})
+		}
+
+		var showDelete = function (objButton) {
+			// alert(objButton.value);
+			let value = objButton.value // {id: "5f2253f290a3911d6acf7d30" , cusname:"asssss" }
+			var values = value.split(',', 2);
+			var typeIdDel = values[0]
+			var name = values[1]
+
+			$('[name=typeIdDel]').text(typeIdDel);
+			$('[name=cusNameOrderCancel]').text("Bạn muốn huỷ đơn hàng của: " + name);
+			$('#DeleteOrderModal').modal('show');
+		};
+		var showDetails = function (objButton) {
+			// alert(objButton.value);
+			let value = objButton.value // {id: "5f2253f290a3911d6acf7d30" , cusname:"asssss" }
+			var orderId = value
+			// event.preventDefault();
+
+			var formData = new FormData();
+			formData.append('orderID', orderId);
+			$.ajax({
+				url: 'Order/getDetails',
+				type: 'POST',
+				data: formData,
+				cache: false,
+				contentType: false,
+				processData: false,
+			}).done(function (result) {
+				if (result.success) {
+					$('[name=cusAddress]').text("Địa chỉ: " + result.userOrder.address);
+					$('[name=cusPhone]').text("Số điện thoại: " + result.userOrder.phone);
+					$('[name=cusName]').text("Khách hàng: " + result.userOrder.cusName);
+					$('[name=orderIDBill]').text(result.userOrder._id);
+					$('#detailsTable').empty();
+					for (let details of result.userOrder.orderDetail) {
+						let total = parseInt(details.quan) * parseInt(details.price)
+						// productImg: 'img/product/imgProduct-1596367016472.png',
+						$('#detailsTable').append(
+							`<tr>
+									<td hidden>${details._id}</td>
+									<td>${details.productName}</td>
+									<td><img src="${details.productImg}" class="avatar img-fluid" alt="No IMG"></td>
+									<td>${details.quan}</td>
+									<td>${details.price}</td>
+									<td>${details.price}</td>
+									<td>${total}</td>
+								</tr>`
+						)
+					}
+					$('#detailsModal').modal('show');
 				} else {
 					alert(result.mgs)
 				}
 			}).fail(() => {
 				alert("Không kết nối được với server")
 			})
-		}
-		var showDelete = function (objButton) {
-			alert(objButton.value);
-			let value =objButton.value // {id: "5f2253f290a3911d6acf7d30" , cusname:"asssss" }
-			 value = JSON.parse('	{id: "5f2253f290a3911d6acf7d30", cusname: "asssss"}')
-			var typeIdDel =value.id
-			var name =value.cusName
-			$('[name=cusNameOrderCancel]').text("Bạn muốn huỷ đơn hàng của: " + name);
-			$('#DeleteOrderModal').modal('show');
 		};
+
 		var loadImg = function (event) {
 			$('#typeImgForm').attr('src', URL.createObjectURL(event.target.files[0]));
 		};
+		$('#status').on('change', function () {
+			phanTrang(0)
+		})
 		//Phan trang
 		$('#limit').on('change', function () {
-			var optionSelected = $("option:selected", this);
-			var valueSelected = this.value;
-			var page = 0;
-			var limit = valueSelected;
-			var formData = new FormData();
-			formData.append('page', page);
-			formData.append('limit', limit);
-			formData.append('status', "0");
-			$.ajax({
-				url: 'order/getList',
-				type: 'POST',
-				data: formData,
-				cache: false,
-				contentType: false,
-				processData: false,
-			}).done(function (result) {
-				if (result.success) {
-					$('#bodyTable').empty();
-					$('#countPage').empty();
-					for (var i = 0; i < result.countPage; i++) {
-						$('#countPage').append(`<button type="button" style="background-color:dimgray;" name="ahihi"  value="${i}" onclick="phanTrang(${i})" >${i}</button>`)
-						// $('#countPage1').append(`<button name="pagetype" style="background-color:dimgray;" value="${i}" type="button">${i}</button>`)
-					}
-					for (let order of result.listOrder) {
-						$('#bodyTable').append(
-							`
-							<tr>
-									<td hidden>${order._id}</td>
-									<td>${order._id}</td>
-									<td>${order.cusName}</td>
-									<td>${order.address}</td>
-									<td>${order.phone}</td>
-									<td>${order.total}</td>
-									<td>${order.status}</td>
-									<td class="table-action">
-										<button type="button" name="btn_edit" data-toggle="modal" data-target="#editTypeModal"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 align-middle"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></button>
-										<button type="button" onclick="showDelete(event)" name="btn_delete" orderCancel">
-											Huỷ đơn hàng</button>
-									</td>
-								</tr>`
-						)
-					}
-				} else {
-					alert(result.mgs)
-				}
-			}).fail((error) => {
-				console.log(error)
-				alert("Không kết nối được với server")
-			})
+			phanTrang(0)
 		});
 		$('[name=pagetype]').click(function () {
 			var page = ($(this).val());
@@ -294,7 +416,8 @@
 									<td>${order.status}</td>
 									<td class="table-action">
 										<button type="button" name="btn_edit" data-toggle="modal" data-target="#editTypeModal"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 align-middle"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></button>
-										<button type="button" name="btn_delete" onclick="showDelete(event)" orderCancel">
+										<button type="button" value="${order._id},${order.cusName}"
+												onclick="showDelete(this)" name="btn_delete">
 											Huỷ đơn hàng</button>
 									</td>
 								</tr>`
@@ -318,15 +441,6 @@
 			$('[name=editTypeName]').val(name);
 			$('[name=editDescription]').val(des);
 		});
-		// $('[name=btn_delete]').click(function () {
-		// 	// DeleteOrderModal
-		// 	var typeIdDel = ($(this).parent().parent().children().eq(0).html());
-		// 	var name = ($(this).parent().parent().children().eq(1).html());
-		// 	var name = ($(this).parent().parent().children().eq(2).html());
-		// 	$('[name=typeIdDel]').text(typeIdDel);
-		// 	$('[name=cusNameOrderCancel]').text("Bạn muốn huỷ đơn hàng của: "+name);
-		// 	$('#DeleteOrderModal').modal('show');
-		// });
 	</script>
 	<style>
 		div.scrollmenu {

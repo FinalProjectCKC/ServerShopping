@@ -35,6 +35,7 @@ exports.newOrder = async (req, res) => {
       let cusName = receiver
       if (userCart !== null) {
         const cartDetail = userCart.cartDetail
+        console.log(cartDetail)
         const newOrder = new Order({
           _id: new mongoose.Types.ObjectId(),
           orderDetail: cartDetail,
@@ -376,7 +377,7 @@ exports.downloadOrder = async (req, res) => {
               text: 'Tổng tiền phải trả: '
             },
             {
-              text: `${total} $`,
+              text: `${total} VND`,
             }
           ],
           style: 'infor'

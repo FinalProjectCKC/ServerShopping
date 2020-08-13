@@ -19,13 +19,13 @@ const orderDetail = new Schema({
     type: String,
     require: true
   },
+  productImg: {
+    type: String,
+    require: false
+  },
   unit: {
     type: String,
     require: true
-  },
-  reasonCancel: {
-    type: String,
-    default: null
   },
   quan: {
     type: String,
@@ -59,6 +59,10 @@ const orderSchema = new Schema({
   orderDetail: [orderDetail],
   total: {
     type: String,
+  },
+  reasonCancel: {
+    type: String,
+    default: null,
   },
   cusID: {
     type: Schema.Types.ObjectId,

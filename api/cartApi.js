@@ -110,16 +110,14 @@ exports.addToCart = async (req, res) => {
     //check if product is exit in cart
     const cartDetail = userCart.cartDetail.filter(data => data.productId.toString() === productId.toString())
     let cartDetailIndex = userCart.cartDetail.findIndex(data => data.productId.toString() === productId.toString())
+    const productTypes = await ProductType.findOne({
+      'product._id': productId
+    })
+    const Products = productTypes.product.filter(data => data._id.toString() === productId.toString())
+    const Product = Products[0]
+    let ProductPrice = Product.price
     if (cartDetail.length == 0) {
-      //get productHave product
-
-      // const productTypes = await ProductType.find()
-      const productTypes = await ProductType.findOne({
-        'product._id': productId
-      })
-      const Products = productTypes.product.filter(data => data._id.toString() === productId.toString())
-      const Product = Products[0]
-      let ProductPrice = Product.price
+      
       //add product to cart      
       let newDetails = {
         _id: new mongoose.Types.ObjectId(),
@@ -202,6 +200,7 @@ exports.addToCart = async (req, res) => {
       })
     }
   } catch (error) {
+    console.log(error)
     return res.json({
       status: -1,
       message: 'Có sự cố xảy ra. Không thêm được vào giỏ hàng!',
