@@ -43,6 +43,7 @@ exports.newOrder = async (req, res) => {
           address: address,
           phone: phone,
           cusName: cusName,
+          cusMail: customer.email,
           // cusName: (customer.fullName == "" || customer.fullName === null) ? customer.username : customer.fullName,
           total: userCart.total,
           status: 0,

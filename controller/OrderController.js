@@ -7,12 +7,6 @@ const fs = require('fs')
 const path = require('path')
 const PdfPrinter = require('pdfmake');
 
-function objectIsEmpty(object) {
-  if (Object.keys(object).length == 0) {
-    return true;
-  }
-  return false;
-}
 exports.getListOrder = async (req, res) => {
   try {
     let page = req.body.page;
@@ -129,6 +123,13 @@ exports.changeStatus = async (req, res) => {
       })
       .then(async (data) => {
         if (data !== null) {
+        //send mail
+        let order =  await Order.findOne(
+          {
+            _id: orderID
+          })
+        let cusMail = order.email
+        
           return res.json({
             success: true,
             mgs: "Huỷ đơn hàng thành công!",
@@ -352,4 +353,79 @@ exports.downloadOrder = async (req, res) => {
       mgs: "Xuất hoá đơn thất bại!",
     });
   }
+}
+exports.sendReport = async (req, res) => {
+  let { url, name, type } = req.body
+  cusMail
+  const accountId = handleAccountJwt.getAccountId(req)
+  const fis = {
+    username: 'fis.insight@fpt.com.vn',
+    password: 'fistdchcm2020@#!'
+  }
+
+  try {
+    const account = await Account.findOne(
+      { _id: accountId }
+    )
+    let nodemailer = require('nodemailer')
+    let subject = ''
+    if (type === 1) {
+      subject = 'Báo cáo điểm danh khoá học'
+    } else if (type === 2) {
+      subject = 'Báo cáo đánh giá khoá học'
+    } else {
+      subject = 'Báo cáo điểm danh buổi học'
+    }
+
+    var transporter = nodemailer.createTransport({
+      host: "10.4.11.62",
+      port: 25,
+      secure: false,
+      auth: {
+        user: fis.username,
+        pass: fis.password
+      }
+    });
+    let filepath = __dirname.replace('/api', '') + url.replace(`${API_FIS}`, '')
+    let fileName = (type === 1 || type === 2) ? `${name}.xlsx` : `${name}.pdf`
+    var mailOptions = {
+      from: 'fis.insight@fpt.com.vn',
+      to: account.email,
+      subject: `${subject} - ${name}`,
+      text: 'Tải xuống để xem tài liệu !',
+      html: `
+        <h2>FIS Insight App</h2>
+        <p>${subject}: ${name}</p>
+      `,
+      attachments: {
+        filename: fileName,
+        path: filepath
+      }
+    };
+
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        console.log(error)
+        return res.json({
+          resultCode: -1,
+          message: 'Có sự cố xảy ra. Gửi email không thành công. Vui lòng thử lại sau !',
+          data: null
+        })
+      } else {
+        return res.json({
+          resultCode: 1,
+          message: 'Gửi email thành công !',
+          data: null
+        })
+      }
+    })
+  } catch (error) {
+    console.log(error)
+    return res.json({
+      resultCode: -1,
+      message: 'Có sự cố xảy ra. Gửi email không thành công. Vui lòng thử lại sau !',
+      data: null
+    })
+  }
+  ;
 }

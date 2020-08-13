@@ -76,6 +76,10 @@ const orderSchema = new Schema({
     type: String,
     required: true,
   },
+  cusMail: {
+    type: String,
+    required: true,
+  },
   phone: {
     type: String,
     required: true,
