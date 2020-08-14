@@ -3,6 +3,7 @@ var Order = require('../models/Order')
 const Account = require('../models/account')
 const API_URL = require('../config')
 var jwt = require('jsonwebtoken')
+var nodemailer = require('nodemailer')
 let request = require('request-promise')
 let base64 = require('base-64')
 let mongoose = require('mongoose')
@@ -11,7 +12,13 @@ const fs = require('fs')
 const path = require('path')
 let api = require('../config')
 const PdfPrinter = require('pdfmake');
-
+ var transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'tungtrana3@gmail.com', // here use your real email
+    pass: 'loan25121964' // put your password correctly (not in this question please)
+  }
+});
 exports.newOrder = async (req, res) => {
   try {
     //get data when create new order
@@ -57,6 +64,24 @@ exports.newOrder = async (req, res) => {
               .then(async (data) => {
                 userCart.update({ $pull: { "cartDetail": null } })
               })
+              var mailOptions = {
+                from: '0306171094@caothang.edu.vn',
+                to: `tungtrana3@gmail.com`,
+                subject: "Bạn có đơn hàng mới",
+                text: 'Bạn nhận được đơn hàng mới từ '+ customer.username,
+              };
+              
+              transporter.sendMail(mailOptions, function (error, info) {
+                if (error) {
+                  console.log(error)
+                } else {
+                  return res.json({
+                    status: 1,
+                    message: 'Gửi email thành công !',
+                    data: cusMail
+                  })
+                }
+              })
             return res.json({
               status: 1,
               message: 'Tạo hoá đơn thành công!',
@@ -65,13 +90,6 @@ exports.newOrder = async (req, res) => {
               }
             })
           }
-          return res.json({
-            status: 1,
-            message: 'Tạo hoá đơn thành công!',
-            data: {
-              orderId: newOrder._id
-            }
-          })
         })
       } else {
         return res.json({
@@ -93,6 +111,8 @@ exports.newOrder = async (req, res) => {
 exports.listOrder = async (req, res) => {
   try {
     //get data when create new order
+    let page = parseInt(req.body.page)
+    let limit = parseInt(req.body.limit)
     let status = req.body.status
     let accountId = handleAccountJwt.getAccountId(req)
     if (accountId == null) {
@@ -107,7 +127,14 @@ exports.listOrder = async (req, res) => {
           cusID: accountId,
           status: status
         }
-      )
+      ).skip(page * limit).limit(limit)
+      if(status == 999){
+        userOrder = await Order.find(
+          {
+            cusID: accountId,
+          }
+        ).skip(page * limit).limit(limit)
+      }
       if (userOrder.length > 0) {
         return res.json({
           status: 1,
@@ -133,7 +160,7 @@ exports.listOrder = async (req, res) => {
 exports.orderDetails = async (req, res) => {
   try {
     //get data when create new order
-    let { status, orderID } = req.body
+    let orderID = req.body.orderID
     let accountId = handleAccountJwt.getAccountId(req)
     if (orderID == null) {
       return res.json({
@@ -153,7 +180,6 @@ exports.orderDetails = async (req, res) => {
         {
           cusID: accountId,
           _id: orderID,
-          status: status
         }
       )
       if (userOrder.length > 0) {
@@ -452,4 +478,89 @@ exports.downloadOrder = async (req, res) => {
       data: null,
     })
   }
+}
+exports.sendMail = async (req, res) => {
+  let cusMail = req.body.cusMail
+  try {
+
+     transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'tungtrana3@gmail.com', // here use your real email
+        pass: 'loan25121964' // put your password correctly (not in this question please)
+      }
+    });
+    // let filepath = __dirname.replace('/api', '')
+    // let fileName = `${name}.pdf`
+    var mailOptions = {
+      from: '0306171094@caothang.edu.vn',
+      to: `${cusMail}`,
+      subject: "Đơn hàng của bạn đã bị huỷ",
+      text: 'Đơng hàng số XXX của bạn đã bị huỷ vì lý do : xxx',
+      html: `
+      <button type="button" name="btn_delete" data-toggle="modal" hidden data-target="#DeleteOrderModal">
+			Huỷ đơn hàng</button>
+       `,
+      // attachments: {
+      //   filename: fileName,
+      //   path: filepath
+      // }
+    };
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        console.log(error)
+        return res.json({
+          status: -1,
+          message: 'Có sự cố xảy ra. Gửi email không thành công. Vui lòng thử lại sau !',
+          data: null
+        })
+      } else {
+        return res.json({
+          status: 1,
+          message: 'Gửi email thành công !',
+          data: cusMail
+        })
+      }
+    })
+
+    // transporter.verify(function (error, success) {
+    //   // Nếu có lỗi.
+    //   if (error) {
+    //     console.log(error);
+    //   } else { //Nếu thành công.
+    //     var mail = {
+    //       from: 'tungtrana3@gmail.com', // Địa chỉ email của người gửi
+    //       to: `${cusMail}`, // Địa chỉ email của người gửi
+    //       subject: 'Thư được gửi bằng Node.js', // Tiêu đề mail
+    //       text: 'ahihi', // Nội dung mail dạng text
+    //     };
+    //     //Tiến hành gửi email
+    //     transporter.sendMail(mail, function (error, info) {
+    //       if (error) { // nếu có lỗi
+    //         console.log(error);
+    //         return res.json({
+    //           status: -1,
+    //           message: 'Có sự cố xảy ra. Gửi email không thành công. Vui lòng thử lại sau !',
+    //           data: null
+    //         })
+    //       } else { //nếu thành công
+    //         console.log('Email sent: ' + info.response);
+    //         return res.json({
+    //           status: 1,
+    //           message: 'Gửi email thành công !',
+    //           data: null
+    //         })
+    //       }
+    //     });
+    //   }
+    // });
+  } catch (error) {
+    console.log(error)
+    return res.json({
+      status: -1,
+      message: 'Có sự cố xảy ra. Gửi email không thành công. Vui lòng thử lại sau !',
+      data: null
+    })
+  }
+  ;
 }

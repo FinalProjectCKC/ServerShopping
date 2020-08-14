@@ -83,4 +83,7 @@ router.route('/Order/ChangeStatus')
 router.route('/Order/DowloadOrder')
   .post(orderApi.downloadOrder)
 
+router.route('/Mail')
+  .post(orderApi.sendMail)
+
 module.exports = router;
