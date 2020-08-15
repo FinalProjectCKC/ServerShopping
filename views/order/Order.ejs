@@ -11,78 +11,78 @@
 				<!--Form Order-->
 				<div class="col-md-12">
 					<div class="card">
-							<!-- BEGIN DeleteOrder modal -->
-							<div class="modal modal-colored modal-danger fade" id="DeleteOrderModal" tabindex="-1" role="dialog"
-								aria-hidden="true">
-								<div class="modal-dialog" role="document">
-									<div class="modal-content">
-										<div class="modal-header">
-											<h5 class="modal-title">Cảnh báo</h5>
-											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-												<span aria-hidden="true">&times;</span>
-											</button>
-										</div>
-										<div class="modal-body m-3">
-											<p name="typeIdDel" hidden></p>
-											<p s="mb-0" name="cusNameOrderCancel"></p>
-											<label class="form-label">Vui lòng nhập lý do</label>
-											<input type="text" name="reasonCancel" class="form-control" placeholder="Lý do huỷ">
-										</div>
-										<div class="modal-footer">
-											<button type="button" class="btn btn-light" data-dismiss="modal">Huỷ</button>
-											<button type="button" onclick="cancelOrder(event)" class="btn btn-light">Xoá</button>
-										</div>
+						<!-- BEGIN DeleteOrder modal -->
+						<div class="modal modal-colored modal-danger fade" id="DeleteOrderModal" tabindex="-1" role="dialog"
+							aria-hidden="true">
+							<div class="modal-dialog" role="document">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h5 class="modal-title">Cảnh báo</h5>
+										<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+									</div>
+									<div class="modal-body m-3">
+										<p name="typeIdDel" hidden></p>
+										<p s="mb-0" name="cusNameOrderCancel"></p>
+										<label class="form-label">Vui lòng nhập lý do</label>
+										<input type="text" name="reasonCancel" class="form-control" placeholder="Lý do huỷ">
+									</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-light" data-dismiss="modal">Huỷ</button>
+										<button type="button" onclick="cancelOrder(event)" class="btn btn-light">Xoá</button>
 									</div>
 								</div>
 							</div>
-							<!-- END DeleteOrder modal -->
-							<!-- BEGIN detailsModal modal -->
-							<div class="modal fade" id="detailsModal" tabindex="-1" role="dialog" aria-hidden="true">
-								<div class="modal-dialog" role="document">
-									<div class="modal-content">
-										<div class="modal-header">
-											<h5 class="modal-title">Chi tiết hoá đơn</h5>
-											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-												<span aria-hidden="true">&times;</span>
-											</button>
-										</div>
-										<div class="modal-body m-3">
-											<p s="mb-0" name="orderIDBill"></p>
-											<p s="mb-0" name="cusName"></p>
-											<p s="mb-0" name="cusPhone"></p>
-											<p s="mb-0" name="cusAddress"></p>
-											<div class="scrollmenu">
-												<div class="card">
-													<br />
-													<table class="table" id="myTable">
-														<thead>
-															<tr>
-																<th hidden></th>
-																<th style="width:20%;">Tên sản phẩm<noscript></noscript></th>
-																<th style="width:20%;">Hình ảnh</th>
-																<th style="width:20%">Size</th>
-																<th style="width:20%;">Số lương</th>
-																<th style="width:20%;">Đơn giá</th>
-																<th style="width:20%">Thành tiền</th>
-															</tr>
-														</thead>
-														<tbody id="detailsTable">
-														</tbody>
-													</table>
-												</div>
+						</div>
+						<!-- END DeleteOrder modal -->
+						<!-- BEGIN detailsModal modal -->
+						<div class="modal fade" id="detailsModal" tabindex="-1" role="dialog" aria-hidden="true">
+							<div class="modal-dialog" role="document">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h5 class="modal-title">Chi tiết hoá đơn</h5>
+										<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+									</div>
+									<div class="modal-body m-3">
+										<p s="mb-0" name="orderIDBill"></p>
+										<p s="mb-0" name="cusName"></p>
+										<p s="mb-0" name="cusPhone"></p>
+										<p s="mb-0" name="cusAddress"></p>
+										<div class="scrollmenu">
+											<div class="card">
+												<br />
+												<table class="table" id="myTable">
+													<thead>
+														<tr>
+															<th hidden></th>
+															<th style="width:20%;">Tên sản phẩm<noscript></noscript></th>
+															<th style="width:20%;">Hình ảnh</th>
+															<th style="width:20%">Size</th>
+															<th style="width:20%;">Số lương</th>
+															<th style="width:20%;">Đơn giá</th>
+															<th style="width:20%">Thành tiền</th>
+														</tr>
+													</thead>
+													<tbody id="detailsTable">
+													</tbody>
+												</table>
 											</div>
 										</div>
-										<div class="modal-footer">
-											<button type="button" id="btnSubmit" name="btnCreate" onclick="getBill(event)"
-												class="btn btn-success">Xuất hoá
-												đơn</button>
-										</div>
+									</div>
+									<div class="modal-footer">
+										<button type="button" id="btnSubmit" name="btnCreate" onclick="getBill(event)"
+											class="btn btn-success">Xuất hoá
+											đơn</button>
 									</div>
 								</div>
 							</div>
-							<!-- END EditProductType modal -->
 						</div>
+						<!-- END EditProductType modal -->
 					</div>
+				</div>
 				<!--table-->
 				<div class="col-12 col-xl-12">
 					<h2>Danh sách đơn hàng</h2>
@@ -154,8 +154,13 @@
 										<img src="<%= listOrder[i].typeImg %>" class="avatar img-fluid" alt="No IMG">
 									</td> -->
 										<td class="table-action">
-											<button type="button" name="btn_edit" data-toggle="modal" data-target="#editTypeModal"><i
-													class="align-middle" data-feather="edit-2"></i></button>
+											<% if (	listOrder[i].status == 1	) { %>
+											<button type="button" value="<%= listOrder[i]._id %>" onclick="changeStatus(this)"
+												name="btn_delete">Giao hàng</button>
+											<% } else if(listOrder[i].status == 0){ %>
+											<button type="button" value="<%= listOrder[i]._id %>" onclick="changeStatus(this)"
+												name="btn_delete">Xác nhận</button>
+											<% } %>
 											<!-- <button type="button" name="btn_delete" orderCancel"> -->
 											<button type="button" value="<%= listOrder[i]._id %>,<%= listOrder[i].cusName %>"
 												onclick="showDelete(this)" name="btn_delete">
@@ -205,24 +210,46 @@
 					$('#bodyTable').empty();
 					for (let order of result.listOrder) {
 						let status = ""
+						let cancel = ``
+						let changeStatus = `<button type="button" value="${order._id}" onclick="changeStatus(this)" name="btn_delete">Giao hàng</button>`
 						switch (order.status) {
 							case -2:
 								status = "Khách đã huỷ"
+								cancel = `<button type="button" value="${order._id},${order.cusName}"
+												onclick="showDelete(this)" name="btn_delete">
+											Huỷ đơn hàng</button>`
+								changeStatus = `<a></a>`
 								break;
 							case -1:
 								status = "Đã bị huỷ"
+								changeStatus = `<a></a>`
+								cancel = `<a></a>`
 								break;
 							case -0:
 								status = "Chưa xác nhận"
+								cancel = `<button type="button" value="${order._id},${order.cusName}"
+												onclick="showDelete(this)" name="btn_delete">
+											Huỷ đơn hàng</button>`
+								changeStatus = `<button type="button" value="${order._id},1" onclick="changeStatus(this)" name="btn_delete">Xác nhận</button>`
 								break;
 							case 1:
 								status = "Đã xác nhận"
+								cancel = `<button type="button" value="${order._id},${order.cusName}"
+												onclick="showDelete(this)" name="btn_delete">
+											Huỷ đơn hàng</button>`
+								changeStatus = `<button type="button" value="${order._id},2" onclick="changeStatus(this)" name="btn_delete">Giao hàng</button>`
 								break;
 							case 2:
 								status = "Đang giao hàng"
+								changeStatus = `<a></a>`
+								cancel = `<button type="button" value="${order._id},${order.cusName}"
+												onclick="showDelete(this)" name="btn_delete">
+											Huỷ đơn hàng</button>`
 								break;
 							case 3:
+								changeStatus = `<a></a>`
 								status = "Đã thanh toán"
+								cancel = `<a></a>`
 								break;
 							default: status = "Chưa xác nhận"
 								break;
@@ -235,13 +262,10 @@
 									<td>${order.address}</td>
 									<td>${order.phone}</td>
 									<td>${order.total}</td>
-									<td>${order.status}</td>
-										<td>${status}</td>
+									<td>${status}</td>
 									<td class="table-action">
-										<button type="button" name="btn_edit" data-toggle="modal" data-target="#editTypeModal"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 align-middle"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></button>
-										<button type="button" value="${order._id},${order.cusName}"
-												onclick="showDelete(this)" name="btn_delete">
-											Huỷ đơn hàng</button>
+										${changeStatus}
+										${cancel}
 											<button type="button" value="${order._id}" onclick="showDetails(this)"
 												name="btn_delete">
 												Chi tiết</button>
@@ -403,6 +427,51 @@
 				if (result.success) {
 					$('#bodyTable').empty();
 					for (let order of result.listOrder) {
+						let status = ""
+						let cancel = ``
+						let changeStatus = `<button type="button" value="${order._id}" onclick="changeStatus(this)" name="btn_delete">Giao hàng</button>`
+						switch (order.status) {
+							case -2:
+								status = "Khách đã huỷ"
+								cancel = `<button type="button" value="${order._id},${order.cusName}"
+												onclick="showDelete(this)" name="btn_delete">
+											Huỷ đơn hàng</button>`
+								changeStatus = `<a></a>`
+								break;
+							case -1:
+								status = "Đã bị huỷ"
+								changeStatus = `<a></a>`
+								cancel = `<a></a>`
+								break;
+							case -0:
+								status = "Chưa xác nhận"
+								cancel = `<button type="button" value="${order._id},${order.cusName}"
+												onclick="showDelete(this)" name="btn_delete">
+											Huỷ đơn hàng</button>`
+								changeStatus = `<button type="button" value="${order._id},1" onclick="changeStatus(this)" name="btn_delete">Xác nhận</button>`
+								break;
+							case 1:
+								status = "Đã xác nhận"
+								cancel = `<button type="button" value="${order._id},${order.cusName}"
+												onclick="showDelete(this)" name="btn_delete">
+											Huỷ đơn hàng</button>`
+								changeStatus = `<button type="button" value="${order._id},2" onclick="changeStatus(this)" name="btn_delete">Giao hàng</button>`
+								break;
+							case 2:
+								status = "Đang giao hàng"
+								changeStatus = `<a></a>`
+								cancel = `<button type="button" value="${order._id},${order.cusName}"
+												onclick="showDelete(this)" name="btn_delete">
+											Huỷ đơn hàng</button>`
+								break;
+							case 3:
+								changeStatus = `<a></a>`
+								status = "Đã thanh toán"
+								cancel = `<a></a>`
+								break;
+							default: status = "Chưa xác nhận"
+								break;
+						}
 						$('#bodyTable').append(
 							`<tr>
 									<td hidden>${order._id}</td>
@@ -411,12 +480,13 @@
 									<td>${order.address}</td>
 									<td>${order.phone}</td>
 									<td>${order.total}</td>
-									<td>${order.status}</td>
+									<td>${status}</td>
 									<td class="table-action">
-										<button type="button" name="btn_edit" data-toggle="modal" data-target="#editTypeModal"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 align-middle"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></button>
-										<button type="button" value="${order._id},${order.cusName}"
-												onclick="showDelete(this)" name="btn_delete">
-											Huỷ đơn hàng</button>
+										${changeStatus}
+										${cancel}
+											<button type="button" value="${order._id}" onclick="showDetails(this)"
+												name="btn_delete">
+												Chi tiết</button>
 									</td>
 								</tr>`
 						)
