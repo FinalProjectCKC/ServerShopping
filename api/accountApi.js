@@ -260,6 +260,7 @@ exports.updatePassword = async (req, res) => {
         let accountId = handleAccountJwt.getAccountId(req)
         let newPass = req.body.newpass
         let password = req.body.password
+        console.log(req.body)
         let date = new Date()
         let today = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
         if (accountId == null) {
@@ -275,7 +276,6 @@ exports.updatePassword = async (req, res) => {
             }
         )
         let newPassWord = bcrypt.hashSync(newPass);
-        // console.log(bcrypt.compareSync(password, newPassWord))
         if (bcrypt.compareSync(password, check.password)) {
             await Account.findOneAndUpdate(
                 {
