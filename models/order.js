@@ -60,6 +60,10 @@ const orderSchema = new Schema({
   total: {
     type: String,
   },
+  quanti: {
+    type: Number,
+    default: 0
+  },
   reasonCancel: {
     type: String,
     default: null,

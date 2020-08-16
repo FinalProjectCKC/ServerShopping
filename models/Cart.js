@@ -63,6 +63,10 @@ const cartSchema = new Schema({
   total: {
     type: String,
   },
+  quanti: {
+    type: Number,
+    default: 0
+  },
   userId: {
     type: Schema.Types.ObjectId,
     required: true,

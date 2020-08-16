@@ -131,16 +131,22 @@ exports.addToCart = async (req, res) => {
         last_modified: today
       }
       let oldTotal = 0
+      let oldQuanti = 0
       if (userCart.total !== null) {
         oldTotal = userCart.total
       }
+      if (userCart.quanti !== null) {
+        oldQuanti = userCart.quanti 
+      }
       let total = parseInt(oldTotal) + parseInt(quan) * parseInt(ProductPrice)
+      let newQuanti = parseInt(oldQuanti) + parseInt(quan) 
       //add to cart
       userCart = await Cart.findOneAndUpdate(
         { userId: accountId },
         {
           last_modified: today,
           total: total,
+          quanti: newQuanti,
           $push: { cartDetail: newDetails }
         }
       ).then(async (data) => {
@@ -164,10 +170,15 @@ exports.addToCart = async (req, res) => {
     } else {
       //edit quanti
       let oldTotal = 0
+      let oldQuanti = 0
+      if (userCart.quanti !== null) {
+        oldQuanti = userCart.quanti
+      }
       if (userCart.total !== null) {
         oldTotal = userCart.total
       }
       let total = parseInt(oldTotal) + parseInt(quan) * parseInt(ProductPrice)
+      let newQuanti = parseInt(oldQuanti) + parseInt(quan) 
       let oldQuan = cartDetail[0].quan
       let newQuan = parseInt(oldQuan) + quan
 
@@ -177,7 +188,8 @@ exports.addToCart = async (req, res) => {
         },
         {
           $set: { [`cartDetail.${cartDetailIndex}.quan`]: newQuan },
-          total: total
+          total: total,
+          quanti: newQuanti,
         }
       ).then(async (data) => {
 
