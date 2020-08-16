@@ -102,6 +102,7 @@ exports.changeStatus = async (req, res) => {
     // let accountId = handleAccountJwt.getAccountId(req)
     let orderID = req.body.orderId
     let reasonCancel = req.body.reasonCancel
+    console.log("11111",req.body)
     let status = parseInt(req.body.status)
     let date = new Date()
     let today = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))

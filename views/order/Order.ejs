@@ -155,10 +155,10 @@
 									</td> -->
 										<td class="table-action">
 											<% if (	listOrder[i].status == 1	) { %>
-											<button type="button" value="<%= listOrder[i]._id %>" onclick="changeStatus(this)"
+											<button type="button" value="<%= listOrder[i]._id %>,2" onclick="changeStatus(this)"
 												name="btn_delete">Giao hàng</button>
 											<% } else if(listOrder[i].status == 0){ %>
-											<button type="button" value="<%= listOrder[i]._id %>" onclick="changeStatus(this)"
+											<button type="button" value="<%= listOrder[i]._id %>,1" onclick="changeStatus(this)"
 												name="btn_delete">Xác nhận</button>
 											<% } %>
 											<!-- <button type="button" name="btn_delete" orderCancel"> -->
@@ -341,7 +341,41 @@
 				alert("Không kết nối được với server")
 			})
 		}
+		var changeStatus = function (objButton) {
 
+			let value = objButton.value
+			// alert(value)
+			var values = value.split(',', 2);
+			var orderID = values[0]
+			var reasonCancel = null
+			var status = values[1]
+
+			var formData = new FormData();
+			var orderId = orderID
+			var reasonCancel = null
+
+			formData.append('orderId', orderId);
+			formData.append('reasonCancel', reasonCancel);
+			formData.append('status', status);
+
+			$.ajax({
+				url: 'Order/changeStatus',
+				type: 'POST',
+				data: formData,
+				cache: false,
+				contentType: false,
+				processData: false,
+			}).done(function (result) {
+				if (result.success) {
+					// alert("Huỷ đơn hàng thành công")
+					phanTrang(0)
+					// location.reload()
+				} else {
+				}
+			}).fail(() => {
+				alert("Không kết nối được với server")
+			})
+		};
 		var showDelete = function (objButton) {
 			// alert(objButton.value);
 			let value = objButton.value // {id: "5f2253f290a3911d6acf7d30" , cusname:"asssss" }
@@ -429,7 +463,7 @@
 					for (let order of result.listOrder) {
 						let status = ""
 						let cancel = ``
-						let changeStatus = `<button type="button" value="${order._id}" onclick="changeStatus(this)" name="btn_delete">Giao hàng</button>`
+						let changeStatus = `<button type="button" value="${order._id},1" onclick="changeStatus(this)" name="btn_delete">Giao hàng</button>`
 						switch (order.status) {
 							case -2:
 								status = "Khách đã huỷ"
