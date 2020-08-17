@@ -12,7 +12,7 @@ exports.getListOrder = async (req, res) => {
     let page = req.body.page;
     let status = parseInt(req.body.status);;
     let limit = parseInt(req.body.limit);
-    const listAll = Order.find({});
+    const listAll = Order.find({status: status});
     let listOrder = await Order.find({
       status: status
     })

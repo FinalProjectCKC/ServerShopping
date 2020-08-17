@@ -59,6 +59,40 @@ exports.getListPageType = async (req, res) => {
     });
   }
 };
+exports.getProductTypeById = async (req, res) => {
+  try {
+    let typeId = req.body.typeId
+    if (typeId === null || typeId === undefined) {
+      return res.json({
+        status: -1,
+        message: 'Vui lòng nhập ID loại cần tìm',
+        data: null
+      })
+    }
+    const productTypes = await ProductType.findOne(
+      { _id: typeId }
+    )
+    if (productTypes !== null) {
+      return res.json({
+        success: true,
+        productType: productTypes,
+        mgs: "Lấy loại sản phẩm thành công ",
+      })
+    } else {
+      return res.json({
+        success: false,
+        productType: null,
+        mgs: "Không có loại sản phẩm này",
+      })
+    }
+  } catch{
+    return res.json({
+      success: false,
+      productType: null,
+      mgs: "Có lỗi xảy ra! Không lấy được loại sản phẩm",
+    })
+  }
+}
 exports.addProductType1 = async (req, res) => {
   let typeName = req.body.typeName;
   let description = req.body.description;
@@ -574,124 +608,3 @@ exports.editProduct = async (req, res) => {
     });
   }
 };
-// exports.getListProduct = async (req, res) => {
-//   try {
-//     const listProductType = await ProductType.find()
-//     var listProduct = []
-//     for (let ProType of listProductType) {
-//       if (ProType.product !== []) {
-//         for (let Product of ProType.product) {
-//           listProduct.push(Product);
-//         }
-//       }
-//     }
-//     return res.render('product/Product', { listProduct, listProductType, mgs: "" });
-//   } catch (error) {
-//     return res.send('Có lỗi xảy ra! Lấy danh sách sản phẩm thất bại');;
-//   }
-// }
-// exports.addProduct = async (req, res) => {
-//   let { description, productName, unit,  price, typeProduct } = req.body
-//   let quan =req.body.quan
-//   let files = req.files
-//   let date = new Date()
-//   let today = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
-//   if (productName == null || productName == undefined || productName == '') {
-//     return res.json({ success: false, mgs: "Tên sản phẩm không được để trống" });
-//   }
-//   try {
-//     const check = await ProductType.findOne({
-//       _id: typeProduct
-//     })
-//     if (check == null) {
-//       return res.json({
-//         success: false,
-//         mgs: 'Không tìm thấy loại sản phẩm này!',
-//       })
-//     }
-//     let typeImg = "img/product/default.png"
-//     if (!objectIsEmpty(files)) {
-//       var file = req.files.addInputImg
-//       var imageName = file.fieldName + '-' + Date.now() + '.png'
-//       var tmp_path = file.path
-//       var target_path = __dirname.replace('controller', '') + 'public/img/product/' + imageName
-//       let src = fs.createReadStream(tmp_path)
-//       let dest = fs.createWriteStream(target_path)
-//       src.pipe(dest)
-//       src.on('end', async () => {
-//         typeImg = "img/product/" + imageName
-//       })
-//       src.on('error', (err) => {
-//         fs.unlink(tmp_path, (err) => { console.log(err) })
-//         return res.json({
-//           status: -1,
-//           message: 'Thất bại',
-//         })
-//       })
-//     }
-//     const newProduct = {
-//       _id: new mongoose.Types.ObjectId(),
-//       productName: productName,
-//       unit: unit,
-//       quan: quan,
-//       price: price,
-//       typeProduct: check.typeName,
-//       productImg: 'img/product/'+imageName,
-//       description: description,
-//       created_at: today,
-//       last_modified: today
-//     }
-//     await ProductType.findOneAndUpdate(
-//       { _id: typeProduct },
-//       { $push: { product: newProduct } }
-//     ).then(async (data) => {
-//       if (data !== null) {
-//         return res.json({ success: true, mgs: "Thêm sản phẩm thành công" });
-//       }
-//     })
-//   } catch(error){
-//     console.log(error)
-//     return res.json({
-//       success: false,
-//       mgs: 'Có sự cố xảy ra. Không thể thêm sản phẩm!',
-//     })
-//   }
-// }
-// exports.editProduct = async (req, res) => {
-//   //Type infor
-//   try {
-//     let typeName = req.body.typeName
-//     let description = req.body.description
-//     await Products.findOneAndUpdate(
-//       { typeName: typeName },
-//       {
-//         typeName: typeName,
-//         description: description,
-//       }
-//     ).then(() => {
-//       return res.send('Cập nhật thành công');
-//     })
-//   } catch (error) {
-//     console.log(error)
-//     return res.send('Có lỗi xảy ra! Cập nhật thất bại');
-//   }
-// }
-// exports.deleteProduct = async (req, res) => {
-//   //Type infor
-//   try {
-//     let typeName = req.body.typeName
-//     let date = new Date()
-//     let today = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
-//     await ProductType.findOneAndUpdate(
-//       { typeName: typeName },
-//       {
-//         delete_at: today,
-//         last_modified: today,
-//       }
-//     )
-//     return res.send('Xoá thành công');
-//   } catch (error) {
-//     console.log(error)
-//     return res.send('Có lỗi xảy ra! Xoá thất bại');
-//   }
-// }

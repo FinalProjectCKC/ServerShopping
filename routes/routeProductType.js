@@ -15,7 +15,9 @@ proType.get('/', ProductController.getListProductType)
 
 proType.route('/getTypePage')
   .post(ProductController.getListPageType)
-  
+  proType.route('/getProductById')
+  .post(ProductController.getProductTypeById)
+ 
 proType.route('/addType')
   .post(ProductController.addProductType1)
 

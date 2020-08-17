@@ -47,6 +47,54 @@ exports.getListAccount = async (req, res) => {
     return res.send('Có lỗi xảy ra! Lấy danh sách thất bại');;
   }
 }
+exports.addAccount = async (req, res) => {
+  let username = req.body.username;
+  let fullname = req.body.fullname;
+  let email = req.body.email;
+  let password = req.body.password;
+  let address = req.body.address;
+  let date = new Date();
+  let today = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+  if (!username) {
+    return res.json({ success: false, mgs: "Tên tài khoản không được để trống" });
+  }
+  try {
+    const check = await Account.findOne({
+      username: username,
+    });
+    console.log("username",username)
+    if (check==null) {
+            const newAccount = new Account({
+              _id: new mongoose.Types.ObjectId(),
+              username: username,
+              fullName: fullname,
+              email:email,
+              password: password,
+              address:address,
+              accRole:"admin",
+              created_at: today,
+              last_modified: today,
+            });
+            await newAccount.save().then(async () => {
+              return res.json({
+                success: true,
+                mgs: "Thêm thành công",
+              });
+            });
+    } else {
+      return res.json({
+        success: false,
+        mgs: "Tên đã tồn tại!",
+      });
+    }
+  } catch(e){
+    console.log(e)
+    return res.json({
+      success: false,
+      mgs: "Có sự cố xảy ra. Không thể thêm loại sản phẩm!",
+    });
+  }
+}
 // exports.logout = async (req, res) => {
 
 // }

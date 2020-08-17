@@ -41,6 +41,10 @@ function checkFileType(file, cb) {
 }
 //Navigation
 routeAccount.get('/', AccountController.getListAccount)
+
+routeAccount.route('/addAccount')
+  .post(AccountController.addAccount)
+
 // routeProduct.get('/', ProductController.getListProduct)
 // proType.route('/addType')
 //   .post(upload.single('typeImg'))
