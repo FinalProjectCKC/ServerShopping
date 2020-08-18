@@ -9,6 +9,9 @@ const PdfPrinter = require('pdfmake');
 
 exports.getListOrder = async (req, res) => {
   try {
+    if(!req.session.isLogin){
+      return res.render('login/login');
+    }
     let page = req.body.page;
     let status = parseInt(req.body.status);;
     let limit = parseInt(req.body.limit);
@@ -38,6 +41,9 @@ exports.getListOrder = async (req, res) => {
 };
 exports.getListOrder1 = async (req, res) => {
   try {
+    if(!req.session.isLogin){
+      return res.render('login/login');
+    }
     let page = 0; //req.body.page
     let limit = 2;
     const listOrder = await Order.find({ status: 0 })
@@ -60,6 +66,9 @@ exports.getListOrder1 = async (req, res) => {
 };
 exports.orderDetails = async (req, res) => {
   try {
+    if(!req.session.isLogin){
+      return res.render('login/login');
+    }
     //get data when create new order
     let orderID = req.body.orderID
     if (orderID == null) {
@@ -99,6 +108,9 @@ exports.orderDetails = async (req, res) => {
 }
 exports.changeStatus = async (req, res) => {
   try {
+    if(!req.session.isLogin){
+      return res.render('login/login');
+    }
     // let accountId = handleAccountJwt.getAccountId(req)
     let orderID = req.body.orderId
     let reasonCancel = req.body.reasonCancel
@@ -150,6 +162,9 @@ exports.changeStatus = async (req, res) => {
 }
 exports.downloadOrder = async (req, res) => {
   try {
+    if(!req.session.isLogin){
+      return res.render('login/login');
+    }
     let orderID = req.body.orderID
     console.log(orderID)
     let date = Date.now()

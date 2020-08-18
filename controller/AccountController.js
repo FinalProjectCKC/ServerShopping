@@ -41,6 +41,9 @@ exports.login = async (req, res) => {
 }
 exports.getListAccount = async (req, res) => {
   try {
+    if(!req.session.isLogin){
+      return res.render('login/login');
+    }
     const listAccount = await Account.find()
     return res.render('account/ListAccount', { listAccount });
   } catch (error) {
@@ -54,6 +57,9 @@ exports.addAccount = async (req, res) => {
   let password = req.body.password;
   let address = req.body.address;
   let date = new Date();
+  if(!req.session.isLogin){
+    return res.render('login/login');
+  }
   let today = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
   if (!username) {
     return res.json({ success: false, mgs: "Tên tài khoản không được để trống" });

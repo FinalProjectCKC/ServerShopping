@@ -19,6 +19,9 @@ function objectIsEmpty(object) {
 }
 exports.getListProductType = async (req, res) => {
   try {
+    if(!req.session.isLogin){
+      return res.render('login/login');
+    }
     let page = 0; //req.body.page
     let limit = 1; //req.body.limit
     const listProductType = await ProductType.find()
@@ -38,6 +41,9 @@ exports.getListProductType = async (req, res) => {
 };
 exports.getListPageType = async (req, res) => {
   try {
+    if(!req.session.isLogin){
+      return res.render('login/login');
+    }
     let page = req.body.page;
     let limit = parseInt(req.body.limit);
     const listAll = ProductType.find({});
@@ -61,6 +67,9 @@ exports.getListPageType = async (req, res) => {
 };
 exports.getProductTypeById = async (req, res) => {
   try {
+    if(!req.session.isLogin){
+      return res.render('login/login');
+    }
     let typeId = req.body.typeId
     if (typeId === null || typeId === undefined) {
       return res.json({
@@ -94,6 +103,9 @@ exports.getProductTypeById = async (req, res) => {
   }
 }
 exports.addProductType1 = async (req, res) => {
+  if(!req.session.isLogin){
+    return res.render('login/login');
+  }
   let typeName = req.body.typeName;
   let description = req.body.description;
   let date = new Date();
@@ -180,6 +192,9 @@ exports.addProductType1 = async (req, res) => {
   }
 };
 exports.editProductType = async (req, res) => {
+  if(!req.session.isLogin){
+    return res.render('login/login');
+  }
   let typeId = req.body.typeId;
   let typeName = req.body.typeName;
   let description = req.body.description;
@@ -281,6 +296,9 @@ exports.editProductType = async (req, res) => {
   }
 };
 exports.deleteProductType = async (req, res) => {
+  if(!req.session.isLogin){
+    return res.render('login/login');
+  }
   //Type infor
   try {
     let typeId = req.body.typeId;
@@ -309,6 +327,9 @@ exports.deleteProductType = async (req, res) => {
 
 exports.getListProduct = async (req, res) => {
   try {
+    if(!req.session.isLogin){
+      return res.render('login/login');
+    }
     const listProductType = await ProductType.find({ delete_at: null });
     const listProduct = [];
 
@@ -333,6 +354,9 @@ exports.getListProduct = async (req, res) => {
   }
 };
 exports.addProduct = async (req, res) => {
+  if(!req.session.isLogin){
+    return res.render('login/login');
+  }
   let productType = req.body.productType;
   let description = req.body.description;
   let productName = req.body.productName;
@@ -468,6 +492,9 @@ exports.editProduct = async (req, res) => {
     price,
     unit,
   } = req.body;
+  if(!req.session.isLogin){
+    return res.render('login/login');
+  }
   let date = new Date();
   let today = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
   if (!productName) {
