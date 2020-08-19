@@ -1,6 +1,7 @@
 var Cart = require('../models/Cart')
 var Order = require('../models/Order')
 const Account = require('../models/account')
+var ProductType = require('../models/ProductTypes')
 const API_URL = require('../config')
 var jwt = require('jsonwebtoken')
 var nodemailer = require('nodemailer')
@@ -12,7 +13,7 @@ const fs = require('fs')
 const path = require('path')
 let api = require('../config')
 const PdfPrinter = require('pdfmake');
- var transporter = nodemailer.createTransport({
+var transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
     user: 'tungtrana3@gmail.com', // here use your real email
@@ -64,24 +65,24 @@ exports.newOrder = async (req, res) => {
               .then(async (data) => {
                 userCart.update({ $pull: { "cartDetail": null } })
               })
-              var mailOptions = {
-                from: '0306171094@caothang.edu.vn',
-                to: `tungtrana3@gmail.com`,
-                subject: "Bạn có đơn hàng mới",
-                text: 'Bạn nhận được đơn hàng mới từ '+ customer.username,
-              };
-              
-              transporter.sendMail(mailOptions, function (error, info) {
-                if (error) {
-                  console.log(error)
-                } else {
-                  return res.json({
-                    status: 1,
-                    message: 'Gửi email thành công !',
-                    data: cusMail
-                  })
-                }
-              })
+            var mailOptions = {
+              from: '0306171094@caothang.edu.vn',
+              to: `tungtrana3@gmail.com`,
+              subject: "Bạn có đơn hàng mới",
+              text: 'Bạn nhận được đơn hàng mới từ ' + customer.username,
+            };
+
+            transporter.sendMail(mailOptions, function (error, info) {
+              if (error) {
+                console.log(error)
+              } else {
+                return res.json({
+                  status: 1,
+                  message: 'Gửi email thành công !',
+                  data: cusMail
+                })
+              }
+            })
             return res.json({
               status: 1,
               message: 'Tạo hoá đơn thành công!',
@@ -128,7 +129,7 @@ exports.listOrder = async (req, res) => {
           status: status
         }
       ).skip(page * limit).limit(limit)
-      if(status == 999){
+      if (status == 999) {
         userOrder = await Order.find(
           {
             cusID: accountId,
@@ -244,6 +245,31 @@ exports.ChangeStatus = async (req, res) => {
       })
       .then(async (data) => {
         if (data !== null) {
+          if (parseInt(status) == 3) {
+            let order = await Order.findOne(
+              {
+                cusID: accountId,
+                _id: orderID
+              })
+            let orderDetails = order.orderDetail
+            for (let detail of orderDetails) {
+              let productTypes = await ProductType.findOne({
+                'product._id': detail.productId
+              })
+              let index = productTypes.product.findIndex(data => data._id.toString() === detail.productId.toString())
+              let oldSaled = productTypes.product[index].saled
+              let newSale = parseInt(oldSaled) + parseInt(detail.quan)
+              // console.log(productTypes.product[index].saled)
+              await ProductType.findOneAndUpdate(
+                {
+                  'product._id': detail.productId,
+                },
+                {
+                  $set: { [`product.${index}.saled`]: newSale },
+                }
+              )
+            }
+          }
           return res.json({
             status: 1,
             message: message,
@@ -261,6 +287,7 @@ exports.ChangeStatus = async (req, res) => {
         })
       })
   } catch (error) {
+    console.log(error)
     return res.json({
       status: -1,
       message: 'Có sự cố xảy ra. Không cập nhật được hoá đơn!',
@@ -483,7 +510,7 @@ exports.sendMail = async (req, res) => {
   let cusMail = req.body.cusMail
   try {
 
-     transporter = nodemailer.createTransport({
+    transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
         user: 'tungtrana3@gmail.com', // here use your real email
