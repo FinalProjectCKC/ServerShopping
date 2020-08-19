@@ -61,6 +61,8 @@ router.route('/Product/GetByName')
   .post(productApi.getProductByName)
 router.route('/Product/GetByID')
   .post(productApi.getProductById)
+  router.route('/Product/Search')
+  .post(productApi.searchProduct)
 
 //Cart
 router.route('/Cart/GetCart')

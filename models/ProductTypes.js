@@ -12,6 +12,10 @@ const productSchema = new Schema({
     type: String,
     require: true,
   },
+  saled: {
+    type: Number,
+    default: 0,
+  },
   productType: {
     type: String,
     require: true,
