@@ -1,6 +1,6 @@
 var passport = require('passport')
 var Account = require('../models/account')
-var Order = require('../models/Order')
+var Order = require('../models/order')
 var jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs');
 let request = require('request-promise')

@@ -1,5 +1,5 @@
-var Cart = require('../models/Cart')
-var Order = require('../models/Order')
+var Cart = require('../models/cart')
+var Order = require('../models/order')
 const Account = require('../models/account')
 var ProductType = require('../models/ProductTypes')
 const API_URL = require('../config')
