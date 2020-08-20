@@ -277,9 +277,9 @@ exports.searchProduct = async (req, res) => {
       delete_at: null,
       "product.productName": { $regex: `${searchKey}` },
     });
-    findProducts.concat(find2)
-    findProducts.concat(find3)
-    findProducts.concat(find4)
+    findProducts.push(find2)
+    findProducts.push(find3)
+    findProducts.push(find4)
 
     let products = [];
     for (let ProType of findProducts) {
