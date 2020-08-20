@@ -258,10 +258,29 @@ exports.searchProduct = async (req, res) => {
   try {
     let searchKey = req.body.searchKey;
     console.log(searchKey)
-    const findProducts = await ProductType.find({
+    let findProducts = await ProductType.find({
       delete_at: null,
       "product.productName": { $regex: `${searchKey}` },
     });
+    searchKey = searchKey.toLowerCase()
+    let find2 = await ProductType.find({
+      delete_at: null,
+      "product.productName": { $regex: `${searchKey}` },
+    });
+    searchKey = searchKey.toUpperCase()
+    let find3 = await ProductType.find({
+      delete_at: null,
+      "product.productName": { $regex: `${searchKey}` },
+    });
+    searchKey = searchKey.charAt(0).toUpperCase() + searchKey.slice(1);
+    let find4 = await ProductType.find({
+      delete_at: null,
+      "product.productName": { $regex: `${searchKey}` },
+    });
+    findProducts.concat(find2)
+    findProducts.concat(find3)
+    findProducts.concat(find4)
+
     let products = [];
     for (let ProType of findProducts) {
       if (ProType.product !== []) {
