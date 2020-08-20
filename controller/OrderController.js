@@ -27,6 +27,7 @@ exports.getListOrder = async (req, res) => {
     }
     return res.json({
       success: true,
+      user : req.session.user,
       listOrder: listOrder,
       mgs: "Ahihi ",
       countPage: countPage,
@@ -55,6 +56,7 @@ exports.getListOrder1 = async (req, res) => {
       countPage += 1
     }
     return res.render("order/Order", {
+      user : req.session.user,
       listOrder,
       mgs: "",
       countPage: countPage,

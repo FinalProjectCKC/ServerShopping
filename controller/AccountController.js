@@ -42,7 +42,6 @@ exports.login = async (req, res) => {
 }
 exports.getdata = async (req, res) => {
   try {
-    const listOrder =await Order.find({ status: 3 })
     let orderSuccess = await Order.find({ status: 3 })
     let orderCancel =await Order.find({ status: -1 })
     let orderShipping = await Order.find({ status: 2 })
@@ -73,6 +72,7 @@ exports.home = async (req, res) => {
     const listOrder =await Order.find({ status: 3 })
     let saledQuan = 0
     let total = 0
+    let numAcc =  await (await Account.find()).length
     let numOrder =  await (await Order.find()).length
     for(let order of listOrder){
       saledQuan = saledQuan + parseInt(order.quanti) 
@@ -93,9 +93,11 @@ exports.home = async (req, res) => {
       orderCusCancel: (await orderCusCancel).length,
     }
     return res.render('pages/index', {
+      user : req.session.user,
       orderInfor : orderInfor,
       saledQuan: saledQuan,
       total: total,
+      numAcc: numAcc,
       numOrder: numOrder,
     });
   }
@@ -111,7 +113,7 @@ exports.getListAccount = async (req, res) => {
       return res.render('login/login');
     }
     const listAccount = await Account.find()
-    return res.render('account/ListAccount', { listAccount });
+    return res.render('account/ListAccount', { listAccount,user : req.session.user,});
   } catch (error) {
     return res.send('Có lỗi xảy ra! Lấy danh sách thất bại');;
   }
@@ -167,6 +169,7 @@ exports.addAccount = async (req, res) => {
     });
   }
 }
-// exports.logout = async (req, res) => {
-
-// }
+exports.logout = async (req, res) => {
+  req.session.isLogin = false
+    return res.render('login/login');
+}

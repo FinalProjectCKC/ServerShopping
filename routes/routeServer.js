@@ -33,6 +33,8 @@ router.route('/home')
   .get(AccountController.getdata)
 router.route('/login')
   .post(AccountController.login)
+  router.route('/logout')
+  .get(AccountController.logout)
 //Product
 router.use('/productType', proType);
 // router.use('/productType', proType);

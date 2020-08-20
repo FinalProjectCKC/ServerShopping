@@ -35,20 +35,20 @@
 											<div class="card-body">
 												<h5 class="card-title mb-4">Sản phẩm đã bán</h5>
 												<h1 class="display-5 mt-1 mb-3"><%= saledQuan %></h1>
-												<div class="mb-1">
+												<!-- <div class="mb-1">
 													<span class="text-danger"> <i class="mdi mdi-arrow-bottom-right"></i> -3.65% </span>
 													<span class="text-muted">So với tuần trước</span>
-												</div>
+												</div> -->
 											</div>
 										</div>
 										<div class="card">
 											<div class="card-body">
 												<h5 class="card-title mb-4">Tài khoản khách hàng</h5>
-												<h1 class="display-5 mt-1 mb-3">14.212</h1>
-												<div class="mb-1">
+												<h1 class="display-5 mt-1 mb-3"><%= numAcc %></h1>
+												<!-- <div class="mb-1">
 													<span class="text-success"> <i class="mdi mdi-arrow-bottom-right"></i> 5.25% </span>
 													<span class="text-muted">So với tuần trước</span>
-												</div>
+												</div> -->
 											</div>
 										</div>
 									</div>
@@ -57,20 +57,20 @@
 											<div class="card-body">
 												<h5 class="card-title mb-4">Doanh thu</h5>
 												<h1 class="display-5 mt-1 mb-3"><%= total %> VND</h1>
-												<div class="mb-1">
+												<!-- <div class="mb-1">
 													<span class="text-success"> <i class="mdi mdi-arrow-bottom-right"></i> 6.65% </span>
 													<span class="text-muted">So với tuần trước</span>
-												</div>
+												</div> -->
 											</div>
 										</div>
 										<div class="card">
 											<div class="card-body">
 												<h5 class="card-title mb-4">Đơn hàng</h5>
 												<h1 class="display-5 mt-1 mb-3"><%= numOrder %></h1>
-												<div class="mb-1">
+												<!-- <div class="mb-1">
 													<span class="text-danger"> <i class="mdi mdi-arrow-bottom-right"></i> -2.25% </span>
 													<span class="text-muted">So với tuần trước</span>
-												</div>
+												</div> -->
 											</div>
 										</div>
 									</div>
@@ -146,9 +146,9 @@
 							data: [result.orderInfor.orderNew, result.orderInfor.orderSuccess, result.orderInfor.orderShipping, result.orderInfor.orderCancel, result.orderInfor.orderCusCancel],
 							backgroundColor: [
 								window.theme.primary,
-								window.theme.primary,
-								window.theme.primary,
+								"#00FF00",
 								window.theme.warning,
+								window.theme.danger,
 								window.theme.danger
 							],
 							borderWidth: 5

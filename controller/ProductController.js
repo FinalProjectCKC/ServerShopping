@@ -31,6 +31,7 @@ exports.getListProductType = async (req, res) => {
     // const listAll = await ProductType.find().skip(page * limit).limit(limit)
     const countPage = parseInt((await listAll).length / limit);
     return res.render("product/ProductType", {
+      user : req.session.user,
       listProductType,
       mgs: "",
       countPage: countPage,
@@ -345,6 +346,7 @@ exports.getListProduct = async (req, res) => {
     }
     console.log(listProduct);
     return res.render("product/Product", {
+      user : req.session.user,
       listProduct,
       listProductType,
       mgs: "",

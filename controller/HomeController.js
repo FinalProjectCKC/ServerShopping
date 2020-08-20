@@ -16,6 +16,7 @@ exports.dashBoard = async (req, res) => {
       return res.render('login/login');
     }
     return res.render("product/ProductType", {
+      user : req.session.user,
       listProductType,
       mgs: "",
       countPage: countPage,
