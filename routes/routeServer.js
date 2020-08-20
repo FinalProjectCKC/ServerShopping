@@ -19,14 +19,18 @@ router.get('', function (req, res, next) {
   return res.render('login/login', { mgs: "" });
 });
 
-router.get('/home', function (req, res) {
-  if (req.session.isLogin) {
-    return res.render('pages/index');
-  }
-  else {
-    return res.render('login/login');
-  }
-});
+// router.get('/home', function (req, res) {
+//   if (req.session.isLogin) {
+//     return res.render('pages/index');
+//   }
+//   else {
+//     return res.render('login/login');
+//   }
+// });
+router.route('/home')
+  .get(AccountController.home)
+  router.route('/getData')
+  .get(AccountController.getdata)
 router.route('/login')
   .post(AccountController.login)
 //Product

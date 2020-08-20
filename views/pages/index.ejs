@@ -27,20 +27,6 @@
 					</div>
 					<!-- Thống kê -->
 					<div class="row">
-						<div class="col-12 col-md-6 col-xxl-3 d-flex order-1 order-xxl-1">
-							<div class="card flex-fill">
-								<div class="card-header">
-									<h5 class="card-title mb-0">Calendar</h5>
-								</div>
-								<div class="card-body d-flex">
-									<div class="align-self-center w-100">
-										<div class="chart">
-											<div id="datetimepicker-dashboard"></div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
 						<div class="col-xl-6 col-xxl-5 d-flex">
 							<div class="w-100">
 								<div class="row">
@@ -48,7 +34,7 @@
 										<div class="card">
 											<div class="card-body">
 												<h5 class="card-title mb-4">Sản phẩm đã bán</h5>
-												<h1 class="display-5 mt-1 mb-3">2.382</h1>
+												<h1 class="display-5 mt-1 mb-3"><%= saledQuan %></h1>
 												<div class="mb-1">
 													<span class="text-danger"> <i class="mdi mdi-arrow-bottom-right"></i> -3.65% </span>
 													<span class="text-muted">So với tuần trước</span>
@@ -70,7 +56,7 @@
 										<div class="card">
 											<div class="card-body">
 												<h5 class="card-title mb-4">Doanh thu</h5>
-												<h1 class="display-5 mt-1 mb-3">$21.300</h1>
+												<h1 class="display-5 mt-1 mb-3"><%= total %> VND</h1>
 												<div class="mb-1">
 													<span class="text-success"> <i class="mdi mdi-arrow-bottom-right"></i> 6.65% </span>
 													<span class="text-muted">So với tuần trước</span>
@@ -80,7 +66,7 @@
 										<div class="card">
 											<div class="card-body">
 												<h5 class="card-title mb-4">Đơn hàng</h5>
-												<h1 class="display-5 mt-1 mb-3">64</h1>
+												<h1 class="display-5 mt-1 mb-3"><%= numOrder %></h1>
 												<div class="mb-1">
 													<span class="text-danger"> <i class="mdi mdi-arrow-bottom-right"></i> -2.25% </span>
 													<span class="text-muted">So với tuần trước</span>
@@ -108,37 +94,26 @@
 											<tbody>
 												<tr>
 													<td>Đơn đặt mới</td>
-													<td class="text-right">4306</td>
+													<td class="text-right"><%= orderInfor.orderNew %></td>
 												</tr>
 												<tr>
 													<td>Đơn đã huỷ</td>
-													<td class="text-right">3801</td>
+													<td class="text-right"><%= orderInfor.orderCancel %></td>
+												</tr>
+												<tr>
+													<td>Đơn bị khách huỷ</td>
+													<td class="text-right"><%= orderInfor.orderCusCancel %></td>
 												</tr>
 												<tr>
 													<td>Đơn hàng đang giao</td>
-													<td class="text-right">1689</td>
+													<td class="text-right"><%= orderInfor.orderShipping %></td>
 												</tr>
 												<tr>
 													<td>Đơn đã giao</td>
-													<td class="text-right">1689</td>
+													<td class="text-right"><%= orderInfor.orderSuccess %></td>
 												</tr>
 											</tbody>
 										</table>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-xl-6 col-xxl-7">
-							<div class="card flex-fill w-100">
-								<div class="card-header">
-
-									<h5 class="card-title mb-0">Doanh thu trong năm </h5>
-								</div>
-								<div class="card-body py-3">
-									<div class="chart chart-sm">
-										<canvas id="chartjs-dashboard-line"></canvas>
 									</div>
 								</div>
 							</div>
@@ -153,84 +128,56 @@
 	<script src="js/app.js"></script>
 
 	<script>
-		$(function() {
-			var ctx = document.getElementById('chartjs-dashboard-line').getContext("2d");
-			var gradient = ctx.createLinearGradient(0, 0, 0, 225);
-			gradient.addColorStop(0, 'rgba(215, 227, 244, 1)');
-			gradient.addColorStop(1, 'rgba(215, 227, 244, 0)');
-			// Line chart
-			new Chart(document.getElementById("chartjs-dashboard-line"), {
-				type: 'line',
-				data: {
-					labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-					datasets: [{
-						label: "Sales ($)",
-						fill: true,
-						backgroundColor: gradient,
-						borderColor: window.theme.primary,
-						data: [
-							2115,
-							1562,
-							1584,
-							1892,
-							1587,
-							1923,
-							2566,
-							2448,
-							2805,
-							3438,
-							2917,
-							3327
-						]
-					}]
-				},
-				options: {
-					maintainAspectRatio: false,
-					legend: {
-						display: false
-					},
-					tooltips: {
-						intersect: false
-					},
-					hover: {
-						intersect: true
-					},
-					plugins: {
-						filler: {
-							propagate: false
-						}
-					},
-					scales: {
-						xAxes: [{
-							reverse: true,
-							gridLines: {
-								color: "rgba(0,0,0,0.0)"
-							}
-						}],
-						yAxes: [{
-							ticks: {
-								stepSize: 1000
-							},
-							display: true,
-							borderDash: [3, 3],
-							gridLines: {
-								color: "rgba(0,0,0,0.0)"
-							}
+		$(document).ready(function () {
+			$.ajax({
+				url: 'getData',
+				type: 'GET',
+				data: null,
+				cache: false,
+				contentType: false,
+				processData: false,
+			}).done(function (result) {
+				// alert("ádadasd"+ result)
+				new Chart(document.getElementById("chartjs-dashboard-pie"), {
+					type: 'pie',
+					data: {
+						labels: ["Đơn hàng mới", "Đơn hàng đã giao", "Đơn hàng đang giao", "Đơn hàng đã huỷ", "Đơn hàng bị khách huỷ"],
+						datasets: [{
+							data: [result.orderInfor.orderNew, result.orderInfor.orderSuccess, result.orderInfor.orderShipping, result.orderInfor.orderCancel, result.orderInfor.orderCusCancel],
+							backgroundColor: [
+								window.theme.primary,
+								window.theme.primary,
+								window.theme.primary,
+								window.theme.warning,
+								window.theme.danger
+							],
+							borderWidth: 5
 						}]
+					},
+					options: {
+						responsive: !window.MSInputMethodContext,
+						maintainAspectRatio: false,
+						legend: {
+							display: false
+						},
+						cutoutPercentage: 75
 					}
-				}
-			});
-		});
+				});
+			}).fail((error) => {
+				alert("Không kết nối được với server")
+			})
+		})
 	</script>
 	<script>
-		$(function() {
+		$(function () {
 			new Chart(document.getElementById("chartjs-dashboard-pie"), {
 				type: 'pie',
 				data: {
-					labels: ["Chrome", "Firefox", "IE"],
+					labels: ["Đơn hàng mới", "Đơn hàng đã giao", "Đơn hàng đang giao", "Đơn hàng đã huỷ", "Đơn hàng bị khách huỷ"],
 					datasets: [{
-						data: [4306, 3801, 1689, 1689],
+						data: [orderInfor.orderNew, orderInfor.orderSuccess, orderInfor.orderShipping, orderInfor.orderCancel, orderInfor.orderCusCancel],
 						backgroundColor: [
+							window.theme.primary,
 							window.theme.primary,
 							window.theme.primary,
 							window.theme.warning,
@@ -251,18 +198,6 @@
 		});
 	</script>
 	<script>
-// 		$(document).ready(function(){
-//     $('#datetimepicker-dashboard').datepicker({ onSelect: function(dateText, inst) { alert("Working"); } });
-// });
-		$(function() {
-			$('#datetimepicker-dashboard').datetimepicker({
-				inline: true,
-				sideBySide: false,
-				timepicker:true,
-				format: 'L',
-				onSelectDate:  function(){ alert("ÁDfasdf")} 
-  })
-			});
 	</script>
 </body>
 

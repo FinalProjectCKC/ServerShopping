@@ -1,5 +1,6 @@
 var passport = require('passport')
 var Account = require('../models/account')
+var Order = require('../models/Order')
 var jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs');
 let request = require('request-promise')
@@ -39,9 +40,74 @@ exports.login = async (req, res) => {
   }
 
 }
+exports.getdata = async (req, res) => {
+  try {
+    const listOrder =await Order.find({ status: 3 })
+    let orderSuccess = await Order.find({ status: 3 })
+    let orderCancel =await Order.find({ status: -1 })
+    let orderShipping = await Order.find({ status: 2 })
+    let orderNew =await Order.find({ status: 0 })
+    let orderCusCancel =await Order.find({ status: -2 })
+    let orderInfor = {
+      orderSuccess: (await orderSuccess).length,
+      orderCancel: (await orderCancel).length,
+      orderShipping: (await orderShipping).length,
+      orderNew: (await orderNew).length,
+      orderCusCancel: (await orderCusCancel).length,
+    }
+    return res.json({
+      orderInfor : orderInfor,
+    });
+  }
+  catch(error){
+    console.log(error)
+    return res.json({ success: false, mgs: 'Có sự cố xảy ra, vui lòng thử lại sau' });
+  }
+
+}
+exports.home = async (req, res) => {
+  try {
+    if (!req.session.isLogin) {
+      return res.render('login/login');
+    }
+    const listOrder =await Order.find({ status: 3 })
+    let saledQuan = 0
+    let total = 0
+    let numOrder =  await (await Order.find()).length
+    for(let order of listOrder){
+      saledQuan = saledQuan + parseInt(order.quanti) 
+      total = total + parseInt(order.total) 
+    }
+  total = Number((total).toFixed(1)).toLocaleString()
+//  console.log("xxxxx ", newtotal)
+    let orderSuccess = await Order.find({ status: 3 })
+    let orderCancel =await Order.find({ status: -1 })
+    let orderShipping = await Order.find({ status: 2 })
+    let orderNew =await Order.find({ status: 0 })
+    let orderCusCancel =await Order.find({ status: -2 })
+    let orderInfor = {
+      orderSuccess: (await orderSuccess).length,
+      orderCancel: (await orderCancel).length,
+      orderShipping: (await orderShipping).length,
+      orderNew: (await orderNew).length,
+      orderCusCancel: (await orderCusCancel).length,
+    }
+    return res.render('pages/index', {
+      orderInfor : orderInfor,
+      saledQuan: saledQuan,
+      total: total,
+      numOrder: numOrder,
+    });
+  }
+  catch(error){
+    console.log(error)
+    return res.json({ success: false, mgs: 'Có sự cố xảy ra, vui lòng thử lại sau' });
+  }
+
+}
 exports.getListAccount = async (req, res) => {
   try {
-    if(!req.session.isLogin){
+    if (!req.session.isLogin) {
       return res.render('login/login');
     }
     const listAccount = await Account.find()
@@ -57,7 +123,7 @@ exports.addAccount = async (req, res) => {
   let password = req.body.password;
   let address = req.body.address;
   let date = new Date();
-  if(!req.session.isLogin){
+  if (!req.session.isLogin) {
     return res.render('login/login');
   }
   let today = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
@@ -68,32 +134,32 @@ exports.addAccount = async (req, res) => {
     const check = await Account.findOne({
       username: username,
     });
-    console.log("username",username)
-    if (check==null) {
-            const newAccount = new Account({
-              _id: new mongoose.Types.ObjectId(),
-              username: username,
-              fullName: fullname,
-              email:email,
-              password: password,
-              address:address,
-              accRole:"admin",
-              created_at: today,
-              last_modified: today,
-            });
-            await newAccount.save().then(async () => {
-              return res.json({
-                success: true,
-                mgs: "Thêm thành công",
-              });
-            });
+    console.log("username", username)
+    if (check == null) {
+      const newAccount = new Account({
+        _id: new mongoose.Types.ObjectId(),
+        username: username,
+        fullName: fullname,
+        email: email,
+        password: password,
+        address: address,
+        accRole: "admin",
+        created_at: today,
+        last_modified: today,
+      });
+      await newAccount.save().then(async () => {
+        return res.json({
+          success: true,
+          mgs: "Thêm thành công",
+        });
+      });
     } else {
       return res.json({
         success: false,
         mgs: "Tên đã tồn tại!",
       });
     }
-  } catch(e){
+  } catch (e) {
     console.log(e)
     return res.json({
       success: false,
