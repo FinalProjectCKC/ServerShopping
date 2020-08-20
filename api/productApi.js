@@ -11,6 +11,18 @@ const path = require("path");
 let api = require("../config");
 API_URL = api.API_URL;
 
+function compare(a, b) {
+  const saledA = parseInt(a.saled)
+  const saledB = parseInt(b.saled)
+
+  if (saledA < saledB) {
+    return 1
+  } else if (saledA > saledB) {
+    return -1
+  }
+  return 0
+}
+
 exports.addProduct = async (req, res) => {
   let accountId = handleAccountJwt.getAccountId(req);
   let courseName = req.body.courseName;
@@ -112,8 +124,13 @@ exports.getProductByProType = async (req, res) => {
         data: null,
       });
     }
-    let productTypes = await ProductType.find({ "_id": ProTypeId }, { product: { $slice: [skip, parseInt(limit)] } })
+    let productTypes = await ProductType.find(
+      { "_id": ProTypeId },
+      { product: { $slice: [skip, parseInt(limit)] } },
+    )
+
     productTypes = productTypes[0]
+    product = productTypes.product.sort(compare);
     if (productTypes !== null) {
       return res.json({
         status: 1,
@@ -122,7 +139,7 @@ exports.getProductByProType = async (req, res) => {
           typeId: productTypes._id,
           typeName: productTypes.typeName,
           typeImg: productTypes.typeImg,
-          product: productTypes.product,
+          product: product,
           description: productTypes.description,
         },
       });
@@ -240,7 +257,7 @@ exports.getProductById = async (req, res) => {
 exports.searchProduct = async (req, res) => {
   try {
     let searchKey = req.body.searchKey;
- console.log(searchKey)
+    console.log(searchKey)
     const findProducts = await ProductType.find({
       delete_at: null,
       "product.productName": { $regex: `${searchKey}` },
