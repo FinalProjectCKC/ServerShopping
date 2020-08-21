@@ -362,7 +362,7 @@ exports.downloadOrder = async (req, res) => {
     return res.json({
       success: true,
       mgs: "Xuất hoá đơn thành công!",
-      data: `http://localhost:8080/pdf/${fileName}`,
+      data: `https://warm-brook-93118.herokuapp.com/pdf/${fileName}`,
     });
   } catch (error) {
     console.log(error)
