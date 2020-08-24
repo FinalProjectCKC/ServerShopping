@@ -16,8 +16,8 @@ const PdfPrinter = require('pdfmake');
 var transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: 'tungtrana3@gmail.com', // here use your real email
-    pass: 'loan25121964' // put your password correctly (not in this question please)
+    user: 'xxx@gmail.com', // here use your real email
+    pass: 'xxx' // put your password correctly (not in this question please)
   }
 });
 exports.newOrder = async (req, res) => {
@@ -513,8 +513,8 @@ exports.sendMail = async (req, res) => {
     transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: 'tungtrana3@gmail.com', // here use your real email
-        pass: 'loan25121964' // put your password correctly (not in this question please)
+        user: 'xxx@gmail.com', // here use your real email
+        pass: 'xxx' // put your password correctly (not in this question please)
       }
     });
     // let filepath = __dirname.replace('/api', '')
